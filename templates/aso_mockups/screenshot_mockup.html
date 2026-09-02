@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Store Screenshot Mockup</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        body {
+            width: 1080px;
+            height: 1920px;
+            background: linear-gradient(145deg, {{ bg_gradient_start|default('#4F46E5') }}, {{ bg_gradient_end|default('#7C3AED') }});
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow: hidden;
+            position: relative;
+            padding-top: 100px;
+        }
+        .header-container {
+            width: 880px;
+            text-align: center;
+            z-index: 10;
+            margin-bottom: 60px;
+        }
+        .tag-pill {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 10px 28px;
+            border-radius: 30px;
+            color: #FFFFFF;
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .headline {
+            color: #FFFFFF;
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.25;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            word-break: keep-all;
+        }
+        .subheadline {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 32px;
+            font-weight: 500;
+            margin-top: 16px;
+        }
+        /* Phone Frame */
+        .device-wrapper {
+            position: absolute;
+            bottom: -80px;
+            width: 820px;
+            height: 1420px;
+            background: #18181B;
+            border-radius: 64px 64px 0 0;
+            padding: 24px 24px 0 24px;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.45), 0 0 0 12px #27272A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .device-notch {
+            width: 220px;
+            height: 32px;
+            background: #27272A;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 16px;
+        }
+        .screen-container {
+            width: 100%;
+            height: 100%;
+            background: {{ app_surface_color|default('#F8FAFC') }};
+            border-radius: 44px 44px 0 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .app-appbar {
+            height: 90px;
+            background: {{ app_primary_color|default('#4F46E5') }};
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .app-content {
+            flex: 1;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .card-term {
+            font-size: 48px;
+            font-weight: 800;
+            color: #1E293B;
+        }
+        .card-meaning {
+            font-size: 28px;
+            color: #64748B;
+            font-weight: 600;
+        }
+        .audio-btn {
+            align-self: flex-start;
+            background: {{ app_primary_color|default('#4F46E5') }};
+            color: white;
+            padding: 12px 28px;
+            border-radius: 16px;
+            font-size: 22px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .stroke-box {
+            height: 260px;
+            background: #F1F5F9;
+            border: 2px dashed #CBD5E1;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 110px;
+            font-weight: 900;
+            color: {{ app_primary_color|default('#4F46E5') }};
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <div class="tag-pill">{{ app_name }}</div>
+        <h1 class="headline">{{ headline }}</h1>
+        <p class="subheadline">{{ subheadline|default('Fast, Intuitive & Native Learning Experience') }}</p>
+    </div>
+
+    <div class="device-wrapper">
+        <div class="device-notch"></div>
+        <div class="screen-container">
+            <div class="app-appbar">
+                <span>{{ app_name }}</span>
+                <span>⭐ Lv.1</span>
+            </div>
+            <div class="app-content">
+                <div class="card">
+                    <div class="card-term">{{ card_term|default('안녕하세요') }}</div>
+                    <div class="card-meaning">{{ card_meaning|default('Hello / Good day') }}</div>
+                    <div class="audio-btn">🔊 Listen Native Audio</div>
+                </div>
+                <div class="stroke-box">
+                    {{ stroke_char|default('한') }}
+                </div>
+                <div class="card" style="background: #EEF2FF; border: 1px solid #C7D2FE;">
+                    <div style="font-size: 24px; color: #4338CA; font-weight: 700;">💡 Example</div>
+                    <div style="font-size: 26px; color: #1E293B;">{{ example_sentence|default('안녕하세요, 만나서 반갑습니다.') }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

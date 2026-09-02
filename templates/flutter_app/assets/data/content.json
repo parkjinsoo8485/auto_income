@@ -1,0 +1,286 @@
+{
+  "app_info": {
+    "app_id": "com.koreanmaster.topik.level6",
+    "app_name": "TOPIK Korean L6 - Master",
+    "version_name": "1.0.0",
+    "version_code": 1,
+    "target_language": "ko",
+    "native_language": "en"
+  },
+  "ui_theme": {
+    "primary_color": "#7C3AED",
+    "secondary_color": "#EC4899",
+    "background_color": "#F8FAFC",
+    "surface_color": "#FFFFFF",
+    "text_color": "#1E293B",
+    "font_family": "Nunito",
+    "layout_mode": "carousel"
+  },
+  "modules": {
+    "vocabulary_list": true,
+    "flashcards": true,
+    "quiz_multiple_choice": true,
+    "stroke_order_animation": true,
+    "audio_pronunciation": true
+  },
+  "monetization": {
+    "ad_mode": "test",
+    "admob_app_id": "ca-app-pub-3940256099942544~3347511713",
+    "admob_banner_id": "ca-app-pub-3940256099942544/6300978111",
+    "admob_interstitial_id": "ca-app-pub-3940256099942544/1033173712",
+    "admob_rewarded_id": "ca-app-pub-3940256099942544/5224354917",
+    "remote_config_interstitial_cooldown_seconds": 90
+  },
+  "assets": {
+    "icon_source_path": null,
+    "tts_engine": "edge-tts",
+    "tts_voice": "ko-KR-InJoonNeural"
+  },
+  "store_metadata": {
+    "title": "Learn Korean TOPIK Level 6 - Vocabulary",
+    "short_description": "Master TOPIK Level 6 Korean vocabulary with native audio, flashcards and quizzes!",
+    "full_description": "Pass the TOPIK exam with confidence!\nLearn essential Korean vocabulary with native audio, smart flashcards, and quizzes.\n\nKey Features:\n- 25 TOPIK Level 6 essential words\n- Native Korean audio pronunciation\n- Smart spaced repetition flashcards\n- 4-choice quiz challenges\n- Daily streak tracking\n- Ad-supported free access",
+    "keywords": [
+      "learn korean",
+      "topik level 6",
+      "korean vocabulary",
+      "korean exam",
+      "hangul",
+      "korean quiz"
+    ],
+    "screenshots_headlines": [
+      "Master TOPIK Level 6 Korean",
+      "Native Audio Pronunciation",
+      "Smart Flashcard System",
+      "Challenge Quiz Mode",
+      "Track Your Daily Streak"
+    ]
+  },
+  "content_data": [
+    {
+      "id": "t6_001",
+      "term": "내재",
+      "meaning": "Immanence / Inherent",
+      "pronunciation": "nae-jae",
+      "example": "내재된 모순이 있어요.",
+      "example_meaning": "There is an inherent contradiction.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_002",
+      "term": "초월",
+      "meaning": "Transcendence",
+      "pronunciation": "cho-weol",
+      "example": "한계를 초월했어요.",
+      "example_meaning": "I transcended the limits.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_003",
+      "term": "본질",
+      "meaning": "Essence / Nature",
+      "pronunciation": "bon-jil",
+      "example": "문제의 본질을 파악해요.",
+      "example_meaning": "I grasp the essence of the problem.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_004",
+      "term": "현상",
+      "meaning": "Phenomenon",
+      "pronunciation": "hyeon-sang",
+      "example": "이 현상을 어떻게 설명하나요?",
+      "example_meaning": "How do you explain this phenomenon?",
+      "category": "Academic"
+    },
+    {
+      "id": "t6_005",
+      "term": "체계",
+      "meaning": "System / Framework",
+      "pronunciation": "che-gye",
+      "example": "체계적인 접근이 필요해요.",
+      "example_meaning": "A systematic approach is needed.",
+      "category": "Academic"
+    },
+    {
+      "id": "t6_006",
+      "term": "구조",
+      "meaning": "Structure",
+      "pronunciation": "gu-jo",
+      "example": "사회 구조가 복잡해요.",
+      "example_meaning": "The social structure is complex.",
+      "category": "Academic"
+    },
+    {
+      "id": "t6_007",
+      "term": "기능",
+      "meaning": "Function / Role",
+      "pronunciation": "gi-neung",
+      "example": "각 기관의 기능이 달라요.",
+      "example_meaning": "Each organization has different functions.",
+      "category": "Academic"
+    },
+    {
+      "id": "t6_008",
+      "term": "상호",
+      "meaning": "Mutual / Reciprocal",
+      "pronunciation": "sang-ho",
+      "example": "상호 작용이 중요해요.",
+      "example_meaning": "Mutual interaction is important.",
+      "category": "Academic"
+    },
+    {
+      "id": "t6_009",
+      "term": "의존",
+      "meaning": "Dependence",
+      "pronunciation": "ui-jon",
+      "example": "상호 의존적이에요.",
+      "example_meaning": "They are mutually dependent.",
+      "category": "Society"
+    },
+    {
+      "id": "t6_010",
+      "term": "자율",
+      "meaning": "Autonomy",
+      "pronunciation": "ja-yul",
+      "example": "자율적인 결정이에요.",
+      "example_meaning": "It is an autonomous decision.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_011",
+      "term": "당위",
+      "meaning": "Ought / Normativity",
+      "pronunciation": "dang-wi",
+      "example": "도덕적 당위성이 있어요.",
+      "example_meaning": "There is moral normativity.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_012",
+      "term": "실존",
+      "meaning": "Existence",
+      "pronunciation": "sil-jon",
+      "example": "실존적인 질문을 해요.",
+      "example_meaning": "I ask existential questions.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_013",
+      "term": "공리",
+      "meaning": "Axiom / Public benefit",
+      "pronunciation": "gong-ni",
+      "example": "공리주의적 관점이에요.",
+      "example_meaning": "It is a utilitarian perspective.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_014",
+      "term": "이념",
+      "meaning": "Ideology",
+      "pronunciation": "i-nyeom",
+      "example": "다양한 이념이 공존해요.",
+      "example_meaning": "Various ideologies coexist.",
+      "category": "Politics"
+    },
+    {
+      "id": "t6_015",
+      "term": "패권",
+      "meaning": "Hegemony",
+      "pronunciation": "pae-gwon",
+      "example": "패권 경쟁이 치열해요.",
+      "example_meaning": "The hegemonic competition is fierce.",
+      "category": "Politics"
+    },
+    {
+      "id": "t6_016",
+      "term": "세계관",
+      "meaning": "Worldview",
+      "pronunciation": "se-gye-gwan",
+      "example": "자신만의 세계관이 있어요.",
+      "example_meaning": "I have my own worldview.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_017",
+      "term": "공동체",
+      "meaning": "Community",
+      "pronunciation": "gong-dong-che",
+      "example": "공동체 의식이 필요해요.",
+      "example_meaning": "A sense of community is needed.",
+      "category": "Society"
+    },
+    {
+      "id": "t6_018",
+      "term": "연대",
+      "meaning": "Solidarity",
+      "pronunciation": "yeon-dae",
+      "example": "사회적 연대가 중요해요.",
+      "example_meaning": "Social solidarity is important.",
+      "category": "Society"
+    },
+    {
+      "id": "t6_019",
+      "term": "해체",
+      "meaning": "Deconstruction",
+      "pronunciation": "hae-che",
+      "example": "기존 질서를 해체해요.",
+      "example_meaning": "I deconstruct the existing order.",
+      "category": "Philosophy"
+    },
+    {
+      "id": "t6_020",
+      "term": "재구성",
+      "meaning": "Reconstruction",
+      "pronunciation": "jae-gu-seong",
+      "example": "역사를 재구성해요.",
+      "example_meaning": "I reconstruct history.",
+      "category": "Academic"
+    },
+    {
+      "id": "t6_021",
+      "term": "메타인지",
+      "meaning": "Metacognition",
+      "pronunciation": "me-ta-in-ji",
+      "example": "메타인지 능력을 키워요.",
+      "example_meaning": "I develop metacognitive abilities.",
+      "category": "Psychology"
+    },
+    {
+      "id": "t6_022",
+      "term": "변용",
+      "meaning": "Transformation / Variation",
+      "pronunciation": "byeon-yong",
+      "example": "문화적 변용이 일어나요.",
+      "example_meaning": "Cultural transformation occurs.",
+      "category": "Culture"
+    },
+    {
+      "id": "t6_023",
+      "term": "융합",
+      "meaning": "Convergence / Fusion",
+      "pronunciation": "yung-hap",
+      "example": "학문 간 융합이 중요해요.",
+      "example_meaning": "Convergence between disciplines is important.",
+      "category": "Academic"
+    },
+    {
+      "id": "t6_024",
+      "term": "상생",
+      "meaning": "Mutual prosperity",
+      "pronunciation": "sang-saeng",
+      "example": "상생의 관계를 만들어요.",
+      "example_meaning": "I create a mutually beneficial relationship.",
+      "category": "Society"
+    },
+    {
+      "id": "t6_025",
+      "term": "공생",
+      "meaning": "Symbiosis / Coexistence",
+      "pronunciation": "gong-saeng",
+      "example": "자연과 공생해야 해요.",
+      "example_meaning": "We must coexist with nature.",
+      "category": "Nature"
+    }
+  ]
+}

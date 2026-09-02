@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Flutter / Dart
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+templates/flutter_app/build/
+templates/flutter_app/.dart_tool/
+templates/flutter_app/android/.gradle/
+templates/flutter_app/android/local.properties
+
+# Build artifacts (AAB, JKS keys)
+build_output/*/
+!build_output/.gitkeep
+
+# Local testing files
+results_raw.tsv
+results_utf8.tsv
+sample_tsv.json
+debug_view.json
+
+# System & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

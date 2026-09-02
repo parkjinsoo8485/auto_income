@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "app_info": {
+    "app_id": "com.langmaster.korean.basic",
+    "app_name": "Learn Korean Daily - Hangul & Words",
+    "version_name": "1.0.0",
+    "version_code": 1,
+    "target_language": "ko",
+    "native_language": "en"
+  },
+  "ui_theme": {
+    "primary_color": "#4F46E5",
+    "secondary_color": "#EC4899",
+    "background_color": "#F8FAFC",
+    "surface_color": "#FFFFFF",
+    "text_color": "#1E293B",
+    "font_family": "Pretendard",
+    "layout_mode": "grid"
+  },
+  "modules": {
+    "vocabulary_list": true,
+    "flashcards": true,
+    "quiz_multiple_choice": true,
+    "stroke_order_animation": true,
+    "audio_pronunciation": true
+  },
+  "monetization": {
+    "ad_mode": "test",
+    "admob_app_id": "ca-app-pub-3940256099942544~3347511713",
+    "admob_banner_id": "ca-app-pub-3940256099942544/6300978111",
+    "admob_interstitial_id": "ca-app-pub-3940256099942544/1033173712",
+    "admob_rewarded_id": "ca-app-pub-3940256099942544/5224354917",
+    "remote_config_interstitial_cooldown_seconds": 300
+  },
+  "assets": {
+    "icon_source_path": "assets_src/korean_icon.png",
+    "tts_engine": "edge-tts",
+    "tts_voice": "ko-KR-SunHiNeural"
+  },
+  "store_metadata": {
+    "title": "Learn Korean Daily - Hangul Vocab",
+    "short_description": "Master Korean Hangul and essential vocabulary with native audio and animations!",
+    "full_description": "Are you ready to speak Korean fluently? Learn Korean Daily is designed for learners of all levels...\n\nKey Features:\n- Native Korean pronunciation audio\n- Animated stroke order for Hangul writing\n- Smart Flashcards and Review Quizzes\n- Beautiful, clean interface designed for daily practice.",
+    "keywords": ["learn korean", "hangul writing", "korean vocabulary", "korean quiz", "topik"],
+    "screenshots_headlines": [
+      "Master Korean Alphabet in 7 Days",
+      "Native Audio Pronunciation for All Words",
+      "Interactive Hangul Stroke Animations",
+      "Smart Spaced Repetition Flashcards",
+      "Track Your Daily Study Streak"
+    ]
+  },
+  "content_data": [
+    {
+      "id": "ko_001",
+      "term": "안녕하세요",
+      "meaning": "Hello / Good day",
+      "pronunciation": "An-nyeong-ha-se-yo",
+      "example_sentence": "안녕하세요, 만나서 반갑습니다.",
+      "example_meaning": "Hello, nice to meet you."
+    },
+    {
+      "id": "ko_002",
+      "term": "감사합니다",
+      "meaning": "Thank you",
+      "pronunciation": "Gam-sa-ham-ni-da",
+      "example_sentence": "도와주셔서 감사합니다.",
+      "example_meaning": "Thank you for helping me."
+    },
+    {
+      "id": "ko_003",
+      "term": "사랑해요",
+      "meaning": "I love you",
+      "pronunciation": "Sa-rang-hae-yo",
+      "example_sentence": "진심으로 사랑해요.",
+      "example_meaning": "I love you with all my heart."
+    },
+    {
+      "id": "ko_004",
+      "term": "한글",
+      "meaning": "Hangul (Korean Alphabet)",
+      "pronunciation": "Han-geul",
+      "example_sentence": "한글은 배우기 아주 쉽습니다.",
+      "example_meaning": "Hangul is very easy to learn."
+    },
+    {
+      "id": "ko_005",
+      "term": "친구",
+      "meaning": "Friend",
+      "pronunciation": "Chin-gu",
+      "example_sentence": "우리는 좋은 친구입니다.",
+      "example_meaning": "We are good friends."
+    }
+  ]
+}
