@@ -1,0 +1,17 @@
+{
+  "name": "Korean Master TOPIK",
+  "short_name": "Korean Master",
+  "description": "TOPIK 1~6급 600단어 완전 대비 한국어 학습 앱",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0f1e",
+  "theme_color": "#6366f1",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "qr_code.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}
