@@ -486,7 +486,8 @@ body {
       <h2 class="ob-title">나의 한국어 수준은?</h2>
       <p class="ob-subtitle">목표 급수를 선택하세요<br>Select your target level</p>
       <div id="level-buttons"></div>
-      <button class="btn-secondary" style="margin-top:8px" onclick="nextObStep()">잘 모르겠어요 (Beginner)</button>
+      <button class="btn-primary" style="margin-top:12px" onclick="nextObStep()">다음 (Next)</button>
+      <button class="btn-secondary" style="margin-top:8px" onclick="S.level=1;nextObStep()">잘 모르겠어요 (Beginner)</button>
     </div>
 
     <!-- Step 3: Goal -->
@@ -8534,9 +8535,17 @@ function buildLevelButtons(){
     </button>`).join('');
 }
 function selectObLevel(id,el){
-  document.querySelectorAll('.level-test-btn').forEach(b=>b.style.borderColor='');
+  document.querySelectorAll('.level-test-btn').forEach(b=>{
+    b.style.borderColor='';
+    b.style.background='var(--card)';
+  });
   el.style.borderColor='var(--accent)';
+  el.style.background='rgba(99,102,241,.12)';
   S.level = id;
+  // Automatically advance to the next step
+  setTimeout(() => {
+    nextObStep();
+  }, 220);
 }
 function selectLang(l,el){
   document.querySelectorAll('.lang-card').forEach(c=>c.classList.remove('selected'));
