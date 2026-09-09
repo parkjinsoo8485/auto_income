@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>한글 조판 규칙 및 동적 Gutter 검증</title>
+<style>
+body { background: #0f172a; color: white; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 24px; }
+.grid { display: flex; gap: 14px; flex-wrap: wrap; }
+.card { background: #1e293b; padding: 12px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3); }
+.title { font-size: 20px; font-weight: bold; margin-bottom: 6px; color: #f8fafc; text-align: center; }
+.svg-wrap { width: 150px; height: 150px; background: #0b0f19; border-radius: 8px; }
+.desc { font-size: 11px; color: #94a3b8; margin-top: 6px; text-align: center; font-family: monospace; }
+</style>
+<script src="../assets/hangul_stroke_composer.js"></script>
+</head>
+<body>
+<h2 style="text-align:center; color: #f1f5f9; margin-bottom: 4px;">Context-Aware Rule & 동적 Gutter 한글 조판 엔진 검증</h2>
+<p style="text-align:center; color: #64748b; font-size: 14px; margin-top: 0;">폐쇄형/개방형 받침 클래스별 가변 안전거리 및 네거티브 스페이스 균형 확인</p>
+
+
+    <div style="width: 100%; margin-top: 20px;">
+        <h3 style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 12px;">폐쇄형 각진 받침 (ㅁ, ㅂ, ㅍ) - 안전거리 확대</h3>
+        <div class="grid">
+    
+        <div class="card">
+            <div class="title">곰</div>
+            <div class="svg-wrap" id="wrap-곰"></div>
+            <div class="desc" id="info-곰"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">봄</div>
+            <div class="svg-wrap" id="wrap-봄"></div>
+            <div class="desc" id="info-봄"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">몸</div>
+            <div class="svg-wrap" id="wrap-몸"></div>
+            <div class="desc" id="info-몸"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">톱</div>
+            <div class="svg-wrap" id="wrap-톱"></div>
+            <div class="desc" id="info-톱"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">밥</div>
+            <div class="svg-wrap" id="wrap-밥"></div>
+            <div class="desc" id="info-밥"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">답</div>
+            <div class="svg-wrap" id="wrap-답"></div>
+            <div class="desc" id="info-답"></div>
+        </div>
+        
+        </div>
+    </div>
+    
+    <div style="width: 100%; margin-top: 20px;">
+        <h3 style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 12px;">개방형 단순 획 받침 (ㄴ, ㄹ, ㅅ, ㅇ 등) - 탄탄한 높이</h3>
+        <div class="grid">
+    
+        <div class="card">
+            <div class="title">손</div>
+            <div class="svg-wrap" id="wrap-손"></div>
+            <div class="desc" id="info-손"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">돈</div>
+            <div class="svg-wrap" id="wrap-돈"></div>
+            <div class="desc" id="info-돈"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">온</div>
+            <div class="svg-wrap" id="wrap-온"></div>
+            <div class="desc" id="info-온"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">꽃</div>
+            <div class="svg-wrap" id="wrap-꽃"></div>
+            <div class="desc" id="info-꽃"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">달</div>
+            <div class="svg-wrap" id="wrap-달"></div>
+            <div class="desc" id="info-달"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">강</div>
+            <div class="svg-wrap" id="wrap-강"></div>
+            <div class="desc" id="info-강"></div>
+        </div>
+        
+        </div>
+    </div>
+    
+    <div style="width: 100%; margin-top: 20px;">
+        <h3 style="color: #38bdf8; border-bottom: 1px solid #334155; padding-bottom: 6px; margin-bottom: 12px;">하단 가로모음 (ㅜ, ㅠ) 및 평면 (ㅡ) 받침 글자</h3>
+        <div class="grid">
+    
+        <div class="card">
+            <div class="title">문</div>
+            <div class="svg-wrap" id="wrap-문"></div>
+            <div class="desc" id="info-문"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">물</div>
+            <div class="svg-wrap" id="wrap-물"></div>
+            <div class="desc" id="info-물"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">눈</div>
+            <div class="svg-wrap" id="wrap-눈"></div>
+            <div class="desc" id="info-눈"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">국</div>
+            <div class="svg-wrap" id="wrap-국"></div>
+            <div class="desc" id="info-국"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">글</div>
+            <div class="svg-wrap" id="wrap-글"></div>
+            <div class="desc" id="info-글"></div>
+        </div>
+        
+        <div class="card">
+            <div class="title">등</div>
+            <div class="svg-wrap" id="wrap-등"></div>
+            <div class="desc" id="info-등"></div>
+        </div>
+        
+        </div>
+    </div>
+    
+
+<script>
+const allChars = ['곰', '봄', '몸', '톱', '밥', '답', '손', '돈', '온', '꽃', '달', '강', '문', '물', '눈', '국', '글', '등'];
+
+allChars.forEach(ch => {
+    const plan = HangulStrokeComposer.composeStrokePlan(ch);
+    const svg = HangulStrokeComposer.renderComposerSvg(ch, { showBadges: true, animated: false });
+    const wrap = document.getElementById(`wrap-${ch}`);
+    if (wrap) wrap.innerHTML = svg;
+
+    const info = document.getElementById(`info-${ch}`);
+    if (info && plan.slots) {
+        const cho = plan.slots.find(s => s.role === 'cho');
+        const jung = plan.slots.find(s => s.role === 'jung');
+        const jong = plan.slots.find(s => s.role === 'jong');
+        if (jung && jong) {
+            const gap = jong.y - (jung.y + jung.h);
+            info.innerHTML = `중성Y:${jung.y} H:${jung.h}<br>종성Y:${jong.y} (여백:${gap}px)`;
+        } else if (jung) {
+            info.innerHTML = `중성Y:${jung.y} H:${jung.h}`;
+        }
+    }
+});
+</script>
+</body>
+</html>

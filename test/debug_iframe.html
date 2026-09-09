@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+</head>
+<body>
+  <div id="logs"></div>
+  <script>
+    window.onerror = function(msg, url, line, col, error) {
+      const p = document.createElement('div');
+      p.className = 'err';
+      p.textContent = 'ERROR: ' + msg + ' at ' + line + ':' + col;
+      document.body.appendChild(p);
+    };
+  </script>
+  <iframe id="ifr" src="../web_simulator.html#stroke" style="width:400px;height:700px"></iframe>
+  <script>
+    const ifr = document.getElementById('ifr');
+    ifr.onload = function() {
+      const win = ifr.contentWindow;
+      const oldLog = win.console.log;
+      const oldErr = win.console.error;
+      win.console.log = function(...args) {
+        oldLog.apply(win.console, args);
+        const d = document.createElement('div');
+        d.textContent = 'LOG: ' + args.join(' ');
+        document.getElementById('logs').appendChild(d);
+      };
+      win.console.error = function(...args) {
+        oldErr.apply(win.console, args);
+        const d = document.createElement('div');
+        d.textContent = 'ERR: ' + args.join(' ');
+        document.getElementById('logs').appendChild(d);
+      };
+      win.onerror = function(msg, url, line, col) {
+        const d = document.createElement('div');
+        d.textContent = 'WIN-ERR: ' + msg + ' at ' + line;
+        document.getElementById('logs').appendChild(d);
+      };
+    };
+  </script>
+</body>
+</html>

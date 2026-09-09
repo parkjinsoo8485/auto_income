@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <title>한글 획순 - Rect Wipe 방식</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0f172a;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100vh;
+      font-family: 'Noto Sans KR', sans-serif;
+      color: white; gap: 20px; padding: 20px;
+    }
+    h1 { font-size: 1.4rem; color: #a5b4fc; letter-spacing: -0.5px; }
+    .method-badge {
+      font-size: 0.75rem; background: #1e3a5f; color: #60a5fa;
+      border: 1px solid #2563eb; border-radius: 20px; padding: 4px 12px;
+    }
+    .char-selector { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .char-btn {
+      width: 52px; height: 52px; background: #1e293b;
+      border: 2px solid #334155; border-radius: 12px;
+      color: #64748b; font-size: 1.4rem; font-weight: 900;
+      cursor: pointer; transition: all 0.2s;
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+    .char-btn:hover { border-color: #6366f1; color: #a5b4fc; }
+    .char-btn.active {
+      border-color: #6366f1; background: #1e1b4b;
+      color: white; box-shadow: 0 0 16px #6366f180;
+    }
+    .box {
+      width: 280px; height: 280px; background: #1e293b;
+      border: 2px solid #334155; border-radius: 24px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 32px #00000060;
+    }
+    .stroke-info {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.9rem; color: #94a3b8; height: 28px;
+    }
+    .stroke-dot {
+      display: inline-block; width: 8px; height: 8px;
+      border-radius: 50%; background: #6366f1;
+      animation: pulse 0.8s ease infinite;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.5; transform:scale(1.4); }
+    }
+    .progress-bar {
+      width: 280px; height: 6px; background: #1e293b;
+      border-radius: 3px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: linear-gradient(90deg,#6366f1,#a78bfa);
+      border-radius: 3px; transition: width 0.1s; width: 0%;
+    }
+    .controls { display: flex; gap: 12px; }
+    button.replay-btn {
+      padding: 10px 28px;
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      color: white; border: none; border-radius: 12px;
+      font-size: 1rem; font-weight: bold; cursor: pointer;
+      transition: all 0.2s; font-family: 'Noto Sans KR', sans-serif;
+      box-shadow: 0 4px 12px #6366f150;
+    }
+    button.replay-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px #6366f170; }
+    kbd {
+      background: #1e293b; border: 1px solid #475569;
+      border-radius: 4px; padding: 1px 6px;
+    }
+    .tip { font-size: 0.72rem; color: #334155; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <h1>한글 획순 학습</h1>
+  <div class="method-badge">🔲 마스크 + Rect Wipe 방식</div>
+
+  <div class="char-selector" id="charSelector">
+    <button class="char-btn active" onclick="selectChar(this,'안')">안</button>
+    <button class="char-btn" onclick="selectChar(this,'가')">가</button>
+    <button class="char-btn" onclick="selectChar(this,'나')">나</button>
+    <button class="char-btn" onclick="selectChar(this,'다')">다</button>
+    <button class="char-btn" onclick="selectChar(this,'한')">한</button>
+    <button class="char-btn" onclick="selectChar(this,'글')">글</button>
+  </div>
+
+  <div class="box">
+    <svg id="svg" viewBox="0 0 260 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <mask id="revealMask">
+          <!-- 동적으로 채워짐: white rect/circle = 보이는 영역 -->
+        </mask>
+      </defs>
+      <!-- 1. 회색 가이드 폰트 (항상 표시) -->
+      <text id="ghostText" x="130" y="215" text-anchor="middle"
+        font-family="'Noto Sans KR',sans-serif" font-weight="900"
+        font-size="200" fill="#243044">안</text>
+      <!-- 2. 컬러 폰트 (마스크로 획별 reveal) -->
+      <text id="coloredText" x="130" y="215" text-anchor="middle"
+        font-family="'Noto Sans KR',sans-serif" font-weight="900"
+        font-size="200" fill="#818cf8" mask="url(#revealMask)">안</text>
+      <!-- 3. 획 번호 오버레이 -->
+      <g id="strokeNumbers"></g>
+      <!-- 4. 디버그: 와이프 박스 (D키 토글) -->
+      <g id="debugRects" opacity="0"></g>
+    </svg>
+  </div>
+
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="stroke-info" id="strokeInfo"><span>폰트 로딩 중...</span></div>
+  <div class="controls">
+    <button class="replay-btn" onclick="replay()">↺ 다시 재생</button>
+  </div>
+  <p class="tip">
+    키보드: <kbd>R</kbd> 재생 &nbsp; <kbd>D</kbd> 와이프 박스 표시
+  </p>
+
+<script>
+// ============================================================
+// 획 데이터
+// viewBox: 0 0 260 260  |  font-size: 200px
+// text: x=130, y=215 (baseline), text-anchor=middle
+// 글자 실제 범위(근사): x≈22~238, y≈18~215
+//
+// 타입:
+//  'h'  왼→오른  (x 고정, width 증가)
+//  'v'  위→아래  (y 고정, height 증가)
+//  'c'  원형확장  (cx,cy 중심, r 증가)
+//  'rl' 오른→왼  (x+wMax 고정, width 증가하며 x 감소)
+//  'bu' 아래→위  (y+hMax 고정, height 증가하며 y 감소)
+// ============================================================
+const STROKE_DB = {
+  '안': { strokes: [
+    { type:'c',  cx:76,  cy:88,  rMax:44,           dur:700, n:'①', nx:28,  ny:50  },
+    { type:'v',  x:148,  y:22,   w:30,  hMax:148,   dur:650, n:'②', nx:183, ny:45  },
+    { type:'h',  x:148,  y:80,   wMax:60,  h:34,    dur:380, n:'③', nx:215, ny:105 },
+    { type:'v',  x:26,   y:168,  w:38,  hMax:50,    dur:440, n:'④', nx:12,  ny:186 },
+    { type:'h',  x:26,   y:196,  wMax:198, h:30,    dur:750, n:'⑤', nx:130, ny:248 },
+  ]},
+  '가': { strokes: [
+    { type:'h',  x:22,   y:22,   wMax:100, h:30,    dur:520, n:'①', nx:72,  ny:16  },
+    { type:'v',  x:92,   y:22,   w:30,  hMax:180,   dur:750, n:'②', nx:74,  ny:110 },
+    { type:'v',  x:152,  y:22,   w:30,  hMax:193,   dur:800, n:'③', nx:196, ny:110 },
+    { type:'h',  x:152,  y:90,   wMax:60,  h:34,    dur:380, n:'④', nx:218, ny:115 },
+  ]},
+  '나': { strokes: [
+    { type:'v',  x:22,   y:22,   w:36,  hMax:180,   dur:760, n:'①', nx:6,   ny:55  },
+    { type:'h',  x:22,   y:182,  wMax:100, h:30,    dur:560, n:'②', nx:72,  ny:240 },
+    { type:'v',  x:152,  y:22,   w:30,  hMax:193,   dur:800, n:'③', nx:196, ny:110 },
+    { type:'h',  x:152,  y:90,   wMax:60,  h:34,    dur:380, n:'④', nx:218, ny:115 },
+  ]},
+  '다': { strokes: [
+    { type:'h',  x:22,   y:22,   wMax:96,  h:30,    dur:510, n:'①', nx:70,  ny:16  },
+    { type:'v',  x:22,   y:22,   w:30,  hMax:172,   dur:750, n:'②', nx:6,   ny:108 },
+    { type:'h',  x:22,   y:184,  wMax:96,  h:30,    dur:510, n:'③', nx:70,  ny:248 },
+    { type:'v',  x:152,  y:22,   w:30,  hMax:193,   dur:800, n:'④', nx:196, ny:110 },
+    { type:'h',  x:152,  y:90,   wMax:60,  h:34,    dur:380, n:'⑤', nx:218, ny:115 },
+  ]},
+  '한': { strokes: [
+    { type:'h',  x:30,   y:22,   wMax:76,  h:22,    dur:420, n:'①', nx:68,  ny:16  },
+    { type:'c',  cx:68,  cy:90,  rMax:38,            dur:700, n:'②', nx:28,  ny:60  },
+    { type:'v',  x:148,  y:22,   w:30,  hMax:148,   dur:650, n:'③', nx:188, ny:45  },
+    { type:'h',  x:148,  y:80,   wMax:60,  h:34,    dur:380, n:'④', nx:215, ny:105 },
+    { type:'v',  x:26,   y:168,  w:38,  hMax:50,    dur:440, n:'⑤', nx:12,  ny:185 },
+    { type:'h',  x:26,   y:196,  wMax:198, h:30,    dur:750, n:'⑥', nx:130, ny:248 },
+  ]},
+  '글': { strokes: [
+    { type:'h',  x:22,   y:22,   wMax:90,  h:26,    dur:480, n:'①', nx:67,  ny:16  },
+    { type:'v',  x:82,   y:22,   w:30,  hMax:100,   dur:560, n:'②', nx:65,  ny:85  },
+    { type:'h',  x:148,  y:82,   wMax:84,  h:26,    dur:530, n:'③', nx:237, ny:78  },
+    { type:'h',  x:22,   y:140,  wMax:196, h:24,    dur:680, n:'④', nx:120, ny:133 },
+    { type:'v',  x:188,  y:140,  w:30,  hMax:34,    dur:360, n:'⑤', nx:246, ny:162 },
+    { type:'rl', x:22,   y:164,  wMax:196, h:24,    dur:680, n:'⑥', nx:120, ny:200 },
+    { type:'v',  x:22,   y:164,  w:30,  hMax:34,    dur:360, n:'⑦', nx:8,   ny:186 },
+    { type:'h',  x:22,   y:188,  wMax:196, h:26,    dur:680, n:'⑧', nx:120, ny:248 },
+  ]},
+};
+
+// ============================================================
+// 애니메이션 엔진
+// ============================================================
+const NS = 'http://www.w3.org/2000/svg';
+let curChar = '안', curIdx = 0, done = [], rafId = null, debug = false;
+
+function selectChar(btn, ch) {
+  curChar = ch;
+  document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('ghostText').textContent = ch;
+  document.getElementById('coloredText').textContent = ch;
+  replay();
+}
+
+function replay() {
+  if (rafId) cancelAnimationFrame(rafId);
+  curIdx = 0; done = [];
+  document.getElementById('revealMask').innerHTML = '';
+  document.getElementById('strokeNumbers').innerHTML = '';
+  document.getElementById('debugRects').innerHTML = '';
+  document.getElementById('progressFill').style.width = '0%';
+  setInfo('시작...', false);
+  setTimeout(next, 500);
+}
+
+function next() {
+  const db = STROKE_DB[curChar];
+  if (!db) return;
+  const total = db.strokes.length;
+  if (curIdx >= total) {
+    setInfo('✅ 완료! 총 ' + total + '획', false);
+    document.getElementById('progressFill').style.width = '100%';
+    return;
+  }
+  const s = db.strokes[curIdx];
+  setInfo(s.n + ' 획 (' + (curIdx+1) + '/' + total + ')', true);
+  const t0 = performance.now();
+  function frame(now) {
+    const t = Math.min((now - t0) / s.dur, 1);
+    const p = ease(t);
+    renderMask(s, p);
+    document.getElementById('progressFill').style.width = ((curIdx + p) / total * 100) + '%';
+    if (t < 1) { rafId = requestAnimationFrame(frame); }
+    else { done.push(s); addNum(s); curIdx++; setTimeout(next, 280); }
+  }
+  rafId = requestAnimationFrame(frame);
+}
+
+function renderMask(cur, p) {
+  const mask = document.getElementById('revealMask');
+  mask.innerHTML = '';
+  for (const s of done) mask.appendChild(mkShape(s, 1));
+  if (cur) mask.appendChild(mkShape(cur, p));
+  if (debug) renderDbg(cur, p);
+}
+
+function mkShape(s, p) {
+  if (s.type === 'c') {
+    const el = document.createElementNS(NS, 'circle');
+    el.setAttribute('cx', s.cx); el.setAttribute('cy', s.cy);
+    el.setAttribute('r', s.rMax * p); el.setAttribute('fill', 'white');
+    return el;
+  }
+  const el = document.createElementNS(NS, 'rect');
+  el.setAttribute('fill', 'white');
+  if (s.type === 'h')  { el.setAttribute('x',s.x); el.setAttribute('y',s.y); el.setAttribute('width',s.wMax*p); el.setAttribute('height',s.h); }
+  if (s.type === 'v')  { el.setAttribute('x',s.x); el.setAttribute('y',s.y); el.setAttribute('width',s.w);      el.setAttribute('height',s.hMax*p); }
+  if (s.type === 'rl') { const w=s.wMax*p; el.setAttribute('x',s.x+s.wMax-w); el.setAttribute('y',s.y); el.setAttribute('width',w); el.setAttribute('height',s.h); }
+  if (s.type === 'bu') { const h=s.hMax*p; el.setAttribute('x',s.x); el.setAttribute('y',s.y+s.hMax-h); el.setAttribute('width',s.w); el.setAttribute('height',h); }
+  return el;
+}
+
+function renderDbg(s, p) {
+  const g = document.getElementById('debugRects');
+  g.innerHTML = '';
+  if (!s) return;
+  const shape = mkShape(s, p);
+  shape.setAttribute('fill', 'none');
+  shape.setAttribute('stroke', '#f59e0b');
+  shape.setAttribute('stroke-width', '1.5');
+  shape.setAttribute('stroke-dasharray', '4 2');
+  g.appendChild(shape);
+}
+
+function addNum(s) {
+  const g = document.getElementById('strokeNumbers');
+  // 배경 원
+  const bg = document.createElementNS(NS, 'circle');
+  bg.setAttribute('cx', s.nx); bg.setAttribute('cy', s.ny - 4);
+  bg.setAttribute('r', '9'); bg.setAttribute('fill', '#be185d');
+  g.appendChild(bg);
+  // 숫자
+  const txt = document.createElementNS(NS, 'text');
+  txt.setAttribute('x', s.nx); txt.setAttribute('y', s.ny);
+  txt.setAttribute('text-anchor', 'middle');
+  txt.setAttribute('dominant-baseline', 'middle');
+  txt.setAttribute('font-size', '10'); txt.setAttribute('fill', 'white');
+  txt.setAttribute('font-weight', 'bold');
+  txt.textContent = s.n;
+  g.appendChild(txt);
+}
+
+function setInfo(txt, anim) {
+  const el = document.getElementById('strokeInfo');
+  el.innerHTML = anim
+    ? '<span class="stroke-dot"></span> ' + txt
+    : '<span>' + txt + '</span>';
+}
+
+function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'r' || e.key === 'R') replay();
+  if (e.key === 'd' || e.key === 'D') {
+    debug = !debug;
+    document.getElementById('debugRects').setAttribute('opacity', debug ? '1' : '0');
+    if (!debug) document.getElementById('debugRects').innerHTML = '';
+  }
+});
+
+document.fonts.ready.then(() => setTimeout(replay, 300));
+</script>
+</body>
+</html>

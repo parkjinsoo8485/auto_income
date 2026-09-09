@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { background:#020617; color:#f8fafc; font-family:-apple-system,BlinkMacSystemFont,sans-serif; margin:0; padding:30px; display:flex; flex-direction:column; align-items:center; gap:20px; }
+h2 { margin:0 0 10px 0; color:#38bdf8; }
+</style>
+</head>
+<body>
+<h2>비교: 현재 둥근 막대선 획순 vs 바탕 회색 폰트와 100% 동일한 글씨체 획순</h2>
+
+    <div style="background:#1e293b;padding:16px;border-radius:16px;display:flex;gap:24px;align-items:center;">
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">현재 방식 (회색 폰트 + 둥근 막대선)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <g><path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15711 0 0 -0.33257 -10.764 199.601)" fill="rgba(255,255,255,0.14)"/><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.32432 0 0 -0.16703 -12.432 152.616)" fill="rgba(255,255,255,0.14)"/></g>
+      <g><path d="M 39.3,57.1 L 86.7,57.1 L 86.7,149.1" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 137.1,43.6 L 137.1,154.4" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 137.1,99.0 L 165.9,99.0" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+    </svg>
+    
+      </div>
+      <div style="font-size:24px;color:#64748b;">➔</div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#38bdf8;font-weight:700;margin-bottom:6px;">요청하신 방식 (바탕 회색 폰트체 그대로 100% 일치)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <defs>
+        
+        <mask id="m_가_0" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 39.3,57.1 L 86.7,57.1 L 86.7,149.1" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_가_1" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 137.1,43.6 L 137.1,154.4" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_가_2" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 137.1,99.0 L 165.9,99.0" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+      </defs>
+      <!-- 회색 폰트 밑그림 -->
+      <g><path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15711 0 0 -0.33257 -10.764 199.601)" fill="rgba(255,255,255,0.14)"/><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.32432 0 0 -0.16703 -12.432 152.616)" fill="rgba(255,255,255,0.14)"/></g>
+      <!-- 폰트 글씨체 100% 동일하게 획별 색상으로 마스킹 채움 -->
+      <g>
+        <g mask="url(#m_가_0)">
+          <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15711 0 0 -0.33257 -10.764 199.601)" fill="#38bdf8"/>
+        </g>
+        
+        <g mask="url(#m_가_1)">
+          <path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.32432 0 0 -0.16703 -12.432 152.616)" fill="#818cf8"/>
+        </g>
+        
+        <g mask="url(#m_가_2)">
+          <path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.32432 0 0 -0.16703 -12.432 152.616)" fill="#a78bfa"/>
+        </g>
+        </g>
+    </svg>
+    
+      </div>
+    </div>
+    
+    <div style="background:#1e293b;padding:16px;border-radius:16px;display:flex;gap:24px;align-items:center;">
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">현재 방식 (회색 폰트 + 둥근 막대선)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <g><path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15287 0 0 -0.17312 -7.771 110.888)" fill="rgba(255,255,255,0.14)"/><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="rgba(255,255,255,0.14)"/><path d="M720 308Q720 258 701.0 214.5Q682 171 648.0 139.0Q614 107 567.5 89.0Q521 71 467 71Q414 71 368.5 89.0Q323 107 290.0 139.0Q257 171 238.0 214.0Q219 257 219 308Q219 365 238.0 409.5Q257 454 290.0 485.0Q323 516 368.5 532.0Q414 548 467 548Q517 548 563.0 531.5Q609 515 644.0 484.0Q679 453 699.5 408.5Q720 364 720 308ZM646 309Q646 349 631.0 380.5Q616 412 591.5 433.0Q567 454 534.5 465.0Q502 476 467 476Q431 476 399.0 465.0Q367 454 343.0 433.0Q319 412 305.0 380.5Q291 349 291 309Q291 271 304.5 239.5Q318 208 341.5 186.0Q365 164 397.0 152.0Q429 140 467 140Q502 140 534.5 152.5Q567 165 591.5 187.5Q616 210 631.0 241.0Q646 272 646 309Z" transform="matrix(0.27146 0 0 -0.15933 -27.449 187.312)" fill="rgba(255,255,255,0.14)"/></g>
+      <g><path d="M 41.0,36.7 L 87.0,36.7 L 87.0,84.6" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 136.2,29.5 L 136.2,88.5" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 136.2,59.0 L 164.2,59.0" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 100.0,112.2 C 72.8,112.2 53.8,123.6 53.8,138.0 C 53.8,152.4 72.8,163.8 100.0,163.8 C 127.2,163.8 146.2,152.4 146.2,138.0 C 146.2,123.6 127.2,112.2 100.0,112.2 Z" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+    </svg>
+    
+      </div>
+      <div style="font-size:24px;color:#64748b;">➔</div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#38bdf8;font-weight:700;margin-bottom:6px;">요청하신 방식 (바탕 회색 폰트체 그대로 100% 일치)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <defs>
+        
+        <mask id="m_강_0" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 41.0,36.7 L 87.0,36.7 L 87.0,84.6" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_강_1" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 136.2,29.5 L 136.2,88.5" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_강_2" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 136.2,59.0 L 164.2,59.0" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_강_3" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 100.0,112.2 C 72.8,112.2 53.8,123.6 53.8,138.0 C 53.8,152.4 72.8,163.8 100.0,163.8 C 127.2,163.8 146.2,152.4 146.2,138.0 C 146.2,123.6 127.2,112.2 100.0,112.2 Z" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+      </defs>
+      <!-- 회색 폰트 밑그림 -->
+      <g><path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15287 0 0 -0.17312 -7.771 110.888)" fill="rgba(255,255,255,0.14)"/><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="rgba(255,255,255,0.14)"/><path d="M720 308Q720 258 701.0 214.5Q682 171 648.0 139.0Q614 107 567.5 89.0Q521 71 467 71Q414 71 368.5 89.0Q323 107 290.0 139.0Q257 171 238.0 214.0Q219 257 219 308Q219 365 238.0 409.5Q257 454 290.0 485.0Q323 516 368.5 532.0Q414 548 467 548Q517 548 563.0 531.5Q609 515 644.0 484.0Q679 453 699.5 408.5Q720 364 720 308ZM646 309Q646 349 631.0 380.5Q616 412 591.5 433.0Q567 454 534.5 465.0Q502 476 467 476Q431 476 399.0 465.0Q367 454 343.0 433.0Q319 412 305.0 380.5Q291 349 291 309Q291 271 304.5 239.5Q318 208 341.5 186.0Q365 164 397.0 152.0Q429 140 467 140Q502 140 534.5 152.5Q567 165 591.5 187.5Q616 210 631.0 241.0Q646 272 646 309Z" transform="matrix(0.27146 0 0 -0.15933 -27.449 187.312)" fill="rgba(255,255,255,0.14)"/></g>
+      <!-- 폰트 글씨체 100% 동일하게 획별 색상으로 마스킹 채움 -->
+      <g>
+        <g mask="url(#m_강_0)">
+          <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15287 0 0 -0.17312 -7.771 110.888)" fill="#38bdf8"/>
+        </g>
+        
+        <g mask="url(#m_강_1)">
+          <path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="#818cf8"/>
+        </g>
+        
+        <g mask="url(#m_강_2)">
+          <path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="#a78bfa"/>
+        </g>
+        
+        <g mask="url(#m_강_3)">
+          <path d="M720 308Q720 258 701.0 214.5Q682 171 648.0 139.0Q614 107 567.5 89.0Q521 71 467 71Q414 71 368.5 89.0Q323 107 290.0 139.0Q257 171 238.0 214.0Q219 257 219 308Q219 365 238.0 409.5Q257 454 290.0 485.0Q323 516 368.5 532.0Q414 548 467 548Q517 548 563.0 531.5Q609 515 644.0 484.0Q679 453 699.5 408.5Q720 364 720 308ZM646 309Q646 349 631.0 380.5Q616 412 591.5 433.0Q567 454 534.5 465.0Q502 476 467 476Q431 476 399.0 465.0Q367 454 343.0 433.0Q319 412 305.0 380.5Q291 349 291 309Q291 271 304.5 239.5Q318 208 341.5 186.0Q365 164 397.0 152.0Q429 140 467 140Q502 140 534.5 152.5Q567 165 591.5 187.5Q616 210 631.0 241.0Q646 272 646 309Z" transform="matrix(0.27146 0 0 -0.15933 -27.449 187.312)" fill="#f472b6"/>
+        </g>
+        </g>
+    </svg>
+    
+      </div>
+    </div>
+    
+    <div style="background:#1e293b;padding:16px;border-radius:16px;display:flex;gap:24px;align-items:center;">
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">현재 방식 (회색 폰트 + 둥근 막대선)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <g><path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.27176 0 0 -0.16401 -27.592 108.105)" fill="rgba(255,255,255,0.14)"/><path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.18140 0 0 -0.22513 14.744 192.183)" fill="rgba(255,255,255,0.14)"/></g>
+      <g><path d="M 59.0,37.8 L 141.0,37.8 L 141.0,83.2" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 100.0,107.5 L 100.0,145.3" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 43.8,145.3 L 156.2,145.3" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+    </svg>
+    
+      </div>
+      <div style="font-size:24px;color:#64748b;">➔</div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#38bdf8;font-weight:700;margin-bottom:6px;">요청하신 방식 (바탕 회색 폰트체 그대로 100% 일치)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <defs>
+        
+        <mask id="m_고_0" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 59.0,37.8 L 141.0,37.8 L 141.0,83.2" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_고_1" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 100.0,107.5 L 100.0,145.3" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_고_2" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 43.8,145.3 L 156.2,145.3" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+      </defs>
+      <!-- 회색 폰트 밑그림 -->
+      <g><path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.27176 0 0 -0.16401 -27.592 108.105)" fill="rgba(255,255,255,0.14)"/><path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.18140 0 0 -0.22513 14.744 192.183)" fill="rgba(255,255,255,0.14)"/></g>
+      <!-- 폰트 글씨체 100% 동일하게 획별 색상으로 마스킹 채움 -->
+      <g>
+        <g mask="url(#m_고_0)">
+          <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.27176 0 0 -0.16401 -27.592 108.105)" fill="#38bdf8"/>
+        </g>
+        
+        <g mask="url(#m_고_1)">
+          <path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.18140 0 0 -0.22513 14.744 192.183)" fill="#818cf8"/>
+        </g>
+        
+        <g mask="url(#m_고_2)">
+          <path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.18140 0 0 -0.22513 14.744 192.183)" fill="#a78bfa"/>
+        </g>
+        </g>
+    </svg>
+    
+      </div>
+    </div>
+    
+    <div style="background:#1e293b;padding:16px;border-radius:16px;display:flex;gap:24px;align-items:center;">
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">현재 방식 (회색 폰트 + 둥근 막대선)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <g><path d="M594 517H330Q325 517 320.5 520.5Q316 524 316 530V565Q316 579 329 579H594Q609 579 609 565V531Q609 517 594 517ZM735 403H203Q198 403 193.5 407.0Q189 411 189 417V448Q189 454 193.5 458.0Q198 462 203 462H735Q750 462 750 449V416Q750 403 735 403ZM686 197Q686 160 669.5 129.5Q653 99 624.0 77.5Q595 56 555.0 44.0Q515 32 469 32Q422 32 382.5 44.0Q343 56 314.0 77.5Q285 99 268.5 129.5Q252 160 252 197Q252 234 268.5 264.5Q285 295 314.0 316.5Q343 338 382.5 349.5Q422 361 469 361Q515 361 555.0 349.0Q595 337 624.0 315.5Q653 294 669.5 264.0Q686 234 686 197ZM618 195Q618 246 576.5 274.5Q535 303 469 303Q437 303 409.5 295.5Q382 288 362.0 274.5Q342 261 330.5 240.5Q319 220 319 195Q319 170 330.5 150.0Q342 130 362.0 116.0Q382 102 409.5 94.5Q437 87 469 87Q535 87 576.5 115.5Q618 144 618 195Z" transform="matrix(0.12834 0 0 -0.13894 3.743 100.446)" fill="rgba(255,255,255,0.14)"/><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="rgba(255,255,255,0.14)"/><path d="M692 93H308Q261 93 246.5 110.5Q232 128 232 169V502Q232 516 246 516H287Q301 516 301 502V174Q301 160 305.5 156.5Q310 153 324 153H692Q697 153 702.0 149.5Q707 146 707 141V105Q707 99 702.0 96.0Q697 93 692 93Z" transform="matrix(0.28632 0 0 -0.17967 -34.425 192.709)" fill="rgba(255,255,255,0.14)"/></g>
+      <g><path d="M 53.9,30.6 L 74.1,30.6" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 41.0,42.8 L 87.0,42.8" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 64.0,53.4 C 52.5,53.4 43.8,61.8 43.8,73.2 C 43.8,84.6 52.5,91.4 64.0,91.4 C 75.5,91.4 84.2,84.6 84.2,73.2 C 84.2,61.8 75.5,53.4 64.0,53.4 Z" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 136.2,29.5 L 136.2,88.5" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 136.2,59.0 L 164.2,59.0" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M 64.6,113.7 L 64.6,160.8 L 149.0,160.8" stroke="#34d399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none"/></g>
+    </svg>
+    
+      </div>
+      <div style="font-size:24px;color:#64748b;">➔</div>
+      <div style="text-align:center;">
+        <div style="font-size:12px;color:#38bdf8;font-weight:700;margin-bottom:6px;">요청하신 방식 (바탕 회색 폰트체 그대로 100% 일치)</div>
+        
+    <svg viewBox="0 0 200 200" width="160" height="160" style="background:#0f172a;border-radius:14px;">
+      <defs>
+        
+        <mask id="m_한_0" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 53.9,30.6 L 74.1,30.6" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_한_1" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 41.0,42.8 L 87.0,42.8" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_한_2" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 64.0,53.4 C 52.5,53.4 43.8,61.8 43.8,73.2 C 43.8,84.6 52.5,91.4 64.0,91.4 C 75.5,91.4 84.2,84.6 84.2,73.2 C 84.2,61.8 75.5,53.4 64.0,53.4 Z" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_한_3" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 136.2,29.5 L 136.2,88.5" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_한_4" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 136.2,59.0 L 164.2,59.0" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+        <mask id="m_한_5" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+          <rect x="0" y="0" width="200" height="200" fill="black"/>
+          <path d="M 64.6,113.7 L 64.6,160.8 L 149.0,160.8" stroke="white" stroke-width="32" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </mask>
+        
+      </defs>
+      <!-- 회색 폰트 밑그림 -->
+      <g><path d="M594 517H330Q325 517 320.5 520.5Q316 524 316 530V565Q316 579 329 579H594Q609 579 609 565V531Q609 517 594 517ZM735 403H203Q198 403 193.5 407.0Q189 411 189 417V448Q189 454 193.5 458.0Q198 462 203 462H735Q750 462 750 449V416Q750 403 735 403ZM686 197Q686 160 669.5 129.5Q653 99 624.0 77.5Q595 56 555.0 44.0Q515 32 469 32Q422 32 382.5 44.0Q343 56 314.0 77.5Q285 99 268.5 129.5Q252 160 252 197Q252 234 268.5 264.5Q285 295 314.0 316.5Q343 338 382.5 349.5Q422 361 469 361Q515 361 555.0 349.0Q595 337 624.0 315.5Q653 294 669.5 264.0Q686 234 686 197ZM618 195Q618 246 576.5 274.5Q535 303 469 303Q437 303 409.5 295.5Q382 288 362.0 274.5Q342 261 330.5 240.5Q319 220 319 195Q319 170 330.5 150.0Q342 130 362.0 116.0Q382 102 409.5 94.5Q437 87 469 87Q535 87 576.5 115.5Q618 144 618 195Z" transform="matrix(0.12834 0 0 -0.13894 3.743 100.446)" fill="rgba(255,255,255,0.14)"/><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="rgba(255,255,255,0.14)"/><path d="M692 93H308Q261 93 246.5 110.5Q232 128 232 169V502Q232 516 246 516H287Q301 516 301 502V174Q301 160 305.5 156.5Q310 153 324 153H692Q697 153 702.0 149.5Q707 146 707 141V105Q707 99 702.0 96.0Q697 93 692 93Z" transform="matrix(0.28632 0 0 -0.17967 -34.425 192.709)" fill="rgba(255,255,255,0.14)"/></g>
+      <!-- 폰트 글씨체 100% 동일하게 획별 색상으로 마스킹 채움 -->
+      <g>
+        <g mask="url(#m_한_0)">
+          <path d="M594 517H330Q325 517 320.5 520.5Q316 524 316 530V565Q316 579 329 579H594Q609 579 609 565V531Q609 517 594 517ZM735 403H203Q198 403 193.5 407.0Q189 411 189 417V448Q189 454 193.5 458.0Q198 462 203 462H735Q750 462 750 449V416Q750 403 735 403ZM686 197Q686 160 669.5 129.5Q653 99 624.0 77.5Q595 56 555.0 44.0Q515 32 469 32Q422 32 382.5 44.0Q343 56 314.0 77.5Q285 99 268.5 129.5Q252 160 252 197Q252 234 268.5 264.5Q285 295 314.0 316.5Q343 338 382.5 349.5Q422 361 469 361Q515 361 555.0 349.0Q595 337 624.0 315.5Q653 294 669.5 264.0Q686 234 686 197ZM618 195Q618 246 576.5 274.5Q535 303 469 303Q437 303 409.5 295.5Q382 288 362.0 274.5Q342 261 330.5 240.5Q319 220 319 195Q319 170 330.5 150.0Q342 130 362.0 116.0Q382 102 409.5 94.5Q437 87 469 87Q535 87 576.5 115.5Q618 144 618 195Z" transform="matrix(0.12834 0 0 -0.13894 3.743 100.446)" fill="#38bdf8"/>
+        </g>
+        
+        <g mask="url(#m_한_1)">
+          <path d="M594 517H330Q325 517 320.5 520.5Q316 524 316 530V565Q316 579 329 579H594Q609 579 609 565V531Q609 517 594 517ZM735 403H203Q198 403 193.5 407.0Q189 411 189 417V448Q189 454 193.5 458.0Q198 462 203 462H735Q750 462 750 449V416Q750 403 735 403ZM686 197Q686 160 669.5 129.5Q653 99 624.0 77.5Q595 56 555.0 44.0Q515 32 469 32Q422 32 382.5 44.0Q343 56 314.0 77.5Q285 99 268.5 129.5Q252 160 252 197Q252 234 268.5 264.5Q285 295 314.0 316.5Q343 338 382.5 349.5Q422 361 469 361Q515 361 555.0 349.0Q595 337 624.0 315.5Q653 294 669.5 264.0Q686 234 686 197ZM618 195Q618 246 576.5 274.5Q535 303 469 303Q437 303 409.5 295.5Q382 288 362.0 274.5Q342 261 330.5 240.5Q319 220 319 195Q319 170 330.5 150.0Q342 130 362.0 116.0Q382 102 409.5 94.5Q437 87 469 87Q535 87 576.5 115.5Q618 144 618 195Z" transform="matrix(0.12834 0 0 -0.13894 3.743 100.446)" fill="#818cf8"/>
+        </g>
+        
+        <g mask="url(#m_한_2)">
+          <path d="M594 517H330Q325 517 320.5 520.5Q316 524 316 530V565Q316 579 329 579H594Q609 579 609 565V531Q609 517 594 517ZM735 403H203Q198 403 193.5 407.0Q189 411 189 417V448Q189 454 193.5 458.0Q198 462 203 462H735Q750 462 750 449V416Q750 403 735 403ZM686 197Q686 160 669.5 129.5Q653 99 624.0 77.5Q595 56 555.0 44.0Q515 32 469 32Q422 32 382.5 44.0Q343 56 314.0 77.5Q285 99 268.5 129.5Q252 160 252 197Q252 234 268.5 264.5Q285 295 314.0 316.5Q343 338 382.5 349.5Q422 361 469 361Q515 361 555.0 349.0Q595 337 624.0 315.5Q653 294 669.5 264.0Q686 234 686 197ZM618 195Q618 246 576.5 274.5Q535 303 469 303Q437 303 409.5 295.5Q382 288 362.0 274.5Q342 261 330.5 240.5Q319 220 319 195Q319 170 330.5 150.0Q342 130 362.0 116.0Q382 102 409.5 94.5Q437 87 469 87Q535 87 576.5 115.5Q618 144 618 195Z" transform="matrix(0.12834 0 0 -0.13894 3.743 100.446)" fill="#a78bfa"/>
+        </g>
+        
+        <g mask="url(#m_한_3)">
+          <path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="#f472b6"/>
+        </g>
+        
+        <g mask="url(#m_한_4)">
+          <path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -9.198 87.549)" fill="#fbbf24"/>
+        </g>
+        
+        <g mask="url(#m_한_5)">
+          <path d="M692 93H308Q261 93 246.5 110.5Q232 128 232 169V502Q232 516 246 516H287Q301 516 301 502V174Q301 160 305.5 156.5Q310 153 324 153H692Q697 153 702.0 149.5Q707 146 707 141V105Q707 99 702.0 96.0Q697 93 692 93Z" transform="matrix(0.28632 0 0 -0.17967 -34.425 192.709)" fill="#34d399"/>
+        </g>
+        </g>
+    </svg>
+    
+      </div>
+    </div>
+    
+</body>
+</html>

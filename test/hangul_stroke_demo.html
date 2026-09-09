@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한글 획순 벡터 합성 엔진 & 인터랙티브 학습 뷰어</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #151d30;
+      --surface: #1e293b;
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.35);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --border-accent: rgba(56, 189, 248, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    header h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: #38bdf8;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 24px;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Tabs */
+    .tab-buttons {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 14px;
+      background: #0f172a;
+      padding: 4px;
+      border-radius: 12px;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 8px 10px;
+      font-size: 13px;
+      background: transparent;
+      color: var(--text-muted);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: var(--accent);
+      color: #0f172a;
+      box-shadow: 0 2px 10px var(--accent-glow);
+    }
+
+    /* Word Input Section */
+    .word-input-box {
+      margin-bottom: 14px;
+      display: flex;
+      gap: 8px;
+    }
+    .word-input-box input {
+      flex: 1;
+      background: #0f172a;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .word-input-box input:focus {
+      border-color: var(--accent);
+    }
+    .btn-apply {
+      padding: 10px 16px;
+      background: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-apply:hover {
+      background: #7dd3fc;
+      transform: translateY(-1px);
+    }
+
+    /* Presets list */
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+    .preset-chip {
+      padding: 5px 10px;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .preset-chip:hover {
+      border-color: var(--accent);
+      color: var(--text);
+    }
+
+    .jamo-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .jamo-btn {
+      aspect-ratio: 1;
+      font-size: 22px;
+      font-weight: bold;
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .jamo-btn .strokes-badge {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: normal;
+      margin-top: 2px;
+    }
+    .jamo-btn:hover {
+      background: #283548;
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .jamo-btn.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4);
+    }
+    .jamo-btn.active .strokes-badge {
+      color: #bae6fd;
+    }
+
+    /* Viewer Stage */
+    .viewer-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .syllable-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .s-tab {
+      padding: 8px 18px;
+      border-radius: 12px;
+      background: #1e293b;
+      color: var(--text-muted);
+      border: 1.5px solid var(--border);
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .s-tab.active {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .stage-wrapper {
+      display: flex;
+      gap: 24px;
+      justify-content: center;
+      align-items: flex-start;
+      flex-wrap: wrap;
+    }
+    .display-box {
+      width: 380px;
+      height: 380px;
+      background: #0f172a;
+      border-radius: 24px;
+      border: 2px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    }
+    .display-box svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .drawing-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      cursor: crosshair;
+      z-index: 10;
+    }
+
+    /* Analysis sidebar */
+    .info-card {
+      flex: 1;
+      min-width: 260px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .info-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .info-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      row-gap: 8px;
+      font-size: 13px;
+    }
+    .info-label {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .info-val {
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+    .badge-pill {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+    }
+    .ctrl-group {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border);
+      background: #1e293b;
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-primary {
+      background: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+    .btn-primary:hover {
+      background: #7dd3fc;
+      color: #0f172a;
+    }
+    .toggles {
+      display: flex;
+      gap: 14px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+    .toggle-lbl {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .toggle-lbl input {
+      accent-color: var(--accent);
+    }
+
+    .speed-select {
+      background: #1e293b;
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      padding: 7px 10px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>✍️ 한글 획순 벡터 합성 엔진 데모</h1>
+    <p>한글 폰트 벡터 데이터 + 6대 조판 결합 규칙 기반 동적 합성 뷰어 (국립국어원 표준 100% 준수)</p>
+  </header>
+
+  <div class="main-layout">
+    <!-- 좌측 선택 패널 -->
+    <div class="card">
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchCategory('syllables')">음절/단어</button>
+        <button class="tab-btn" onclick="switchCategory('consonants')">자음</button>
+        <button class="tab-btn" onclick="switchCategory('vowels')">모음</button>
+      </div>
+
+      <!-- 단어/음절 입력 영역 -->
+      <div id="wordInputArea">
+        <div class="word-input-box">
+          <input type="text" id="customInput" placeholder="단어 입력 (예: 학교, 사랑)" value="한국어" maxlength="8">
+          <button class="btn-apply" onclick="applyCustomWord()">합성</button>
+        </div>
+
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">6대 조판 유형별 대표 음절:</div>
+        <div class="preset-chips">
+          <span class="preset-chip" onclick="loadSingleSyllable('가')">Type 1 (가)</span>
+          <span class="preset-chip" onclick="loadSingleSyllable('고')">Type 2 (고)</span>
+          <span class="preset-chip" onclick="loadSingleSyllable('과')">Type 3 (과)</span>
+          <span class="preset-chip" onclick="loadSingleSyllable('강')">Type 4 (강)</span>
+          <span class="preset-chip" onclick="loadSingleSyllable('곰')">Type 5 (곰)</span>
+          <span class="preset-chip" onclick="loadSingleSyllable('광')">Type 6 (광)</span>
+          <span class="preset-chip" onclick="loadSingleSyllable('닭')">겹받침 (닭)</span>
+          <span class="preset-chip" onclick="loadSingleSyllable('꽃')">된소리 (꽃)</span>
+        </div>
+      </div>
+
+      <!-- 자모 그리드 (자음/모음 탭 시 표시) -->
+      <div class="jamo-grid" id="jamoGrid" style="display: none;"></div>
+    </div>
+
+    <!-- 우측 뷰어 패널 -->
+    <div class="card viewer-panel">
+      <!-- 단어 내 음절 선택 탭 -->
+      <div class="syllable-tabs" id="syllableTabs"></div>
+
+      <!-- 뷰어 스테이지 -->
+      <div class="stage-wrapper">
+        <div class="display-box" id="displayBox">
+          <div id="svgTarget" style="width: 100%; height: 100%;"></div>
+          <canvas class="drawing-canvas" id="drawingCanvas"></canvas>
+        </div>
+
+        <!-- 구조 분석 정보 카드 -->
+        <div class="info-card">
+          <div class="info-title" id="charTitle">한 (han)</div>
+          <div class="info-grid">
+            <span class="info-label">유니코드</span>
+            <span class="info-val" id="infoUnicode">U+D55C</span>
+
+            <span class="info-label">음절 분해</span>
+            <span class="info-val" id="infoDecomp">ㅎ + ㅏ + ㄴ</span>
+
+            <span class="info-label">조판 유형</span>
+            <span class="info-val"><span class="badge-pill" id="infoType">Type 4 (받침 세로모음)</span></span>
+
+            <span class="info-label">총 획수</span>
+            <span class="info-val" id="infoStrokes">총 6획</span>
+
+            <span class="info-label">현재 단계</span>
+            <span class="info-val" id="infoStep">전체 순차 재생</span>
+          </div>
+
+          <div style="border-top: 1px solid var(--border); padding-top: 10px; margin-top: 6px;">
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">획순 가이드 설명:</div>
+            <div id="strokeDescList" style="font-size: 12px; line-height: 1.6; color: #cbd5e1;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 제어 바 -->
+      <div class="controls">
+        <div class="ctrl-group">
+          <button class="btn btn-primary" id="btnPlay" onclick="replayAnimation()">▶ 다시 재생</button>
+          <button class="btn" onclick="stepStroke(-1)">◀ 이전 획</button>
+          <button class="btn" onclick="stepStroke(1)">다음 획 ▶</button>
+          <button class="btn" onclick="showAllStrokes()">전체 보기</button>
+        </div>
+
+        <div class="ctrl-group">
+          <select class="speed-select" id="speedSelect" onchange="changeSpeed(this.value)">
+            <option value="0.5">0.5x 속도</option>
+            <option value="1.0" selected>1.0x 정상속도</option>
+            <option value="1.5">1.5x 빠른속도</option>
+            <option value="2.0">2.0x 초고속</option>
+          </select>
+          <button class="btn" onclick="clearDrawingCanvas()">🧹 캔버스 지우기</button>
+        </div>
+
+        <div class="toggles">
+          <label class="toggle-lbl">
+            <input type="checkbox" id="chkNumbers" checked onchange="updateViewer()"> 획 번호
+          </label>
+          <label class="toggle-lbl">
+            <input type="checkbox" id="chkArrows" onchange="updateViewer()"> 화살표
+          </label>
+          <label class="toggle-lbl">
+            <input type="checkbox" id="chkGrid" checked onchange="updateViewer()"> 가이드 격자
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/hangul_stroke_composer.js"></script>
+  <script>
+    const consonants = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+    const vowels = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+
+    let currentCategory = 'syllables';
+    let currentWord = '한국어';
+    let currentCharIdx = 0;
+    let currentStep = -1; // -1: 전체 재생, >=0: 특정 획
+    let animSpeed = 1.0;
+
+    function init() {
+      renderSyllableTabs();
+      loadCurrentChar();
+      initCanvas();
+    }
+
+    function switchCategory(cat) {
+      currentCategory = cat;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const wordInputArea = document.getElementById('wordInputArea');
+      const jamoGrid = document.getElementById('jamoGrid');
+
+      if (cat === 'syllables') {
+        wordInputArea.style.display = 'block';
+        jamoGrid.style.display = 'none';
+        renderSyllableTabs();
+        loadCurrentChar();
+      } else {
+        wordInputArea.style.display = 'none';
+        jamoGrid.style.display = 'grid';
+        renderJamoGrid(cat === 'consonants' ? consonants : vowels);
+      }
+    }
+
+    function renderJamoGrid(list) {
+      const grid = document.getElementById('jamoGrid');
+      grid.innerHTML = '';
+      list.forEach(j => {
+        const plan = HangulStrokeComposer.composeStrokePlan(j);
+        const btn = document.createElement('button');
+        btn.className = 'jamo-btn';
+        btn.innerHTML = `${j}<span class="strokes-badge">${plan.strokes.length}획</span>`;
+        btn.onclick = () => {
+          document.querySelectorAll('.jamo-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          loadSingleSyllable(j);
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    function applyCustomWord() {
+      const val = document.getElementById('customInput').value.trim();
+      if (!val) return;
+      currentWord = val;
+      currentCharIdx = 0;
+      currentStep = -1;
+      renderSyllableTabs();
+      loadCurrentChar();
+    }
+
+    function loadSingleSyllable(ch) {
+      currentWord = ch;
+      currentCharIdx = 0;
+      currentStep = -1;
+      renderSyllableTabs();
+      loadCurrentChar();
+    }
+
+    function renderSyllableTabs() {
+      const container = document.getElementById('syllableTabs');
+      container.innerHTML = '';
+      const chars = [...currentWord];
+      chars.forEach((c, idx) => {
+        const tab = document.createElement('button');
+        tab.className = `s-tab ${idx === currentCharIdx ? 'active' : ''}`;
+        tab.textContent = c;
+        tab.onclick = () => {
+          currentCharIdx = idx;
+          currentStep = -1;
+          renderSyllableTabs();
+          loadCurrentChar();
+        };
+        container.appendChild(tab);
+      });
+    }
+
+    function loadCurrentChar() {
+      const chars = [...currentWord];
+      const ch = chars[currentCharIdx] || chars[0] || '가';
+
+      // 1. 정보 분석 카드 업데이트
+      const dec = HangulStrokeComposer.decomposeHangul(ch);
+      const plan = HangulStrokeComposer.composeStrokePlan(ch);
+
+      document.getElementById('charTitle').textContent = `${ch}`;
+      document.getElementById('infoUnicode').textContent = `U+${ch.charCodeAt(0).toString(16).toUpperCase()}`;
+
+      if (dec.isHangul) {
+        document.getElementById('infoDecomp').textContent = `${dec.cho} + ${dec.jung}` + (dec.jong ? ` + ${dec.jong}` : '');
+        const typeNames = {
+          1: 'Type 1 (받침 없는 세로모음)',
+          2: 'Type 2 (받침 없는 가로모음)',
+          3: 'Type 3 (받침 없는 복합모음)',
+          4: 'Type 4 (받침 있는 세로모음)',
+          5: 'Type 5 (받침 있는 가로모음)',
+          6: 'Type 6 (받침 있는 복합모음)'
+        };
+        const slotType = plan.slots[0]?.type || 1;
+        document.getElementById('infoType').textContent = typeNames[slotType] || `Type ${slotType}`;
+      } else {
+        document.getElementById('infoDecomp').textContent = ch;
+        document.getElementById('infoType').textContent = '단일 자모';
+      }
+
+      document.getElementById('infoStrokes').textContent = `총 ${plan.strokes.length}획`;
+      document.getElementById('infoStep').textContent = currentStep >= 0 ? `${currentStep + 1}획 / ${plan.strokes.length}획` : '전체 순차 재생';
+
+      // 획 가이드 설명 리스트
+      const descList = document.getElementById('strokeDescList');
+      descList.innerHTML = plan.strokes.map((st, i) =>
+        `<div style="${currentStep === i ? 'color: var(--accent); font-weight: bold;' : ''}">${i + 1}획: ${st.jamo} (${st.desc})</div>`
+      ).join('');
+
+      // 2. SVG 렌더링
+      updateViewer();
+      clearDrawingCanvas();
+    }
+
+    function updateViewer() {
+      const chars = [...currentWord];
+      const ch = chars[currentCharIdx] || '가';
+
+      const showNums = document.getElementById('chkNumbers').checked;
+      const showArrows = document.getElementById('chkArrows').checked;
+      const showGrid = document.getElementById('chkGrid').checked;
+
+      const svgHtml = HangulStrokeComposer.renderComposerSvg(ch, {
+        showNumbers: showNums,
+        showArrows: showArrows,
+        showGrid: showGrid,
+        speed: animSpeed,
+        animated: currentStep < 0,
+        activeStroke: currentStep
+      });
+
+      document.getElementById('svgTarget').innerHTML = svgHtml;
+    }
+
+    function replayAnimation() {
+      currentStep = -1;
+      document.getElementById('infoStep').textContent = '전체 순차 재생';
+      updateViewer();
+    }
+
+    function stepStroke(dir) {
+      const chars = [...currentWord];
+      const ch = chars[currentCharIdx] || '가';
+      const plan = HangulStrokeComposer.composeStrokePlan(ch);
+      const total = plan.strokes.length;
+
+      if (currentStep < 0) {
+        currentStep = dir > 0 ? 0 : total - 1;
+      } else {
+        currentStep = Math.max(0, Math.min(total - 1, currentStep + dir));
+      }
+
+      document.getElementById('infoStep').textContent = `${currentStep + 1}획 / ${total}획`;
+      loadCurrentChar();
+    }
+
+    function showAllStrokes() {
+      const chars = [...currentWord];
+      const ch = chars[currentCharIdx] || '가';
+      const plan = HangulStrokeComposer.composeStrokePlan(ch);
+      currentStep = plan.strokes.length - 1;
+      document.getElementById('infoStep').textContent = '전체 보기 (정적)';
+      updateViewer();
+    }
+
+    function changeSpeed(val) {
+      animSpeed = parseFloat(val) || 1.0;
+      replayAnimation();
+    }
+
+    // Canvas 직접 따라쓰기
+    function initCanvas() {
+      const cvs = document.getElementById('drawingCanvas');
+      const box = document.getElementById('displayBox');
+      cvs.width = box.clientWidth || 380;
+      cvs.height = box.clientHeight || 380;
+
+      const ctx = cvs.getContext('2d');
+      let drawing = false;
+
+      function getPos(e) {
+        const r = cvs.getBoundingClientRect();
+        const cx = (e.touches ? e.touches[0].clientX : e.clientX) - r.left;
+        const cy = (e.touches ? e.touches[0].clientY : e.clientY) - r.top;
+        return { x: cx * (cvs.width / r.width), y: cy * (cvs.height / r.height) };
+      }
+
+      function start(e) {
+        drawing = true;
+        const p = getPos(e);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.strokeStyle = '#f59e0b';
+        ctx.lineWidth = 14;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        e.preventDefault();
+      }
+
+      function move(e) {
+        if (!drawing) return;
+        const p = getPos(e);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        e.preventDefault();
+      }
+
+      function end() {
+        drawing = false;
+      }
+
+      cvs.onmousedown = start;
+      cvs.onmousemove = move;
+      cvs.onmouseup = end;
+      cvs.onmouseleave = end;
+      window.onmouseup = end;
+      cvs.ontouchstart = start;
+      cvs.ontouchmove = move;
+      cvs.ontouchend = end;
+      cvs.ontouchcancel = end;
+    }
+
+    function clearDrawingCanvas() {
+      const cvs = document.getElementById('drawingCanvas');
+      if (cvs) {
+        const ctx = cvs.getContext('2d');
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

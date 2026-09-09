@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Stroke Test Nanum</title>
+</head>
+<body style="margin:0;padding:0;background:#0f172a">
+  <iframe id="sim" src="../web_simulator.html" style="width:430px;height:880px;border:none;"></iframe>
+  <script>
+    const iframe = document.getElementById('sim');
+    iframe.onload = () => {
+      setTimeout(() => {
+        const win = iframe.contentWindow;
+        try {
+          // Finish onboarding
+          if (win.finishOnboarding) {
+            win.finishOnboarding();
+          }
+          setTimeout(() => {
+            // Switch to stroke mode
+            if (win.switchMode) {
+              win.switchMode('stroke');
+            }
+          }, 300);
+        } catch (e) {
+          console.error(e);
+        }
+      }, 500);
+    };
+  </script>
+</body>
+</html>

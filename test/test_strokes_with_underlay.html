@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+body { background:#020617; color:#f8fafc; font-family:sans-serif; margin:0; padding:24px; display:flex; flex-wrap:wrap; gap:20px; justify-content:center; }
+h1 { width:100%; text-align:center; color:#38bdf8; margin-bottom:16px; }
+</style>
+</head>
+<body>
+<h1>한글 6대 결합규칙 + 회색 폰트 벡터 밑그림 + 획순 정렬 테스트</h1>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">가 (3획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15711 0 0 -0.33257 -10.764 199.601)" fill="rgba(255,255,255,0.15)" /><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.16703 -9.198 152.616)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 39.3,57.1 L 86.7,57.1 L 86.7,149.1" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 130.6,45.1 L 130.6,152.9" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 130.6,95.9 L 161.4,95.9" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="39.3" cy="57.1" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="39.3" y="57.1" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="130.6" cy="45.1" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="130.6" y="45.1" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="130.6" cy="95.9" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="130.6" y="95.9" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">고 (3획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.27176 0 0 -0.16401 -27.592 108.105)" fill="rgba(255,255,255,0.15)" /><path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.18140 0 0 -0.22513 14.744 192.183)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 59.0,37.8 L 141.0,37.8 L 141.0,83.2" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 100.0,107.5 L 100.0,140.2" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 45.4,140.2 L 154.6,140.2" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="59.0" cy="37.8" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="59.0" y="37.8" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="100.0" cy="107.5" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="100.0" y="107.5" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="45.4" cy="140.2" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="45.4" y="140.2" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">과 (5획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15711 0 0 -0.16401 -10.764 108.105)" fill="rgba(255,255,255,0.15)" /><path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.09767 0 0 -0.21466 18.093 187.524)" fill="rgba(255,255,255,0.15)" /><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.16703 -9.198 152.616)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 39.3,37.8 L 86.7,37.8 L 86.7,83.2" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 64.0,106.8 L 64.0,137.9" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 34.6,137.9 L 93.4,137.9" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 130.6,45.1 L 130.6,152.9" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 130.6,95.9 L 161.4,95.9" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="39.3" cy="37.8" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="39.3" y="37.8" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="64.0" cy="106.8" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="64.0" y="106.8" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="34.6" cy="137.9" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="34.6" y="137.9" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="130.6" cy="45.1" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="130.6" y="45.1" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="130.6" cy="95.9" r="7.5" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+                      <text x="130.6" y="95.9" fill="#fbbf24" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">5</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">강 (4획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15287 0 0 -0.17312 -9.771 110.888)" fill="rgba(255,255,255,0.15)" /><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -11.198 87.549)" fill="rgba(255,255,255,0.15)" /><path d="M720 308Q720 258 701.0 214.5Q682 171 648.0 139.0Q614 107 567.5 89.0Q521 71 467 71Q414 71 368.5 89.0Q323 107 290.0 139.0Q257 171 238.0 214.0Q219 257 219 308Q219 365 238.0 409.5Q257 454 290.0 485.0Q323 516 368.5 532.0Q414 548 467 548Q517 548 563.0 531.5Q609 515 644.0 484.0Q679 453 699.5 408.5Q720 364 720 308ZM646 309Q646 349 631.0 380.5Q616 412 591.5 433.0Q567 454 534.5 465.0Q502 476 467 476Q431 476 399.0 465.0Q367 454 343.0 433.0Q319 412 305.0 380.5Q291 349 291 309Q291 271 304.5 239.5Q318 208 341.5 186.0Q365 164 397.0 152.0Q429 140 467 140Q502 140 534.5 152.5Q567 165 591.5 187.5Q616 210 631.0 241.0Q646 272 646 309Z" transform="matrix(0.27146 0 0 -0.15933 -27.449 187.312)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 39.0,36.7 L 85.0,36.7 L 85.0,84.6" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 128.6,30.3 L 128.6,87.7" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 128.6,57.4 L 159.4,57.4" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 100.0,112.2 C 72.8,112.2 53.8,123.6 53.8,138.0 C 53.8,152.4 72.8,163.8 100.0,163.8 C 127.2,163.8 146.2,152.4 146.2,138.0 C 146.2,123.6 127.2,112.2 100.0,112.2 Z" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="39.0" cy="36.7" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="39.0" y="36.7" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="128.6" cy="30.3" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="128.6" y="30.3" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="128.6" cy="57.4" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="128.6" y="57.4" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="100.0" cy="112.2" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="100.0" y="112.2" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">곰 (6획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.26327 0 0 -0.12301 -23.605 80.579)" fill="rgba(255,255,255,0.15)" /><path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.17674 0 0 -0.12565 16.930 123.916)" fill="rgba(255,255,255,0.15)" /><path d="M232 432Q232 474 248.0 488.5Q264 503 308 503H632Q656 503 670.5 500.0Q685 497 693.5 489.0Q702 481 705.0 467.0Q708 453 708 432V169Q708 127 692.0 112.5Q676 98 632 98H308Q284 98 269.5 101.0Q255 104 246.5 112.5Q238 121 235.0 134.5Q232 148 232 169ZM325 443Q311 443 306.0 437.5Q301 432 301 417V184Q301 169 306.0 163.5Q311 158 325 158H615Q629 158 634.0 163.5Q639 169 639 184V417Q639 432 634.0 437.5Q629 443 615 443Z" transform="matrix(0.27731 0 0 -0.16790 -30.336 200.454)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 60.3,27.9 L 139.7,27.9 L 139.7,61.9" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 100.0,76.6 L 100.0,94.9" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 46.8,94.9 L 153.2,94.9" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 63.0,128.2 L 63.0,173.1" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 63.0,129.6 L 142.2,129.6 L 142.2,173.1" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 60.4,171.8 L 144.9,171.8" stroke="#34d399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="60.3" cy="27.9" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="60.3" y="27.9" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="100.0" cy="76.6" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="100.0" y="76.6" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="46.8" cy="94.9" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="46.8" y="94.9" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="63.0" cy="128.2" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="63.0" y="128.2" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="63.0" cy="129.6" r="7.5" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+                      <text x="63.0" y="129.6" fill="#fbbf24" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">5</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="60.4" cy="171.8" r="7.5" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+                      <text x="60.4" y="171.8" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">6</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">광 (6획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M249 525H629Q676 525 690.5 507.5Q705 490 705 449V100Q705 86 691 86H650Q636 86 636 100V444Q636 458 631.5 461.5Q627 465 613 465H249Q244 465 239.0 468.5Q234 472 234 477V513Q234 519 239.0 522.0Q244 525 249 525Z" transform="matrix(0.15287 0 0 -0.12301 -7.771 82.579)" fill="rgba(255,255,255,0.15)" /><path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.09070 0 0 -0.12565 20.372 125.916)" fill="rgba(255,255,255,0.15)" /><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.30631 0 0 -0.11063 -5.964 104.512)" fill="rgba(255,255,255,0.15)" /><path d="M720 308Q720 258 701.0 214.5Q682 171 648.0 139.0Q614 107 567.5 89.0Q521 71 467 71Q414 71 368.5 89.0Q323 107 290.0 139.0Q257 171 238.0 214.0Q219 257 219 308Q219 365 238.0 409.5Q257 454 290.0 485.0Q323 516 368.5 532.0Q414 548 467 548Q517 548 563.0 531.5Q609 515 644.0 484.0Q679 453 699.5 408.5Q720 364 720 308ZM646 309Q646 349 631.0 380.5Q616 412 591.5 433.0Q567 454 534.5 465.0Q502 476 467 476Q431 476 399.0 465.0Q367 454 343.0 433.0Q319 412 305.0 380.5Q291 349 291 309Q291 271 304.5 239.5Q318 208 341.5 186.0Q365 164 397.0 152.0Q429 140 467 140Q502 140 534.5 152.5Q567 165 591.5 187.5Q616 210 631.0 241.0Q646 272 646 309Z" transform="matrix(0.26347 0 0 -0.12998 -23.701 191.229)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 41.0,29.9 L 87.0,29.9 L 87.0,63.9" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 63.0,78.6 L 63.0,96.9" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 35.7,96.9 L 90.3,96.9" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 129.8,33.3 L 129.8,104.7" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 129.8,67.0 L 159.8,67.0" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 100.0,129.9 C 73.6,129.9 55.1,139.2 55.1,151.0 C 55.1,162.8 73.6,172.1 100.0,172.1 C 126.4,172.1 144.9,162.8 144.9,151.0 C 144.9,139.2 126.4,129.9 100.0,129.9 Z" stroke="#34d399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="41.0" cy="29.9" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="41.0" y="29.9" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="63.0" cy="78.6" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="63.0" y="78.6" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="35.7" cy="96.9" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="35.7" y="96.9" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="129.8" cy="33.3" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="129.8" y="33.3" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="129.8" cy="67.0" r="7.5" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+                      <text x="129.8" y="67.0" fill="#fbbf24" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">5</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="100.0" cy="129.9" r="7.5" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+                      <text x="100.0" y="129.9" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">6</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">닭 (8획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M715 115Q715 101 702 101H300Q256 101 240.0 115.5Q224 130 224 172V446Q224 488 240.0 502.5Q256 517 300 517H685Q698 517 698 504V471Q698 457 685 457H318Q304 457 299.0 451.5Q294 446 294 431V187Q294 173 299.0 167.0Q304 161 318 161H702Q715 161 715 148Z" transform="matrix(0.14664 0 0 -0.18269 -6.847 114.452)" fill="rgba(255,255,255,0.15)" /><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -11.198 87.549)" fill="rgba(255,255,255,0.15)" /><path d="M488 117Q490 109 485.5 106.0Q481 103 476 102Q470 101 457.5 99.0Q445 97 431.5 94.5Q418 92 405.0 90.5Q392 89 385 89Q373 88 357.0 87.5Q341 87 324.0 87.0Q307 87 290.0 87.0Q273 87 259 87Q235 88 221.0 92.0Q207 96 199.0 105.0Q191 114 188.5 128.0Q186 142 186 163V270Q186 312 202.5 324.0Q219 336 263 336H371Q385 336 389.0 340.0Q393 344 393 359V448Q393 463 389.5 467.0Q386 471 372 471H199Q194 471 189.5 474.0Q185 477 185 482V517Q185 522 189.5 525.0Q194 528 199 528H383Q407 528 421.5 524.5Q436 521 444.5 513.0Q453 505 456.0 490.5Q459 476 459 455V352Q459 310 442.5 296.0Q426 282 382 282H273Q259 282 255.5 278.0Q252 274 252 259V168Q252 154 256.0 149.5Q260 145 274 144Q284 143 298.5 142.5Q313 142 328.5 142.5Q344 143 358.5 144.0Q373 145 383 146Q402 148 427.0 152.0Q452 156 466 159Q481 162 483 148ZM499 520H679Q726 520 740.5 502.5Q755 485 755 444V100Q755 86 741 86H705Q691 86 691 100V443Q691 457 686.5 460.5Q682 464 668 464H499Q494 464 489.0 467.5Q484 471 484 476V508Q484 514 489.0 517.0Q494 520 499 520Z" transform="matrix(0.23860 0 0 -0.17195 -12.140 190.787)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 39.0,36.7 L 86.5,36.7" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 41.8,36.7 L 41.8,82.3 L 87.9,82.3" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 128.6,30.3 L 128.6,87.7" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 128.6,57.4 L 159.4,57.4" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 45.1,115.2 L 85.5,115.2 L 85.5,136.5" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 45.1,136.5 L 85.5,136.5" stroke="#34d399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 45.1,136.5 L 45.1,162.3 L 88.1,162.3" stroke="#f87171" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 114.5,116.7 L 156.2,116.7 L 156.2,164.6" stroke="#c084fc" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="39.0" cy="36.7" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="39.0" y="36.7" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="41.8" cy="36.7" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="41.8" y="36.7" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="128.6" cy="30.3" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="128.6" y="30.3" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="128.6" cy="57.4" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="128.6" y="57.4" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="45.1" cy="115.2" r="7.5" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+                      <text x="45.1" y="115.2" fill="#fbbf24" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">5</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="45.1" cy="136.5" r="7.5" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+                      <text x="45.1" y="136.5" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">6</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="45.1" cy="136.5" r="7.5" fill="#0f172a" stroke="#f87171" stroke-width="2"/>
+                      <text x="45.1" y="136.5" fill="#f87171" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">7</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="114.5" cy="116.7" r="7.5" fill="#0f172a" stroke="#c084fc" stroke-width="2"/>
+                      <text x="114.5" y="116.7" fill="#c084fc" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">8</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">한 (6획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M594 517H330Q325 517 320.5 520.5Q316 524 316 530V565Q316 579 329 579H594Q609 579 609 565V531Q609 517 594 517ZM735 403H203Q198 403 193.5 407.0Q189 411 189 417V448Q189 454 193.5 458.0Q198 462 203 462H735Q750 462 750 449V416Q750 403 735 403ZM686 197Q686 160 669.5 129.5Q653 99 624.0 77.5Q595 56 555.0 44.0Q515 32 469 32Q422 32 382.5 44.0Q343 56 314.0 77.5Q285 99 268.5 129.5Q252 160 252 197Q252 234 268.5 264.5Q285 295 314.0 316.5Q343 338 382.5 349.5Q422 361 469 361Q515 361 555.0 349.0Q595 337 624.0 315.5Q653 294 669.5 264.0Q686 234 686 197ZM618 195Q618 246 576.5 274.5Q535 303 469 303Q437 303 409.5 295.5Q382 288 362.0 274.5Q342 261 330.5 240.5Q319 220 319 195Q319 170 330.5 150.0Q342 130 362.0 116.0Q382 102 409.5 94.5Q437 87 469 87Q535 87 576.5 115.5Q618 144 618 195Z" transform="matrix(0.12834 0 0 -0.13894 1.743 100.446)" fill="rgba(255,255,255,0.15)" /><path d="M428 304V-126Q428 -140 414 -140H373Q359 -140 359 -126V768Q359 782 373 782H414Q428 782 428 768V364H566Q572 364 576.5 360.5Q581 357 581 351V317Q581 312 576.5 308.0Q572 304 566 304Z" transform="matrix(0.31532 0 0 -0.08894 -11.198 87.549)" fill="rgba(255,255,255,0.15)" /><path d="M692 93H308Q261 93 246.5 110.5Q232 128 232 169V502Q232 516 246 516H287Q301 516 301 502V174Q301 160 305.5 156.5Q310 153 324 153H692Q697 153 702.0 149.5Q707 146 707 141V105Q707 99 702.0 96.0Q697 93 692 93Z" transform="matrix(0.28632 0 0 -0.17967 -34.425 192.709)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 51.9,29.1 L 72.1,29.1" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 39.0,41.3 L 86.5,41.3" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 62.0,51.9 C 50.5,51.9 41.8,61.0 41.8,71.7 C 41.8,82.3 50.5,89.9 62.0,89.9 C 73.5,89.9 82.2,82.3 82.2,71.7 C 82.2,61.0 73.5,51.9 62.0,51.9 Z" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 128.6,30.3 L 128.6,87.7" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 128.6,57.4 L 159.4,57.4" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 64.6,113.7 L 64.6,160.8 L 149.0,160.8" stroke="#34d399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="51.9" cy="29.1" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="51.9" y="29.1" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="39.0" cy="41.3" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="39.0" y="41.3" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="62.0" cy="51.9" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="62.0" y="51.9" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="128.6" cy="30.3" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="128.6" y="30.3" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="128.6" cy="57.4" r="7.5" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+                      <text x="128.6" y="57.4" fill="#fbbf24" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">5</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="64.6" cy="113.7" r="7.5" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+                      <text x="64.6" y="113.7" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">6</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">꽃 (7획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M507 525H696Q743 525 757.5 507.5Q772 490 772 449V100Q772 86 758 86H717Q703 86 703 100V444Q703 458 698.5 461.5Q694 465 680 465H507Q502 465 497.0 468.5Q492 472 492 477V513Q492 519 497.0 522.0Q502 525 507 525ZM182 525H371Q418 525 432.5 507.5Q447 490 447 449V100Q447 86 433 86H392Q378 86 378 100V444Q378 458 373.5 461.5Q369 465 355 465H182Q177 465 172.0 468.5Q167 472 167 477V513Q167 519 172.0 522.0Q177 525 182 525Z" transform="matrix(0.20496 0 0 -0.12301 3.772 80.579)" fill="rgba(255,255,255,0.15)" /><path d="M434 123V430Q434 436 437.5 440.5Q441 445 447 445H490Q495 445 499.0 440.5Q503 436 503 430V123H885Q890 123 895.0 119.5Q900 116 900 110V76Q900 71 895.0 67.0Q890 63 885 63H55Q49 63 44.5 67.0Q40 71 40 76V110Q40 116 44.5 119.5Q49 123 55 123Z" transform="matrix(0.17674 0 0 -0.12565 16.930 123.916)" fill="rgba(255,255,255,0.15)" /><path d="M553 240Q560 235 566.5 230.5Q573 226 580 221Q623 192 670.0 166.5Q717 141 759 127Q773 122 765 107L748 76Q740 63 726 71Q695 84 665.0 99.0Q635 114 604 133Q576 150 550.0 167.5Q524 185 499 204Q497 203 496.0 202.0Q495 201 493 200Q433 163 363.5 129.5Q294 96 209 65Q200 62 196.5 62.5Q193 63 190 68L173 103Q165 115 180 120Q330 175 437.5 238.0Q545 301 620 370Q629 378 624.5 387.0Q620 396 603 396H218Q206 396 206 409V444Q206 456 218 456H630Q660 456 679.5 447.0Q699 438 708.0 424.5Q717 411 714.5 394.5Q712 378 696 362Q651 317 602 277Q579 259 553 240ZM565 590Q580 590 580 576V544Q580 529 565 529H339Q324 529 324 544V576Q324 590 339 590Z" transform="matrix(0.22085 0 0 -0.12889 -3.593 192.047)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 48.7,27.9 L 86.8,27.9 L 86.8,61.9" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 113.2,27.9 L 151.3,27.9 L 151.3,61.9" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 100.0,76.6 L 100.0,94.9" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 46.8,94.9 L 153.2,94.9" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 81.5,124.2 L 118.5,124.2" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 57.8,136.4 L 142.2,136.4 L 100.0,156.8 L 57.8,173.8" stroke="#34d399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 97.4,152.7 L 144.9,173.8" stroke="#f87171" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="48.7" cy="27.9" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="48.7" y="27.9" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="113.2" cy="27.9" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="113.2" y="27.9" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="100.0" cy="76.6" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="100.0" y="76.6" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="46.8" cy="94.9" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="46.8" y="94.9" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="81.5" cy="124.2" r="7.5" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+                      <text x="81.5" y="124.2" fill="#fbbf24" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">5</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="57.8" cy="136.4" r="7.5" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+                      <text x="57.8" y="136.4" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">6</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="97.4" cy="152.7" r="7.5" fill="#0f172a" stroke="#f87171" stroke-width="2"/>
+                      <text x="97.4" y="152.7" fill="#f87171" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">7</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+    <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+      <div style="font-weight:800;color:#38bdf8;font-size:18px;">물 (8획)</div>
+      
+    <svg viewBox="0 0 200 200" width="180" height="180" style="background:#0f172a;border-radius:16px;border:1px solid #334155;">
+      <!-- Grid -->
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+
+      <!-- Vector Font Underlay (Gray Font Vector Data) -->
+      <g class="vector-font-underlay">
+        <path d="M232 432Q232 474 248.0 488.5Q264 503 308 503H632Q656 503 670.5 500.0Q685 497 693.5 489.0Q702 481 705.0 467.0Q708 453 708 432V169Q708 127 692.0 112.5Q676 98 632 98H308Q284 98 269.5 101.0Q255 104 246.5 112.5Q238 121 235.0 134.5Q232 148 232 169ZM325 443Q311 443 306.0 437.5Q301 432 301 417V184Q301 169 306.0 163.5Q311 158 325 158H615Q629 158 634.0 163.5Q639 169 639 184V417Q639 432 634.0 437.5Q629 443 615 443Z" transform="matrix(0.26050 0 0 -0.13333 -22.437 83.067)" fill="rgba(255,255,255,0.15)" /><path d="M504 376V-22Q504 -28 500.5 -32.5Q497 -37 491 -37H448Q443 -37 439.0 -32.5Q435 -28 435 -22V376H55Q49 376 44.5 380.0Q40 384 40 389V423Q40 429 44.5 432.5Q49 436 55 436H885Q890 436 895.0 432.5Q900 429 900 423V389Q900 384 895.0 380.0Q890 376 885 376Z" transform="matrix(0.17674 0 0 -0.10148 16.930 112.245)" fill="rgba(255,255,255,0.15)" /><path d="M719 97Q719 92 714.5 88.5Q710 85 706 85H298Q251 85 236.5 102.5Q222 120 222 162V267Q222 309 239.5 323.5Q257 338 302 338H607Q621 338 625.0 342.0Q629 346 629 361V448Q629 463 625.5 467.0Q622 471 608 471H234Q229 471 224.5 474.0Q220 477 220 482V518Q220 523 224.5 526.0Q229 529 234 529H619Q643 529 658.0 525.5Q673 522 682.0 514.0Q691 506 694.5 491.5Q698 477 698 456V351Q698 309 680.5 294.5Q663 280 618 280H312Q298 280 294.5 276.0Q291 272 291 257V166Q291 152 295.0 147.5Q299 143 313 143H705Q710 143 714.5 140.0Q719 137 719 132Z" transform="matrix(0.26453 0 0 -0.15315 -24.196 197.018)" fill="rgba(255,255,255,0.15)" />
+      </g>
+      
+      <!-- Colored Stroke Lines -->
+      <g class="stroke-lines">
+        <path d="M 65.3,25.7 L 65.3,61.4" stroke="#38bdf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 65.3,26.8 L 139.7,26.8 L 139.7,61.4" stroke="#818cf8" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 62.8,60.3 L 142.2,60.3" stroke="#a78bfa" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 46.8,89.1 L 153.2,89.1" stroke="#f472b6" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 100.0,89.1 L 100.0,107.4" stroke="#fbbf24" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 60.4,129.6 L 142.2,129.6 L 142.2,148.6" stroke="#34d399" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 60.4,148.6 L 142.2,148.6" stroke="#f87171" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/><path d="M 60.4,148.6 L 60.4,171.8 L 147.5,171.8" stroke="#c084fc" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.88"/>
+      </g>
+
+      <!-- Number Badges -->
+      <g class="stroke-numbers">
+        
+                    <g>
+                      <circle cx="65.3" cy="25.7" r="7.5" fill="#0f172a" stroke="#38bdf8" stroke-width="2"/>
+                      <text x="65.3" y="25.7" fill="#38bdf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">1</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="65.3" cy="26.8" r="7.5" fill="#0f172a" stroke="#818cf8" stroke-width="2"/>
+                      <text x="65.3" y="26.8" fill="#818cf8" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">2</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="62.8" cy="60.3" r="7.5" fill="#0f172a" stroke="#a78bfa" stroke-width="2"/>
+                      <text x="62.8" y="60.3" fill="#a78bfa" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">3</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="46.8" cy="89.1" r="7.5" fill="#0f172a" stroke="#f472b6" stroke-width="2"/>
+                      <text x="46.8" y="89.1" fill="#f472b6" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">4</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="100.0" cy="89.1" r="7.5" fill="#0f172a" stroke="#fbbf24" stroke-width="2"/>
+                      <text x="100.0" y="89.1" fill="#fbbf24" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">5</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="60.4" cy="129.6" r="7.5" fill="#0f172a" stroke="#34d399" stroke-width="2"/>
+                      <text x="60.4" y="129.6" fill="#34d399" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">6</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="60.4" cy="148.6" r="7.5" fill="#0f172a" stroke="#f87171" stroke-width="2"/>
+                      <text x="60.4" y="148.6" fill="#f87171" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">7</text>
+                    </g>
+                    
+                    <g>
+                      <circle cx="60.4" cy="148.6" r="7.5" fill="#0f172a" stroke="#c084fc" stroke-width="2"/>
+                      <text x="60.4" y="148.6" fill="#c084fc" font-size="8.5" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="sans-serif">8</text>
+                    </g>
+                    
+      </g>
+    </svg>
+    
+    </div>
+    
+</body>
+</html>

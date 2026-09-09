@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>한글 획순 마스킹 엔진 테스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  body {
+    background: #0f172a;
+    color: #f8fafc;
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px;
+  }
+  h1 { margin-bottom: 20px; font-size: 24px; color: #818cf8; }
+  .canvas-card {
+    background: #1e293b;
+    border: 2px solid #334155;
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.4);
+    margin-bottom: 20px;
+  }
+  .preview-box {
+    width: 280px;
+    height: 280px;
+    background: #0f172a;
+    border: 2px dashed #6366f1;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+  }
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  button {
+    background: #6366f1;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  button:hover { background: #4f46e5; }
+  button.secondary { background: #334155; }
+  button.secondary:hover { background: #475569; }
+  .char-input {
+    padding: 8px 12px;
+    border-radius: 10px;
+    border: 1px solid #475569;
+    background: #0f172a;
+    color: white;
+    font-size: 16px;
+    width: 60px;
+    text-align: center;
+  }
+  .char-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .char-tab {
+    padding: 6px 14px;
+    border-radius: 12px;
+    background: #334155;
+    color: #94a3b8;
+    border: none;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .char-tab.active {
+    background: #6366f1;
+    color: white;
+  }
+  .stroke-info {
+    font-size: 14px;
+    color: #94a3b8;
+    margin-bottom: 12px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🇰🇷 Hangul Stroke Mask Engine Test</h1>
+
+<div class="canvas-card">
+  <div style="display:flex; gap:10px; align-items:center; margin-bottom:15px;">
+    <span>테스트 단어/글자:</span>
+    <input type="text" id="test-word" class="char-input" style="width:120px;" value="한국어">
+    <button onclick="updateWord()">적용</button>
+  </div>
+
+  <div class="char-tabs" id="char-tabs"></div>
+
+  <div class="preview-box" id="preview-box">
+    <!-- SVG rendered here -->
+  </div>
+
+  <div class="stroke-info" id="stroke-info">총 0획</div>
+
+  <div class="controls">
+    <button onclick="replayCurrent()">↺ 다시 재생</button>
+    <button class="secondary" id="btn-speed" onclick="toggleSpeed()">속도 1.0x</button>
+    <button class="secondary" id="btn-num" onclick="toggleNumbers()">획 번호: ON</button>
+  </div>
+</div>
+
+<script>
+// ── 한글 유니코드 분해 상수 ──
+const _CHOS  = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const _JUNGS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const _JONGS = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+// 겹받침 분해 매핑
+const _DOUBLE_JONGS = {
+  'ㄳ': ['ㄱ','ㅅ'], 'ㄵ': ['ㄴ','ㅈ'], 'ㄶ': ['ㄴ','ㅎ'],
+  'ㄺ': ['ㄹ','ㄱ'], 'ㄻ': ['ㄹ','ㅁ'], 'ㄼ': ['ㄹ','ㅂ'],
+  'ㄽ': ['ㄹ','ㅅ'], 'ㄾ': ['ㄹ','ㅌ'], 'ㄿ': ['ㄹ','ㅍ'],
+  'ㅀ': ['ㄹ','ㅎ'], 'ㅄ': ['ㅂ','ㅅ'],
+  'ㄲ': ['ㄱ','ㄱ'], 'ㅆ': ['ㅅ','ㅅ']
+};
+
+function decomposeHangul(ch) {
+  const code = ch.charCodeAt(0) - 0xAC00;
+  if (code < 0 || code > 11171) return { cho: ch, jung: null, jong: null };
+  const jong = code % 28;
+  const jung = Math.floor((code - jong) / 28) % 21;
+  const cho  = Math.floor((code - jong) / 28 / 21);
+  return { cho: _CHOS[cho], jung: _JUNGS[jung], jong: jong ? _JONGS[jong] : null, choIdx: cho, jungIdx: jung, jongIdx: jong };
+}
+
+// ── 표준 획 골격선 데이터베이스 (정규화 0~100) ──
+const STROKE_DB = {
+  // ── 초성/종성 자음 ──
+  'ㄱ': [
+    { d: 'M 18,22 L 82,22 L 82,85', desc: '1획: 가로 후 세로 꺾임' }
+  ],
+  'ㄲ': [
+    { d: 'M 12,22 L 48,22 L 48,82', desc: '1획: 앞 ㄱ' },
+    { d: 'M 54,22 L 90,22 L 90,82', desc: '2획: 뒤 ㄱ' }
+  ],
+  'ㄴ': [
+    { d: 'M 22,18 L 22,82 L 85,82', desc: '1획: 세로 후 가로' }
+  ],
+  'ㄷ': [
+    { d: 'M 18,22 L 82,22',         desc: '1획: 위 가로' },
+    { d: 'M 22,22 L 22,82 L 82,82', desc: '2획: 세로 후 아래 가로' }
+  ],
+  'ㄸ': [
+    { d: 'M 10,22 L 46,22',         desc: '1획' },
+    { d: 'M 14,22 L 14,82 L 46,82', desc: '2획' },
+    { d: 'M 54,22 L 90,22',         desc: '3획' },
+    { d: 'M 58,22 L 58,82 L 90,82', desc: '4획' }
+  ],
+  'ㄹ': [
+    { d: 'M 18,20 L 82,20 L 82,50', desc: '1획: ㄱ' },
+    { d: 'M 20,50 L 82,50',         desc: '2획: 중간 가로' },
+    { d: 'M 20,50 L 20,82 L 85,82', desc: '3획: ㄴ' }
+  ],
+  'ㅁ': [
+    { d: 'M 20,18 L 20,84',         desc: '1획: 왼 세로' },
+    { d: 'M 20,20 L 82,20 L 82,84', desc: '2획: 위 가로 후 오른 세로' },
+    { d: 'M 18,82 L 84,82',         desc: '3획: 아래 가로' }
+  ],
+  'ㅂ': [
+    { d: 'M 22,18 L 22,82', desc: '1획: 왼 세로' },
+    { d: 'M 78,18 L 78,82', desc: '2획: 오른 세로' },
+    { d: 'M 20,50 L 80,50', desc: '3획: 중간 가로' },
+    { d: 'M 20,82 L 80,82', desc: '4획: 아래 가로' }
+  ],
+  'ㅃ': [
+    { d: 'M 10,18 L 10,82', desc: '1획' },
+    { d: 'M 44,18 L 44,82', desc: '2획' },
+    { d: 'M 10,50 L 44,50', desc: '3획' },
+    { d: 'M 10,82 L 44,82', desc: '4획' },
+    { d: 'M 56,18 L 56,82', desc: '5획' },
+    { d: 'M 90,18 L 90,82', desc: '6획' },
+    { d: 'M 56,50 L 90,50', desc: '7획' },
+    { d: 'M 56,82 L 90,82', desc: '8획' }
+  ],
+  'ㅅ': [
+    { d: 'M 50,18 L 18,84', desc: '1획: 왼 사선' },
+    { d: 'M 44,42 L 82,84', desc: '2획: 오른 사선' }
+  ],
+  'ㅆ': [
+    { d: 'M 32,18 L 10,82', desc: '1획' },
+    { d: 'M 28,42 L 46,82', desc: '2획' },
+    { d: 'M 70,18 L 52,82', desc: '3획' },
+    { d: 'M 66,42 L 90,82', desc: '4획' }
+  ],
+  'ㅇ': [
+    { d: 'M 50,18 A 32,32 0 1,0 49.9,18 Z', desc: '1획: 원' }
+  ],
+  'ㅈ': [
+    { d: 'M 18,22 L 82,22', desc: '1획: 가로' },
+    { d: 'M 50,22 L 18,84', desc: '2획: 왼 사선' },
+    { d: 'M 44,46 L 82,84', desc: '3획: 오른 사선' }
+  ],
+  'ㅉ': [
+    { d: 'M 10,22 L 46,22', desc: '1획' },
+    { d: 'M 28,22 L 10,82', desc: '2획' },
+    { d: 'M 24,46 L 46,82', desc: '3획' },
+    { d: 'M 54,22 L 90,22', desc: '4획' },
+    { d: 'M 72,22 L 54,82', desc: '5획' },
+    { d: 'M 68,46 L 90,82', desc: '6획' }
+  ],
+  'ㅊ': [
+    { d: 'M 36,12 L 64,12', desc: '1획: 꼭지 점획' },
+    { d: 'M 18,30 L 82,30', desc: '2획: 가로' },
+    { d: 'M 50,30 L 18,85', desc: '3획: 왼 사선' },
+    { d: 'M 44,52 L 82,85', desc: '4획: 오른 사선' }
+  ],
+  'ㅋ': [
+    { d: 'M 18,20 L 82,20 L 82,84', desc: '1획: ㄱ' },
+    { d: 'M 18,50 L 78,50',         desc: '2획: 중간 가로' }
+  ],
+  'ㅌ': [
+    { d: 'M 18,20 L 82,20',         desc: '1획: 상 가로' },
+    { d: 'M 18,50 L 78,50',         desc: '2획: 중 가로' },
+    { d: 'M 22,20 L 22,82 L 84,82', desc: '3획: 세로 후 하 가로' }
+  ],
+  'ㅍ': [
+    { d: 'M 18,25 L 82,25', desc: '1획: 위 가로' },
+    { d: 'M 36,25 L 36,80', desc: '2획: 왼 세로' },
+    { d: 'M 64,25 L 64,80', desc: '3획: 오른 세로' },
+    { d: 'M 16,80 L 84,80', desc: '4획: 아래 가로' }
+  ],
+  'ㅎ': [
+    { d: 'M 36,12 L 64,12',                 desc: '1획: 꼭지 점획' },
+    { d: 'M 18,28 L 82,28',                 desc: '2획: 가로' },
+    { d: 'M 50,42 A 25,25 0 1,0 49.9,42 Z', desc: '3획: 원' }
+  ],
+
+  // ── 모음 ──
+  'ㅏ': [
+    { d: 'M 50,15 L 50,85', desc: '1획: 세로' },
+    { d: 'M 50,48 L 85,48', desc: '2획: 가로' }
+  ],
+  'ㅐ': [
+    { d: 'M 35,15 L 35,85', desc: '1획: 왼 세로' },
+    { d: 'M 35,48 L 65,48', desc: '2획: 중간 가로' },
+    { d: 'M 65,15 L 65,85', desc: '3획: 오른 세로' }
+  ],
+  'ㅑ': [
+    { d: 'M 50,15 L 50,85', desc: '1획: 세로' },
+    { d: 'M 50,36 L 85,36', desc: '2획: 위 가로' },
+    { d: 'M 50,60 L 85,60', desc: '3획: 아래 가로' }
+  ],
+  'ㅒ': [
+    { d: 'M 35,15 L 35,85', desc: '1획: 왼 세로' },
+    { d: 'M 35,36 L 65,36', desc: '2획: 위 가로' },
+    { d: 'M 35,60 L 65,60', desc: '3획: 아래 가로' },
+    { d: 'M 65,15 L 65,85', desc: '4획: 오른 세로' }
+  ],
+  'ㅓ': [
+    { d: 'M 15,48 L 50,48', desc: '1획: 가로' },
+    { d: 'M 50,15 L 50,85', desc: '2획: 세로' }
+  ],
+  'ㅔ': [
+    { d: 'M 35,48 L 65,48', desc: '1획: 가로' },
+    { d: 'M 35,15 L 35,85', desc: '2획: 왼 세로' },
+    { d: 'M 65,15 L 65,85', desc: '3획: 오른 세로' }
+  ],
+  'ㅕ': [
+    { d: 'M 15,36 L 50,36', desc: '1획: 위 가로' },
+    { d: 'M 15,60 L 50,60', desc: '2획: 아래 가로' },
+    { d: 'M 50,15 L 50,85', desc: '3획: 세로' }
+  ],
+  'ㅖ': [
+    { d: 'M 35,36 L 65,36', desc: '1획: 위 가로' },
+    { d: 'M 35,60 L 65,60', desc: '2획: 아래 가로' },
+    { d: 'M 35,15 L 35,85', desc: '3획: 왼 세로' },
+    { d: 'M 65,15 L 65,85', desc: '4획: 오른 세로' }
+  ],
+  'ㅗ': [
+    { d: 'M 50,18 L 50,56', desc: '1획: 세로' },
+    { d: 'M 15,56 L 85,56', desc: '2획: 가로' }
+  ],
+  'ㅛ': [
+    { d: 'M 36,18 L 36,56', desc: '1획: 왼 세로' },
+    { d: 'M 64,18 L 64,56', desc: '2획: 오른 세로' },
+    { d: 'M 15,56 L 85,56', desc: '3획: 가로' }
+  ],
+  'ㅜ': [
+    { d: 'M 15,44 L 85,44', desc: '1획: 가로' },
+    { d: 'M 50,44 L 50,82', desc: '2획: 세로' }
+  ],
+  'ㅠ': [
+    { d: 'M 15,44 L 85,44', desc: '1획: 가로' },
+    { d: 'M 36,44 L 36,82', desc: '2획: 왼 세로' },
+    { d: 'M 64,44 L 64,82', desc: '3획: 오른 세로' }
+  ],
+  'ㅡ': [
+    { d: 'M 15,50 L 85,50', desc: '1획: 가로' }
+  ],
+  'ㅢ': [
+    { d: 'M 15,50 L 68,50', desc: '1획: 가로' },
+    { d: 'M 72,18 L 72,82', desc: '2획: 세로' }
+  ],
+  'ㅣ': [
+    { d: 'M 50,15 L 50,85', desc: '1획: 세로' }
+  ]
+};
+
+// ── 음절 6대 레이아웃 분해 및 바운딩 박스 계산 (viewBox 0 0 200 200 기준) ──
+function getSyllableLayout(ch) {
+  const dec = decomposeHangul(ch);
+  if (!dec.jung) {
+    return [{ jamo: dec.cho || ch, x: 25, y: 25, w: 150, h: 150 }];
+  }
+
+  const { cho, jung, jong, jungIdx } = dec;
+  const hasJong = !!jong;
+
+  const isVert = [0,1,2,3,4,5,6,7,20].includes(jungIdx);
+  const isHoriz = [8,12,13,17,18].includes(jungIdx);
+
+  const parts = [];
+
+  if (isVert) {
+    if (!hasJong) {
+      parts.push({ jamo: cho, x: 26, y: 35, w: 72, h: 125, role: 'cho' });
+      parts.push({ jamo: jung, x: 104, y: 30, w: 72, h: 135, role: 'jung' });
+    } else {
+      parts.push({ jamo: cho, x: 26, y: 26, w: 70, h: 72, role: 'cho' });
+      parts.push({ jamo: jung, x: 104, y: 24, w: 70, h: 86, role: 'jung' });
+      parts.push({ jamo: jong, x: 40, y: 110, w: 120, h: 66, role: 'jong' });
+    }
+  } else if (isHoriz) {
+    if (!hasJong) {
+      parts.push({ jamo: cho, x: 45, y: 26, w: 110, h: 74, role: 'cho' });
+      parts.push({ jamo: jung, x: 26, y: 104, w: 148, h: 68, role: 'jung' });
+    } else {
+      parts.push({ jamo: cho, x: 48, y: 20, w: 104, h: 56, role: 'cho' });
+      parts.push({ jamo: jung, x: 30, y: 78, w: 140, h: 48, role: 'jung' });
+      parts.push({ jamo: jong, x: 44, y: 124, w: 112, h: 56, role: 'jong' });
+    }
+  } else {
+    const compMap = {
+      'ㅘ': ['ㅗ','ㅏ'], 'ㅙ': ['ㅗ','ㅐ'], 'ㅚ': ['ㅗ','ㅣ'],
+      'ㅝ': ['ㅜ','ㅓ'], 'ㅞ': ['ㅜ','ㅔ'], 'ㅟ': ['ㅜ','ㅣ'],
+      'ㅢ': ['ㅡ','ㅣ']
+    };
+    const [subH, subV] = compMap[jung] || ['ㅡ','ㅣ'];
+
+    if (!hasJong) {
+      parts.push({ jamo: cho, x: 28, y: 28, w: 70, h: 72, role: 'cho' });
+      parts.push({ jamo: subH, x: 24, y: 102, w: 82, h: 65, role: 'jung_h' });
+      parts.push({ jamo: subV, x: 108, y: 28, w: 68, h: 138, role: 'jung_v' });
+    } else {
+      parts.push({ jamo: cho, x: 30, y: 22, w: 66, h: 56, role: 'cho' });
+      parts.push({ jamo: subH, x: 26, y: 78, w: 76, h: 44, role: 'jung_h' });
+      parts.push({ jamo: subV, x: 104, y: 22, w: 66, h: 100, role: 'jung_v' });
+      parts.push({ jamo: jong, x: 42, y: 124, w: 116, h: 54, role: 'jong' });
+    }
+  }
+
+  return parts;
+}
+
+function scalePath(d, x, y, w, h) {
+  let i = 0;
+  return d.replace(/[+-]?\d+\.?\d*/g, (num) => {
+    const val = parseFloat(num);
+    const res = (i % 2 === 0) ? (x + (val / 100) * w).toFixed(1) : (y + (val / 100) * h).toFixed(1);
+    i++;
+    return res;
+  });
+}
+
+function getApproxLen(d) {
+  const nums = d.replace(/[MCLZAmclza]/g,' ').trim().split(/[\s,]+/).filter(Boolean).map(Number);
+  let len = 0;
+  for (let i = 2; i < nums.length - 1; i += 2) {
+    const dx = nums[i] - nums[i-2];
+    const dy = nums[i+1] - nums[i-1];
+    len += Math.sqrt(dx*dx + dy*dy);
+  }
+  return Math.max(len, 70);
+}
+
+let S = {
+  word: '한국어',
+  charIdx: 0,
+  speed: 1.0,
+  showNumbers: true
+};
+
+function updateWord() {
+  const input = document.getElementById('test-word').value.trim();
+  if (!input) return;
+  S.word = input;
+  S.charIdx = 0;
+  renderWordTabs();
+  renderStrokeView();
+}
+
+function renderWordTabs() {
+  const tabsContainer = document.getElementById('char-tabs');
+  tabsContainer.innerHTML = '';
+  [...S.word].forEach((ch, idx) => {
+    const btn = document.createElement('button');
+    btn.className = `char-tab ${idx === S.charIdx ? 'active' : ''}`;
+    btn.textContent = ch;
+    btn.onclick = () => {
+      S.charIdx = idx;
+      renderWordTabs();
+      renderStrokeView();
+    };
+    tabsContainer.appendChild(btn);
+  });
+}
+
+function toggleSpeed() {
+  const speeds = [0.5, 1.0, 1.5, 2.0];
+  const idx = speeds.indexOf(S.speed);
+  S.speed = speeds[(idx + 1) % speeds.length];
+  document.getElementById('btn-speed').textContent = `속도 ${S.speed.toFixed(1)}x`;
+  renderStrokeView();
+}
+
+function toggleNumbers() {
+  S.showNumbers = !S.showNumbers;
+  document.getElementById('btn-num').textContent = `획 번호: ${S.showNumbers ? 'ON' : 'OFF'}`;
+  renderStrokeView();
+}
+
+function replayCurrent() {
+  renderStrokeView();
+}
+
+function renderStrokeView() {
+  const ch = S.word[S.charIdx] || S.word[0];
+  const parts = getSyllableLayout(ch);
+
+  const strokes = [];
+  parts.forEach(part => {
+    let jamosToProcess = [part.jamo];
+    if (part.role === 'jong' && _DOUBLE_JONGS[part.jamo]) {
+      jamosToProcess = _DOUBLE_JONGS[part.jamo];
+    }
+
+    jamosToProcess.forEach((j, subIdx) => {
+      const list = STROKE_DB[j] || [];
+      let sx = part.x, sw = part.w;
+      if (jamosToProcess.length > 1) {
+        sw = part.w * 0.48;
+        sx = subIdx === 0 ? part.x : part.x + part.w * 0.52;
+      }
+      list.forEach(st => {
+        const scaledD = scalePath(st.d, sx, part.y, sw, part.h);
+        strokes.push({
+          d: scaledD,
+          desc: st.desc
+        });
+      });
+    });
+  });
+
+  document.getElementById('stroke-info').innerHTML = `선택 음절: <b style="color:#818cf8">${ch}</b> (총 <b style="color:#fbbf24">${strokes.length}획</b>)`;
+
+  const strokeDur = 0.55 / S.speed;
+  const gapDur = 0.18 / S.speed;
+
+  let maskPaths = '';
+  let numberMarkers = '';
+  const colors = ['#818cf8', '#a78bfa', '#f472b6', '#38bdf8', '#34d399', '#fbbf24', '#f87171'];
+
+  strokes.forEach((st, idx) => {
+    const len = getApproxLen(st.d);
+    const delay = idx * (strokeDur + gapDur);
+
+    maskPaths += `
+      <path d="${st.d}"
+            stroke="white"
+            stroke-width="38"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            stroke-dasharray="${len.toFixed(1)}"
+            stroke-dashoffset="${len.toFixed(1)}"
+            style="animation: drawStrokeMask ${strokeDur.toFixed(2)}s linear ${delay.toFixed(2)}s forwards;" />
+    `;
+
+    if (S.showNumbers) {
+      const nums = st.d.replace(/[MCLZAmclza]/g,' ').trim().split(/[\s,]+/).filter(Boolean).map(Number);
+      const bx = nums[0] || 100;
+      const by = nums[1] || 100;
+      const color = colors[idx % colors.length];
+
+      numberMarkers += `
+        <g style="opacity:0; animation: showMarker 0.3s ease ${delay.toFixed(2)}s forwards;">
+          <circle cx="${bx}" cy="${by}" r="9" fill="#0f172a" stroke="${color}" stroke-width="2"/>
+          <text x="${bx}" y="${by}" fill="${color}" font-size="10" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="'Inter', sans-serif">${idx+1}</text>
+        </g>
+      `;
+    }
+  });
+
+  const uniqueId = 'mask_' + Math.random().toString(36).substr(2, 9);
+
+  const svgHTML = `
+    <svg viewBox="0 0 200 200" width="260" height="260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <style>
+          @keyframes drawStrokeMask {
+            to { stroke-dashoffset: 0; }
+          }
+          @keyframes showMarker {
+            to { opacity: 1; }
+          }
+        </style>
+        <mask id="${uniqueId}">
+          <rect width="200" height="200" fill="black" />
+          ${maskPaths}
+        </mask>
+      </defs>
+
+      <line x1="100" y1="10" x2="100" y2="190" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <line x1="10" y1="100" x2="190" y2="100" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <rect x="15" y="15" width="170" height="170" rx="16" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+      <!-- 밑그림 -->
+      <text x="100" y="105"
+            text-anchor="middle" dominant-baseline="central"
+            font-size="135" font-weight="900"
+            font-family="'Noto Sans KR', sans-serif"
+            fill="rgba(255,255,255,0.08)">${ch}</text>
+
+      <!-- 획순대로 드러나는 글씨 -->
+      <text x="100" y="105"
+            text-anchor="middle" dominant-baseline="central"
+            font-size="135" font-weight="900"
+            font-family="'Noto Sans KR', sans-serif"
+            fill="#818cf8"
+            mask="url(#${uniqueId})">${ch}</text>
+
+      <!-- 번호 마커 -->
+      ${numberMarkers}
+    </svg>
+  `;
+
+  document.getElementById('preview-box').innerHTML = svgHTML;
+}
+
+updateWord();
+</script>
+
+</body>
+</html>

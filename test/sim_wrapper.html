@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+<body style="margin:0; background:#000;">
+<iframe id="sim" src="file:///C:/Myproject/auto_income/web_simulator.html" style="width:420px; height:850px; border:none;"></iframe>
+<script>
+const sim = document.getElementById('sim');
+sim.onload = () => {
+  setTimeout(() => {
+    const doc = sim.contentDocument;
+    // skip onboarding if active
+    const ob = doc.getElementById('ob-screen');
+    if (ob && ob.classList.contains('active')) {
+      doc.getElementById('app-screen').classList.add('active');
+      ob.classList.remove('active');
+    }
+    // switch to stroke mode
+    const btn = doc.getElementById('mode-stroke');
+    if (btn) btn.click();
+  }, 500);
+};
+</script>
+</body>
+</html>

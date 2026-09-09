@@ -1,0 +1,94 @@
+import os
+import subprocess
+
+html_content = """<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+body { background: #0f172a; margin: 0; padding: 20px; color: white; font-family: sans-serif; display: flex; gap: 20px; }
+.box { width: 220px; height: 220px; background: #1e293b; border: 2px dashed #6366f1; border-radius: 20px; display: flex; align-items: center; justify-content: center; position: relative; }
+svg { width: 200px; height: 200px; display: block; }
+</style>
+</head>
+<body>
+<div class="box" id="testbox"></div>
+
+<script>
+// Mock data for '가' (ㄱ: 1 stroke, ㅏ: 2 strokes)
+const strokes = [
+  { d: 'M 46,55 L 90,55 L 60,110', len: 110 },
+  { d: 'M 115,50 L 115,160', len: 110 },
+  { d: 'M 115,105 L 145,105', len: 30 }
+];
+
+const maskId = 'test_raf_mask';
+let maskPaths = strokes.map((s, i) =>
+  `<path id="st_${i}" d="${s.d}" stroke="white" stroke-width="40" stroke-linecap="round" stroke-linejoin="round" fill="none" stroke-dasharray="${s.len}" stroke-dashoffset="${s.len}" />`
+).join('');
+
+document.getElementById('testbox').innerHTML = `
+  <svg viewBox="0 0 200 200">
+    <mask id="${maskId}">
+      <rect width="200" height="200" fill="black" />
+      ${maskPaths}
+    </mask>
+    <text x="100" y="105" text-anchor="middle" dominant-baseline="central" font-size="135" font-weight="900" font-family="'Noto Sans KR', sans-serif" fill="rgba(255,255,255,0.15)">가</text>
+    <text id="masked_target" x="100" y="105" text-anchor="middle" dominant-baseline="central" font-size="135" font-weight="900" font-family="'Noto Sans KR', sans-serif" fill="#6366f1" mask="url(#${maskId})">가</text>
+  </svg>
+`;
+
+const pathEls = strokes.map((_, i) => document.getElementById(`st_${i}`));
+const targetEl = document.getElementById('masked_target');
+
+const strokeDur = 500; // 500ms per stroke
+const gapDur = 150;    // 150ms gap
+let startTime = null;
+
+function animate(now) {
+  if (!startTime) startTime = now;
+  const elapsed = now - startTime;
+
+  let allDone = true;
+  strokes.forEach((s, i) => {
+    const sStart = i * (strokeDur + gapDur);
+    const sEnd = sStart + strokeDur;
+
+    if (elapsed < sStart) {
+      pathEls[i].style.strokeDashoffset = s.len;
+      allDone = false;
+    } else if (elapsed >= sEnd) {
+      pathEls[i].style.strokeDashoffset = '0';
+    } else {
+      const progress = (elapsed - sStart) / strokeDur;
+      pathEls[i].style.strokeDashoffset = s.len * (1 - progress);
+      allDone = false;
+    }
+  });
+
+  // Force Chromium repaint of masked SVG element
+  targetEl.style.opacity = (0.9999 + (Math.sin(now) * 0.0001)).toFixed(5);
+
+  if (!allDone) {
+    requestAnimationFrame(animate);
+  }
+}
+requestAnimationFrame(animate);
+</script>
+</body>
+</html>"""
+
+with open('test/test_raf.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+edge_path = r'C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe'
+html_url = 'file:///' + os.path.abspath('test/test_raf.html').replace('\\', '/')
+
+# Capture at 250ms (midway through stroke 1)
+subprocess.run([edge_path, '--headless', '--disable-gpu', '--virtual-time-budget=250', f'--screenshot={os.path.abspath("test/raf_250ms.png")}', html_url])
+# Capture at 800ms (stroke 1 done, midway through stroke 2)
+subprocess.run([edge_path, '--headless', '--disable-gpu', '--virtual-time-budget=850', f'--screenshot={os.path.abspath("test/raf_850ms.png")}', html_url])
+# Capture at 1800ms (all strokes complete)
+subprocess.run([edge_path, '--headless', '--disable-gpu', '--virtual-time-budget=1800', f'--screenshot={os.path.abspath("test/raf_1800ms.png")}', html_url])
+print('Done capturing rAF test frames')

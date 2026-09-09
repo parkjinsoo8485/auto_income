@@ -1,0 +1,89 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- 가이드 눈금 격자 -->
+      <line x1="100" y1="12" x2="100" y2="188" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <line x1="12" y1="100" x2="188" y2="100" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <line x1="12" y1="12" x2="188" y2="188" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="3,3"/>
+      <line x1="188" y1="12" x2="12" y2="188" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="3,3"/>
+      <rect x="14" y="14" width="172" height="172" rx="16" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+      <!-- 1. 밑그림 가이드 폰트 (연한 회색의 완벽한 Noto Sans 글씨) -->
+      <text x="100" y="105"
+            text-anchor="middle" dominant-baseline="central"
+            font-size="135" font-weight="900"
+            font-family="'Noto Sans KR', sans-serif"
+            fill="rgba(255,255,255,0.08)">안</text>
+
+      <!-- 2. 실제 획순대로 그어지는 붓/펜 스트로크 선 -->
+      
+      <path d="M 61.0,37.5 C 47.0,37.5 37.2,48.3 37.2,62.0 C 37.2,75.7 47.0,86.5 61.0,86.5 C 75.0,86.5 84.8,75.7 84.8,62.0 C 84.8,48.3 75.0,37.5 61.0,37.5 Z"
+            stroke="#818cf8"
+            stroke-width="14"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            stroke-dasharray="169.1"
+            stroke-dashoffset="169.1"
+            style="animation: drawStrokeLine 0.65s ease-out 0.00s forwards;" />
+    
+      <path d="M 139.0,36.9 L 139.0,97.1"
+            stroke="#a78bfa"
+            stroke-width="14"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            stroke-dasharray="80.0"
+            stroke-dashoffset="80.0"
+            style="animation: drawStrokeLine 0.65s ease-out 0.87s forwards;" />
+    
+      <path d="M 139.0,65.3 L 163.5,65.3"
+            stroke="#f472b6"
+            stroke-width="14"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            stroke-dasharray="80.0"
+            stroke-dashoffset="80.0"
+            style="animation: drawStrokeLine 0.65s ease-out 1.74s forwards;" />
+    
+      <path d="M 66.4,121.9 L 66.4,164.1 L 142.0,164.1"
+            stroke="#38bdf8"
+            stroke-width="14"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            stroke-dasharray="117.8"
+            stroke-dashoffset="117.8"
+            style="animation: drawStrokeLine 0.65s ease-out 2.61s forwards;" />
+    
+
+      <!-- 3. 모든 획 완료 후 완성형 글씨 부드럽게 채움 피날레 -->
+      <text x="100" y="105"
+            text-anchor="middle" dominant-baseline="central"
+            font-size="135" font-weight="900"
+            font-family="'Noto Sans KR', sans-serif"
+            fill="var(--accent)"
+            style="opacity:0; animation: fillFinalGlyph 0.6s ease 3.78s forwards;">안</text>
+
+      <!-- 4. 획 번호 마커 레이어 -->
+      
+        <g style="opacity:0; transform-origin:61px 37.5px; animation: showStrokeMarker 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.00s forwards;">
+          <circle cx="61" cy="37.5" r="9" fill="#0f172a" stroke="#818cf8" stroke-width="2.5"/>
+          <text x="61" y="37.5" fill="#818cf8" font-size="10" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="'Inter', sans-serif">1</text>
+        </g>
+      
+        <g style="opacity:0; transform-origin:139px 36.9px; animation: showStrokeMarker 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 0.87s forwards;">
+          <circle cx="139" cy="36.9" r="9" fill="#0f172a" stroke="#a78bfa" stroke-width="2.5"/>
+          <text x="139" y="36.9" fill="#a78bfa" font-size="10" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="'Inter', sans-serif">2</text>
+        </g>
+      
+        <g style="opacity:0; transform-origin:139px 65.3px; animation: showStrokeMarker 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 1.74s forwards;">
+          <circle cx="139" cy="65.3" r="9" fill="#0f172a" stroke="#f472b6" stroke-width="2.5"/>
+          <text x="139" y="65.3" fill="#f472b6" font-size="10" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="'Inter', sans-serif">3</text>
+        </g>
+      
+        <g style="opacity:0; transform-origin:66.4px 121.9px; animation: showStrokeMarker 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) 2.61s forwards;">
+          <circle cx="66.4" cy="121.9" r="9" fill="#0f172a" stroke="#38bdf8" stroke-width="2.5"/>
+          <text x="66.4" y="121.9" fill="#38bdf8" font-size="10" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="'Inter', sans-serif">4</text>
+        </g>
+      
+    </svg>

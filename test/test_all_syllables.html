@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+body { background: #0f172a; margin: 0; padding: 20px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Noto Sans KR', sans-serif; color: white; }
+.card { display: flex; flex-direction: column; align-items: center; }
+.box { width: 180px; height: 180px; background: #1e293b; border: 2px dashed #6366f1; border-radius: 16px; display: flex; align-items: center; justify-content: center; position: relative; }
+svg { width: 170px; height: 170px; display: block; }
+h3 { margin: 4px 0 8px; font-size: 15px; }
+</style>
+</head>
+<body>
+<div id="cards" style="display:flex;gap:15px;flex-wrap:wrap;justify-content:center;"></div>
+
+<script>
+const _STROKE_CHOS  = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const _STROKE_JUNGS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const _STROKE_JONGS = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+const _STROKE_DOUBLE_JONGS = {
+  'ㄳ': ['ㄱ','ㅅ'], 'ㄵ': ['ㄴ','ㅈ'], 'ㄶ': ['ㄴ','ㅎ'],
+  'ㄺ': ['ㄹ','ㄱ'], 'ㄻ': ['ㄹ','ㅁ'], 'ㄼ': ['ㄹ','ㅂ'],
+  'ㄽ': ['ㄹ','ㅅ'], 'ㄾ': ['ㄹ','ㅌ'], 'ㄿ': ['ㄹ','ㅍ'],
+  'ㅀ': ['ㄹ','ㅎ'], 'ㅄ': ['ㅂ','ㅅ'],
+  'ㄲ': ['ㄱ','ㄱ'], 'ㅆ': ['ㅅ','ㅅ']
+};
+
+function decomposeHangulSyllable(ch) {
+  const code = ch.charCodeAt(0) - 0xAC00;
+  if (code < 0 || code > 11171) return { cho: ch, jung: null, jong: null };
+  const jong = code % 28;
+  const jung = Math.floor((code - jong) / 28) % 21;
+  const cho  = Math.floor((code - jong) / 28 / 21);
+  return { cho: _STROKE_CHOS[cho], jung: _STROKE_JUNGS[jung], jong: jong ? _STROKE_JONGS[jong] : null, choIdx: cho, jungIdx: jung, jongIdx: jong };
+}
+
+function getJamoStrokes(jamo, role, isVert, hasJong) {
+  if (jamo === 'ㄱ') {
+    if (role === 'cho' && isVert && !hasJong) {
+      return [{ d: 'M 6,10 L 94,10 L 32,92', desc: '1획: 가로 후 왼사선' }];
+    }
+    return [{ d: 'M 6,10 L 94,10 L 94,92', desc: '1획: 가로 후 세로' }];
+  }
+  if (jamo === 'ㄲ') {
+    if (role === 'cho' && isVert && !hasJong) {
+      return [
+        { d: 'M 6,10 L 48,10 L 20,92', desc: '1획' },
+        { d: 'M 52,10 L 94,10 L 44,92', desc: '2획' }
+      ];
+    }
+    return [
+      { d: 'M 6,10 L 46,10 L 46,92', desc: '1획' },
+      { d: 'M 54,10 L 94,10 L 94,92', desc: '2획' }
+    ];
+  }
+  if (jamo === 'ㅋ') {
+    if (role === 'cho' && isVert && !hasJong) {
+      return [
+        { d: 'M 6,10 L 94,10 L 32,92', desc: '1획' },
+        { d: 'M 6,48 L 76,48', desc: '2획' }
+      ];
+    }
+    return [
+      { d: 'M 6,10 L 94,10 L 94,92', desc: '1획' },
+      { d: 'M 6,50 L 90,50', desc: '2획' }
+    ];
+  }
+
+  const BASE_DB = {
+    'ㄴ': [{ d: 'M 8,8 L 8,92 L 94,92', desc: '1획: ㄴ' }],
+    'ㄷ': [{ d: 'M 6,10 L 94,10', desc: '1획' }, { d: 'M 8,10 L 8,92 L 94,92', desc: '2획' }],
+    'ㄸ': [{ d: 'M 6,10 L 46,10', desc: '1획' }, { d: 'M 8,10 L 8,92 L 46,92', desc: '2획' }, { d: 'M 54,10 L 94,10', desc: '3획' }, { d: 'M 56,10 L 56,92 L 94,92', desc: '4획' }],
+    'ㄹ': [{ d: 'M 6,10 L 94,10 L 94,48', desc: '1획' }, { d: 'M 6,48 L 94,48', desc: '2획' }, { d: 'M 8,48 L 8,92 L 94,92', desc: '3획' }],
+    'ㅁ': [{ d: 'M 8,8 L 8,94', desc: '1획' }, { d: 'M 8,10 L 94,10 L 94,94', desc: '2획' }, { d: 'M 6,92 L 96,92', desc: '3획' }],
+    'ㅂ': [{ d: 'M 10,8 L 10,94', desc: '1획' }, { d: 'M 90,8 L 90,94', desc: '2획' }, { d: 'M 8,50 L 92,50', desc: '3획' }, { d: 'M 8,92 L 92,92', desc: '4획' }],
+    'ㅃ': [{ d: 'M 6,8 L 6,94', desc: '1획' }, { d: 'M 44,8 L 44,94', desc: '2획' }, { d: 'M 4,50 L 46,50', desc: '3획' }, { d: 'M 4,92 L 46,92', desc: '4획' }, { d: 'M 56,8 L 56,94', desc: '5획' }, { d: 'M 94,8 L 94,94', desc: '6획' }, { d: 'M 54,50 L 96,50', desc: '7획' }, { d: 'M 54,92 L 96,92', desc: '8획' }],
+    'ㅅ': [{ d: 'M 50,6 L 6,94', desc: '1획' }, { d: 'M 44,45 L 94,94', desc: '2획' }],
+    'ㅆ': [{ d: 'M 30,6 L 4,94', desc: '1획' }, { d: 'M 26,45 L 48,94', desc: '2획' }, { d: 'M 72,6 L 50,94', desc: '3획' }, { d: 'M 68,45 L 96,94', desc: '4획' }],
+    'ㅇ': [{ d: 'M 50,6 C 24,6 6,24 6,50 C 6,76 24,94 50,94 C 76,94 94,76 94,50 C 94,24 76,6 50,6 Z', desc: '1획' }],
+    'ㅈ': [{ d: 'M 6,10 L 94,10', desc: '1획' }, { d: 'M 50,10 L 6,94', desc: '2획' }, { d: 'M 44,46 L 94,94', desc: '3획' }],
+    'ㅉ': [{ d: 'M 4,10 L 46,10', desc: '1획' }, { d: 'M 28,10 L 4,94', desc: '2획' }, { d: 'M 24,46 L 46,94', desc: '3획' }, { d: 'M 54,10 L 96,10', desc: '4획' }, { d: 'M 74,10 L 52,94', desc: '5획' }, { d: 'M 70,46 L 96,94', desc: '6획' }],
+    'ㅊ': [{ d: 'M 35,4 L 65,4', desc: '1획' }, { d: 'M 6,24 L 94,24', desc: '2획' }, { d: 'M 50,24 L 6,94', desc: '3획' }, { d: 'M 44,52 L 94,94', desc: '4획' }],
+    'ㅋ': [{ d: 'M 6,10 L 94,10 L 94,92', desc: '1획' }, { d: 'M 6,50 L 90,50', desc: '2획' }],
+    'ㅌ': [{ d: 'M 6,10 L 94,10', desc: '1획' }, { d: 'M 6,50 L 92,50', desc: '2획' }, { d: 'M 8,10 L 8,92 L 94,92', desc: '3획' }],
+    'ㅍ': [{ d: 'M 6,12 L 94,12', desc: '1획' }, { d: 'M 30,12 L 30,90', desc: '2획' }, { d: 'M 70,12 L 70,90', desc: '3획' }, { d: 'M 6,90 L 94,90', desc: '4획' }],
+    'ㅎ': [{ d: 'M 35,4 L 65,4', desc: '1획' }, { d: 'M 6,24 L 94,24', desc: '2획' }, { d: 'M 50,38 C 28,38 10,50 10,68 C 10,86 28,96 50,96 C 72,96 90,86 90,68 C 90,50 72,38 50,38 Z', desc: '3획' }],
+
+    'ㅏ': [{ d: 'M 50,2 L 50,98', desc: '1획' }, { d: 'M 50,50 L 98,50', desc: '2획' }],
+    'ㅐ': [{ d: 'M 24,2 L 24,98', desc: '1획' }, { d: 'M 24,50 L 76,50', desc: '2획' }, { d: 'M 76,2 L 76,98', desc: '3획' }],
+    'ㅑ': [{ d: 'M 50,2 L 50,98', desc: '1획' }, { d: 'M 50,34 L 98,34', desc: '2획' }, { d: 'M 50,66 L 98,66', desc: '3획' }],
+    'ㅒ': [{ d: 'M 24,2 L 24,98', desc: '1획' }, { d: 'M 24,34 L 76,34', desc: '2획' }, { d: 'M 24,66 L 76,66', desc: '3획' }, { d: 'M 76,2 L 76,98', desc: '4획' }],
+    'ㅓ': [{ d: 'M 2,50 L 50,50', desc: '1획' }, { d: 'M 50,2 L 50,98', desc: '2획' }],
+    'ㅔ': [{ d: 'M 24,50 L 76,50', desc: '1획' }, { d: 'M 24,2 L 24,98', desc: '2획' }, { d: 'M 76,2 L 76,98', desc: '3획' }],
+    'ㅕ': [{ d: 'M 2,34 L 50,34', desc: '1획' }, { d: 'M 2,66 L 50,66', desc: '2획' }, { d: 'M 50,2 L 50,98', desc: '3획' }],
+    'ㅖ': [{ d: 'M 24,34 L 76,34', desc: '1획' }, { d: 'M 24,66 L 76,66', desc: '2획' }, { d: 'M 24,2 L 24,98', desc: '3획' }, { d: 'M 76,2 L 76,98', desc: '4획' }],
+    'ㅗ': [{ d: 'M 50,2 L 50,58', desc: '1획' }, { d: 'M 2,58 L 98,58', desc: '2획' }],
+    'ㅛ': [{ d: 'M 34,2 L 34,58', desc: '1획' }, { d: 'M 66,2 L 66,58', desc: '2획' }, { d: 'M 2,58 L 98,58', desc: '3획' }],
+    'ㅜ': [{ d: 'M 2,42 L 98,42', desc: '1획' }, { d: 'M 50,42 L 50,98', desc: '2획' }],
+    'ㅠ': [{ d: 'M 2,42 L 98,42', desc: '1획' }, { d: 'M 34,42 L 34,98', desc: '2획' }, { d: 'M 66,42 L 66,98', desc: '3획' }],
+    'ㅡ': [{ d: 'M 2,50 L 98,50', desc: '1획' }],
+    'ㅢ': [{ d: 'M 2,50 L 68,50', desc: '1획' }, { d: 'M 72,2 L 72,98', desc: '2획' }],
+    'ㅣ': [{ d: 'M 50,2 L 50,98', desc: '1획' }]
+  };
+
+  return BASE_DB[jamo] || [];
+}
+
+// 폰트의 실제 렌더링 범위 (X: 40~160, Y: 50~175)에 완벽하게 일치하는 6대 레이아웃
+function getSyllableLayoutParts(ch) {
+  const dec = decomposeHangulSyllable(ch);
+  if (!dec.jung) return [{ jamo: dec.cho || ch, x: 40, y: 50, w: 120, h: 125, role: 'single', isVert: false, hasJong: false }];
+  const { cho, jung, jong, jungIdx } = dec;
+  const hasJong = !!jong;
+  const isVert = [0,1,2,3,4,5,6,7,20].includes(jungIdx);
+  const isHoriz = [8,12,13,17,18].includes(jungIdx);
+  const parts = [];
+
+  if (isVert) {
+    if (!hasJong) {
+      // 1. 좌우형 (가, 나, 다)
+      parts.push({ jamo: cho, x: 38, y: 48, w: 66, h: 128, role: 'cho', isVert, hasJong });
+      parts.push({ jamo: jung, x: 104, y: 48, w: 56, h: 128, role: 'jung', isVert, hasJong });
+    } else {
+      // 4. 좌우+받침형 (간, 날, 달, 안, 한)
+      parts.push({ jamo: cho, x: 38, y: 48, w: 64, h: 66, role: 'cho', isVert, hasJong });
+      parts.push({ jamo: jung, x: 104, y: 46, w: 56, h: 88, role: 'jung', isVert, hasJong });
+      parts.push({ jamo: jong, x: 38, y: 112, w: 124, h: 64, role: 'jong', isVert, hasJong });
+    }
+  } else if (isHoriz) {
+    if (!hasJong) {
+      // 2. 상하형 (고, 노, 도)
+      parts.push({ jamo: cho, x: 48, y: 46, w: 104, h: 66, role: 'cho', isVert, hasJong });
+      parts.push({ jamo: jung, x: 38, y: 110, w: 124, h: 65, role: 'jung', isVert, hasJong });
+    } else {
+      // 5. 상하+받침형 (공, 논, 돌, 물, 꽃)
+      parts.push({ jamo: cho, x: 50, y: 46, w: 100, h: 50, role: 'cho', isVert, hasJong });
+      parts.push({ jamo: jung, x: 38, y: 94, w: 124, h: 42, role: 'jung', isVert, hasJong });
+      parts.push({ jamo: jong, x: 40, y: 130, w: 120, h: 46, role: 'jong', isVert, hasJong });
+    }
+  } else {
+    const compMap = {
+      'ㅘ': ['ㅗ','ㅏ'], 'ㅙ': ['ㅗ','ㅐ'], 'ㅚ': ['ㅗ','ㅣ'],
+      'ㅝ': ['ㅜ','ㅓ'], 'ㅞ': ['ㅜ','ㅔ'], 'ㅟ': ['ㅜ','ㅣ'],
+      'ㅢ': ['ㅡ','ㅣ']
+    };
+    const [subH, subV] = compMap[jung] || ['ㅡ','ㅣ'];
+
+    if (!hasJong) {
+      // 3. 복합형 (과, 귀, 궤, 의)
+      parts.push({ jamo: cho, x: 38, y: 48, w: 62, h: 66, role: 'cho', isVert: false, hasJong });
+      parts.push({ jamo: subH, x: 36, y: 112, w: 66, h: 63, role: 'jung_h', isVert: false, hasJong });
+      parts.push({ jamo: subV, x: 102, y: 48, w: 58, h: 128, role: 'jung_v', isVert: true, hasJong });
+    } else {
+      // 6. 복합+받침형 (관, 광, 괜찮다의 괜)
+      parts.push({ jamo: cho, x: 38, y: 46, w: 60, h: 50, role: 'cho', isVert: false, hasJong });
+      parts.push({ jamo: subH, x: 36, y: 94, w: 64, h: 38, role: 'jung_h', isVert: false, hasJong });
+      parts.push({ jamo: subV, x: 102, y: 46, w: 58, h: 88, role: 'jung_v', isVert: true, hasJong });
+      parts.push({ jamo: jong, x: 38, y: 130, w: 124, h: 46, role: 'jong', isVert: false, hasJong });
+    }
+  }
+  return parts;
+}
+
+function scalePathCoords(d, x, y, w, h) {
+  let i = 0;
+  return d.replace(/[+-]?\d+\.?\d*/g, (num) => {
+    const val = parseFloat(num);
+    const res = (i % 2 === 0) ? (x + (val / 100) * w).toFixed(1) : (y + (val / 100) * h).toFixed(1);
+    i++;
+    return res;
+  });
+}
+
+function renderCharSVG(ch) {
+  const parts = getSyllableLayoutParts(ch);
+  const strokes = [];
+
+  parts.forEach(part => {
+    let jamos = [part.jamo];
+    if (part.role === 'jong' && _STROKE_DOUBLE_JONGS[part.jamo]) {
+      jamos = _STROKE_DOUBLE_JONGS[part.jamo];
+    }
+    jamos.forEach((j, subIdx) => {
+      const list = getJamoStrokes(j, part.role, part.isVert, part.hasJong);
+      let sx = part.x, sw = part.w;
+      if (jamos.length > 1) {
+        sw = part.w * 0.48;
+        sx = subIdx === 0 ? part.x : part.x + part.w * 0.52;
+      }
+      list.forEach(st => {
+        strokes.push({
+          d: scalePathCoords(st.d, sx, part.y, sw, part.h),
+          desc: st.desc
+        });
+      });
+    });
+  });
+
+  let maskPaths = '';
+  let numberMarkers = '';
+  const strokeColors = ['#818cf8', '#a78bfa', '#f472b6', '#38bdf8', '#34d399', '#fbbf24', '#f87171', '#c084fc', '#e879f9'];
+
+  strokes.forEach((st, idx) => {
+    maskPaths += `
+      <path d="${st.d}"
+            stroke="white"
+            stroke-width="40"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none" />
+    `;
+    const nums = st.d.replace(/[MCLZAmclza]/g,' ').trim().split(/[\s,]+/).filter(Boolean).map(Number);
+    const bx = nums[0] || 100;
+    const by = nums[1] || 100;
+    const color = strokeColors[idx % strokeColors.length];
+    numberMarkers += `
+      <g>
+        <circle cx="${bx}" cy="${by}" r="8.5" fill="#0f172a" stroke="${color}" stroke-width="2"/>
+        <text x="${bx}" y="${by}" fill="${color}" font-size="9" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="'Inter', sans-serif">${idx+1}</text>
+      </g>
+    `;
+  });
+
+  const maskId = 'mask_' + Math.random().toString(36).substr(2, 9);
+  return `
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <mask id="${maskId}">
+          <rect width="200" height="200" fill="black" />
+          ${maskPaths}
+        </mask>
+      </defs>
+      <line x1="100" y1="12" x2="100" y2="188" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <line x1="12" y1="100" x2="188" y2="100" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+      <rect x="14" y="14" width="172" height="172" rx="16" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+      <!-- 밑그림 (완성형 폰트 가이드) -->
+      <text x="100" y="105"
+            text-anchor="middle" dominant-baseline="central"
+            font-size="135" font-weight="900"
+            font-family="'Noto Sans KR', sans-serif"
+            fill="rgba(255,255,255,0.12)">${ch}</text>
+
+      <!-- 획순대로 완벽하게 채워지는 글씨 -->
+      <text x="100" y="105"
+            text-anchor="middle" dominant-baseline="central"
+            font-size="135" font-weight="900"
+            font-family="'Noto Sans KR', sans-serif"
+            fill="#818cf8"
+            mask="url(#${maskId})">${ch}</text>
+
+      ${numberMarkers}
+    </svg>
+  `;
+}
+
+const testChars = ['괜', '안', '한', '가', '고', '꽃', '닭', '물'];
+const container = document.getElementById('cards');
+testChars.forEach(ch => {
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.innerHTML = `<h3>'${ch}' 100% 덮어쓰기</h3><div class="box">${renderCharSVG(ch)}</div>`;
+  container.appendChild(card);
+});
+</script>
+</body>
+</html>

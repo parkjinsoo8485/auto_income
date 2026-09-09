@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"><title>Verify Simulator Stroke</title></head>
+<body style="margin:0;background:#0a0f1e;">
+<iframe id="sim" src="../web_simulator.html" style="width:414px;height:896px;border:none;"></iframe>
+<script>
+  const iframe = document.getElementById('sim');
+  iframe.onload = () => {
+    setTimeout(() => {
+      const win = iframe.contentWindow;
+      // Switch to stroke mode
+      if (win.switchMode) {
+        win.switchMode('stroke');
+      }
+    }, 800);
+  };
+</script>
+</body>
+</html>

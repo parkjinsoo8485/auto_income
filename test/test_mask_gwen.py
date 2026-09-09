@@ -1,0 +1,249 @@
+import os
+import subprocess
+
+html_content = """<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@700;900&display=swap" rel="stylesheet">
+<style>
+body { background: #0f172a; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: 'Noto Sans KR', sans-serif; }
+.box { width: 260px; height: 260px; background: #1e293b; border: 2px dashed #6366f1; border-radius: 24px; display: flex; align-items: center; justify-content: center; position: relative; }
+svg { width: 240px; height: 240px; display: block; }
+@keyframes drawStrokeMask { to { stroke-dashoffset: 0; } }
+@keyframes showStrokeMarker { to { opacity: 1; } }
+</style>
+</head>
+<body>
+<div class="box" id="container"></div>
+
+<script>
+const _STROKE_CHOS  = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const _STROKE_JUNGS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const _STROKE_JONGS = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+const _STROKE_DOUBLE_JONGS = {
+  'ㄳ': ['ㄱ','ㅅ'], 'ㄵ': ['ㄴ','ㅈ'], 'ㄶ': ['ㄴ','ㅎ'],
+  'ㄺ': ['ㄹ','ㄱ'], 'ㄻ': ['ㄹ','ㅁ'], 'ㄼ': ['ㄹ','ㅂ'],
+  'ㄽ': ['ㄹ','ㅅ'], 'ㄾ': ['ㄹ','ㅌ'], 'ㄿ': ['ㄹ','ㅍ'],
+  'ㅀ': ['ㄹ','ㅎ'], 'ㅄ': ['ㅂ','ㅅ'],
+  'ㄲ': ['ㄱ','ㄱ'], 'ㅆ': ['ㅅ','ㅅ']
+};
+
+function decomposeHangulSyllable(ch) {
+  const code = ch.charCodeAt(0) - 0xAC00;
+  if (code < 0 || code > 11171) return { cho: ch, jung: null, jong: null };
+  const jong = code % 28;
+  const jung = Math.floor((code - jong) / 28) % 21;
+  const cho  = Math.floor((code - jong) / 28 / 21);
+  return { cho: _STROKE_CHOS[cho], jung: _STROKE_JUNGS[jung], jong: jong ? _STROKE_JONGS[jong] : null, choIdx: cho, jungIdx: jung, jongIdx: jong };
+}
+
+const HANGUL_STROKE_DB = {
+  'ㄱ': [{ d: 'M 18,22 L 82,22 L 82,85', desc: '1획: ㄱ' }],
+  'ㄴ': [{ d: 'M 22,18 L 22,82 L 85,82', desc: '1획: ㄴ' }],
+  'ㄷ': [{ d: 'M 18,22 L 82,22', desc: '1획' }, { d: 'M 22,22 L 22,82 L 82,82', desc: '2획' }],
+  'ㄹ': [{ d: 'M 18,20 L 82,20 L 82,48', desc: '1획' }, { d: 'M 18,48 L 82,48', desc: '2획' }, { d: 'M 18,48 L 18,82 L 85,82', desc: '3획' }],
+  'ㅁ': [{ d: 'M 20,18 L 20,84', desc: '1획' }, { d: 'M 20,20 L 82,20 L 82,84', desc: '2획' }, { d: 'M 18,82 L 84,82', desc: '3획' }],
+  'ㅂ': [{ d: 'M 22,18 L 22,82', desc: '1획' }, { d: 'M 78,18 L 78,82', desc: '2획' }, { d: 'M 20,50 L 80,50', desc: '3획' }, { d: 'M 20,82 L 80,82', desc: '4획' }],
+  'ㅅ': [{ d: 'M 50,18 L 18,84', desc: '1획' }, { d: 'M 44,42 L 82,84', desc: '2획' }],
+  'ㅇ': [{ d: 'M 50,16 C 30,16 16,31 16,50 C 16,69 30,84 50,84 C 70,84 84,69 84,50 C 84,31 70,16 50,16 Z', desc: '1획' }],
+  'ㅈ': [{ d: 'M 18,22 L 82,22', desc: '1획' }, { d: 'M 50,22 L 18,84', desc: '2획' }, { d: 'M 44,46 L 82,84', desc: '3획' }],
+  'ㅊ': [{ d: 'M 36,12 L 64,12', desc: '1획' }, { d: 'M 18,30 L 82,30', desc: '2획' }, { d: 'M 50,30 L 18,85', desc: '3획' }, { d: 'M 44,52 L 82,85', desc: '4획' }],
+  'ㅋ': [{ d: 'M 18,20 L 82,20 L 82,84', desc: '1획' }, { d: 'M 18,50 L 78,50', desc: '2획' }],
+  'ㅌ': [{ d: 'M 18,20 L 82,20', desc: '1획' }, { d: 'M 18,50 L 78,50', desc: '2획' }, { d: 'M 22,20 L 22,82 L 84,82', desc: '3획' }],
+  'ㅍ': [{ d: 'M 18,25 L 82,25', desc: '1획' }, { d: 'M 36,25 L 36,80', desc: '2획' }, { d: 'M 64,25 L 64,80', desc: '3획' }, { d: 'M 16,80 L 84,80', desc: '4획' }],
+  'ㅎ': [{ d: 'M 36,12 L 64,12', desc: '1획' }, { d: 'M 18,28 L 82,28', desc: '2획' }, { d: 'M 50,42 C 34,42 22,54 22,68 C 22,82 34,92 50,92 C 66,92 78,82 78,68 C 78,54 66,42 50,42 Z', desc: '3획' }],
+
+  'ㅏ': [{ d: 'M 50,15 L 50,85', desc: '1획' }, { d: 'M 50,48 L 85,48', desc: '2획' }],
+  'ㅐ': [{ d: 'M 35,15 L 35,85', desc: '1획' }, { d: 'M 35,48 L 65,48', desc: '2획' }, { d: 'M 65,15 L 65,85', desc: '3획' }],
+  'ㅑ': [{ d: 'M 50,15 L 50,85', desc: '1획' }, { d: 'M 50,36 L 85,36', desc: '2획' }, { d: 'M 50,60 L 85,60', desc: '3획' }],
+  'ㅓ': [{ d: 'M 15,48 L 50,48', desc: '1획' }, { d: 'M 50,15 L 50,85', desc: '2획' }],
+  'ㅔ': [{ d: 'M 35,48 L 65,48', desc: '1획' }, { d: 'M 35,15 L 35,85', desc: '2획' }, { d: 'M 65,15 L 65,85', desc: '3획' }],
+  'ㅕ': [{ d: 'M 15,36 L 50,36', desc: '1획' }, { d: 'M 15,60 L 50,60', desc: '2획' }, { d: 'M 50,15 L 50,85', desc: '3획' }],
+  'ㅗ': [{ d: 'M 50,18 L 50,56', desc: '1획' }, { d: 'M 15,56 L 85,56', desc: '2획' }],
+  'ㅛ': [{ d: 'M 36,18 L 36,56', desc: '1획' }, { d: 'M 64,18 L 64,56', desc: '2획' }, { d: 'M 15,56 L 85,56', desc: '3획' }],
+  'ㅜ': [{ d: 'M 15,44 L 85,44', desc: '1획' }, { d: 'M 50,44 L 50,82', desc: '2획' }],
+  'ㅠ': [{ d: 'M 15,44 L 85,44', desc: '1획' }, { d: 'M 36,44 L 36,82', desc: '2획' }, { d: 'M 64,44 L 64,82', desc: '3획' }],
+  'ㅡ': [{ d: 'M 15,50 L 85,50', desc: '1획' }],
+  'ㅢ': [{ d: 'M 15,50 L 68,50', desc: '1획' }, { d: 'M 72,18 L 72,82', desc: '2획' }],
+  'ㅣ': [{ d: 'M 50,15 L 50,85', desc: '1획' }]
+};
+
+function getSyllableLayoutParts(ch) {
+  const dec = decomposeHangulSyllable(ch);
+  if (!dec.jung) return [{ jamo: dec.cho || ch, x: 25, y: 25, w: 150, h: 150, role: 'single' }];
+  const { cho, jung, jong, jungIdx } = dec;
+  const hasJong = !!jong;
+  const isVert = [0,1,2,3,4,5,6,7,20].includes(jungIdx);
+  const isHoriz = [8,12,13,17,18].includes(jungIdx);
+  const parts = [];
+
+  if (isVert) {
+    if (!hasJong) {
+      parts.push({ jamo: cho, x: 26, y: 35, w: 72, h: 125, role: 'cho' });
+      parts.push({ jamo: jung, x: 104, y: 30, w: 72, h: 135, role: 'jung' });
+    } else {
+      parts.push({ jamo: cho, x: 26, y: 26, w: 70, h: 72, role: 'cho' });
+      parts.push({ jamo: jung, x: 104, y: 24, w: 70, h: 86, role: 'jung' });
+      parts.push({ jamo: jong, x: 40, y: 110, w: 120, h: 66, role: 'jong' });
+    }
+  } else if (isHoriz) {
+    if (!hasJong) {
+      parts.push({ jamo: cho, x: 45, y: 26, w: 110, h: 74, role: 'cho' });
+      parts.push({ jamo: jung, x: 26, y: 104, w: 148, h: 68, role: 'jung' });
+    } else {
+      parts.push({ jamo: cho, x: 48, y: 20, w: 104, h: 56, role: 'cho' });
+      parts.push({ jamo: jung, x: 30, y: 78, w: 140, h: 48, role: 'jung' });
+      parts.push({ jamo: jong, x: 44, y: 124, w: 112, h: 56, role: 'jong' });
+    }
+  } else {
+    const compMap = {
+      'ㅘ': ['ㅗ','ㅏ'], 'ㅙ': ['ㅗ','ㅐ'], 'ㅚ': ['ㅗ','ㅣ'],
+      'ㅝ': ['ㅜ','ㅓ'], 'ㅞ': ['ㅜ','ㅔ'], 'ㅟ': ['ㅜ','ㅣ'],
+      'ㅢ': ['ㅡ','ㅣ']
+    };
+    const [subH, subV] = compMap[jung] || ['ㅡ','ㅣ'];
+
+    if (!hasJong) {
+      parts.push({ jamo: cho, x: 28, y: 28, w: 70, h: 72, role: 'cho' });
+      parts.push({ jamo: subH, x: 24, y: 102, w: 82, h: 65, role: 'jung_h' });
+      parts.push({ jamo: subV, x: 108, y: 28, w: 68, h: 138, role: 'jung_v' });
+    } else {
+      // 복합모음 + 받침 ('괜')
+      parts.push({ jamo: cho, x: 26, y: 22, w: 64, h: 56, role: 'cho' });
+      parts.push({ jamo: subH, x: 22, y: 78, w: 72, h: 44, role: 'jung_h' });
+      parts.push({ jamo: subV, x: 102, y: 22, w: 72, h: 100, role: 'jung_v' });
+      parts.push({ jamo: jong, x: 38, y: 124, w: 124, h: 56, role: 'jong' });
+    }
+  }
+  return parts;
+}
+
+function scalePathCoords(d, x, y, w, h) {
+  let i = 0;
+  return d.replace(/[+-]?\d+\.?\d*/g, (num) => {
+    const val = parseFloat(num);
+    const res = (i % 2 === 0) ? (x + (val / 100) * w).toFixed(1) : (y + (val / 100) * h).toFixed(1);
+    i++;
+    return res;
+  });
+}
+
+function calcPathLength(d) {
+  const nums = d.replace(/[MCLZAmclza]/g,' ').trim().split(/[\s,]+/).filter(Boolean).map(Number);
+  let len = 0;
+  for (let i = 2; i < nums.length - 1; i += 2) {
+    const dx = nums[i] - nums[i-2];
+    const dy = nums[i+1] - nums[i-1];
+    len += Math.sqrt(dx*dx + dy*dy);
+  }
+  return Math.max(len, 80);
+}
+
+const curChar = '괜';
+const parts = getSyllableLayoutParts(curChar);
+const strokes = [];
+
+parts.forEach(part => {
+  let jamos = [part.jamo];
+  if (part.role === 'jong' && _STROKE_DOUBLE_JONGS[part.jamo]) {
+    jamos = _STROKE_DOUBLE_JONGS[part.jamo];
+  }
+  jamos.forEach((j, subIdx) => {
+    const list = HANGUL_STROKE_DB[j] || [];
+    let sx = part.x, sw = part.w;
+    if (jamos.length > 1) {
+      sw = part.w * 0.48;
+      sx = subIdx === 0 ? part.x : part.x + part.w * 0.52;
+    }
+    list.forEach(st => {
+      strokes.push({
+        d: scalePathCoords(st.d, sx, part.y, sw, part.h),
+        desc: st.desc
+      });
+    });
+  });
+});
+
+const strokeDur = 0.6;
+const gapDur = 0.2;
+const totalAnimTime = strokes.length * (strokeDur + gapDur);
+const strokeColors = ['#818cf8', '#a78bfa', '#f472b6', '#38bdf8', '#34d399', '#fbbf24', '#f87171', '#c084fc'];
+
+let maskPaths = '';
+let numberMarkers = '';
+
+strokes.forEach((st, idx) => {
+  const len = calcPathLength(st.d);
+  const delay = idx * (strokeDur + gapDur);
+  const color = strokeColors[idx % strokeColors.length];
+
+  maskPaths += `
+    <path d="${st.d}"
+          stroke="white"
+          stroke-width="32"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+          stroke-dasharray="${len.toFixed(1)}"
+          stroke-dashoffset="${len.toFixed(1)}"
+          style="animation: drawStrokeMask ${strokeDur.toFixed(2)}s linear ${delay.toFixed(2)}s forwards;" />
+  `;
+
+  const nums = st.d.replace(/[MCLZAmclza]/g,' ').trim().split(/[\s,]+/).filter(Boolean).map(Number);
+  const bx = nums[0] || 100;
+  const by = nums[1] || 100;
+  numberMarkers += `
+    <g style="opacity:0; transform-origin:${bx}px ${by}px; animation: showStrokeMarker 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) ${delay.toFixed(2)}s forwards;">
+      <circle cx="${bx}" cy="${by}" r="9" fill="#0f172a" stroke="${color}" stroke-width="2.5"/>
+      <text x="${bx}" y="${by}" fill="${color}" font-size="10" font-weight="900" text-anchor="middle" dominant-baseline="central" font-family="'Inter', sans-serif">${idx+1}</text>
+    </g>
+  `;
+});
+
+const maskId = 'hangul_mask_test';
+const svgHTML = `
+  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <mask id="${maskId}">
+        <rect width="200" height="200" fill="black" />
+        ${maskPaths}
+      </mask>
+    </defs>
+    <!-- 눈금 격자 -->
+    <line x1="100" y1="12" x2="100" y2="188" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <line x1="12" y1="100" x2="188" y2="100" stroke="rgba(255,255,255,0.08)" stroke-width="1"/>
+    <line x1="12" y1="12" x2="188" y2="188" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="188" y1="12" x2="12" y2="188" stroke="rgba(255,255,255,0.04)" stroke-width="1" stroke-dasharray="3,3"/>
+    <rect x="14" y="14" width="172" height="172" rx="16" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" stroke-dasharray="4,4"/>
+
+    <!-- 1. 밑그림 가이드 폰트 (연한 회색 완벽한 완성형 폰트) -->
+    <text x="100" y="105"
+          text-anchor="middle" dominant-baseline="central"
+          font-size="135" font-weight="900"
+          font-family="'Noto Sans KR', sans-serif"
+          fill="rgba(255,255,255,0.12)">${curChar}</text>
+
+    <!-- 2. 실제 획순 마스크로 완벽하게 채워지며 덮어쓰는 폰트 -->
+    <text x="100" y="105"
+          text-anchor="middle" dominant-baseline="central"
+          font-size="135" font-weight="900"
+          font-family="'Noto Sans KR', sans-serif"
+          fill="#818cf8"
+          mask="url(#${maskId})">${curChar}</text>
+
+    <!-- 3. 획 번호 마커 레이어 -->
+    ${numberMarkers}
+  </svg>
+`;
+
+document.getElementById('container').innerHTML = svgHTML;
+</script>
+</body>
+</html>"""
+
+with open("test/test_mask_gwen.html", "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+print("Generated test/test_mask_gwen.html")
