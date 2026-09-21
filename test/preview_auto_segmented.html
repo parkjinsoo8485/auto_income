@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>완성형 폰트 글리프 역분해(Auto-Segmentation) & 획순 정합 검증</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #070b14;
+    color: #f1f5f9;
+    font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", Roboto, sans-serif;
+    padding: 32px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    max-width: 800px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 10px;
+  }
+  p.subtitle {
+    color: #94a3b8;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .char-selector {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+  .char-btn {
+    background: #0f172a;
+    border: 1.5px solid #1e293b;
+    color: #cbd5e1;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 8px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .char-btn:hover {
+    border-color: #38bdf8;
+    color: #38bdf8;
+    transform: translateY(-2px);
+  }
+  .char-btn.active {
+    background: linear-gradient(135deg, #0284c7 0%, #6366f1 100%);
+    border-color: #38bdf8;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(56, 189, 248, 0.3);
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    width: 100%;
+    max-width: 1100px;
+  }
+  .card {
+    background: #0f172a;
+    border: 1.5px solid #1e293b;
+    border-radius: 20px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  }
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .card-desc {
+    font-size: 12px;
+    color: #64748b;
+    margin-bottom: 18px;
+    text-align: center;
+  }
+  .svg-box {
+    width: 260px;
+    height: 260px;
+    background: #020617;
+    border-radius: 16px;
+    border: 1.5px solid #1e293b;
+    position: relative;
+    overflow: hidden;
+  }
+  .svg-box svg {
+    width: 100%;
+    height: 100%;
+  }
+  .badge-legend {
+    display: flex;
+    gap: 12px;
+    margin-top: 14px;
+    font-size: 12px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+  .controls {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+  }
+  .btn-action {
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: #f1f5f9;
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-action:hover {
+    background: #334155;
+  }
+</style>
+<script src="../assets/hangul_font_vectors.js"></script>
+<script src="../assets/hangul_stroke_composer.js"></script>
+<script src="../assets/hangul_auto_segmenter.js"></script>
+</head>
+<body>
+
+<header>
+  <h1>✨ 완성형 글리프 역분해(Auto-Segmentation) & 획순 마스킹</h1>
+  <p class="subtitle">
+    디자이너가 빚은 고운돋움 폰트 본체를 <strong>[초성 조각] + [중성 조각] + [종성 조각]</strong>으로 100% 자동 분해하여,<br>
+    초성 획이 그어질 때 받침이나 모음으로 색이 <strong>1픽셀도 번지지 않는 완벽한 격리 획순 시스템</strong>을 증명합니다.
+  </p>
+</header>
+
+<div class="char-selector" id="charSelector"></div>
+
+<div class="grid-container">
+  <!-- 1. 원본 글리프 -->
+  <div class="card">
+    <div class="card-title">1. 고운돋움 원본 글리프</div>
+    <div class="card-desc">11,172자 완성형 폰트 원본 그대로의 외곽선</div>
+    <div class="svg-box" id="box-raw"></div>
+    <div class="badge-legend">
+      <div class="legend-item"><span class="legend-dot" style="background: #94a3b8;"></span><span>단일 글리프 패스</span></div>
+    </div>
+  </div>
+
+  <!-- 2. 자동 분해 세그먼트 -->
+  <div class="card">
+    <div class="card-title">2. 알고리즘 자동 역분해</div>
+    <div class="card-desc">서브패스 위상 분석으로 초·중·종성 조각 완벽 분리</div>
+    <div class="svg-box" id="box-segmented"></div>
+    <div class="badge-legend" id="legend-segmented">
+      <div class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span><span>초성</span></div>
+      <div class="legend-item"><span class="legend-dot" style="background: #c084fc;"></span><span>중성</span></div>
+      <div class="legend-item"><span class="legend-dot" style="background: #fb923c;"></span><span>종성</span></div>
+    </div>
+  </div>
+
+  <!-- 3. 격리 획순 마스킹 애니메이션 -->
+  <div class="card">
+    <div class="card-title">3. 격리 획순 애니메이션 (No Leak)</div>
+    <div class="card-desc">각 획은 오직 자기 자소의 살점만 칠함 (번짐 0%)</div>
+    <div class="svg-box" id="box-anim"></div>
+    <div class="badge-legend">
+      <div class="legend-item"><span class="legend-dot" style="background: #4ade80;"></span><span>실시간 획순 진행</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="controls">
+  <button class="btn-action" onclick="replayAnimation()">🔄 애니메이션 다시 재생</button>
+</div>
+
+<script>
+const TEST_CHARS = ['값', '닭', '곰', '꽃', '한', '광', '빛', '집', '가', '고', '과'];
+const urlParams = new URLSearchParams(window.location.search);
+let currentChar = urlParams.get('char') || '값';
+
+const fontData = window.HANGUL_FONT_VECTORS || window.HangulFontVectors || {};
+const meta = fontData.meta || { matrix: [0.17, 0, 0, -0.17, 18, 168] };
+const m = meta.matrix.join(' ');
+const PALETTE = ['#38bdf8', '#818cf8', '#c084fc', '#f472b6', '#fb923c', '#4ade80', '#2dd4bf', '#a78bfa'];
+
+function initSelector() {
+  const container = document.getElementById('charSelector');
+  TEST_CHARS.forEach(ch => {
+    const btn = document.createElement('button');
+    btn.className = 'char-btn' + (ch === currentChar ? ' active' : '');
+    btn.innerText = ch;
+    btn.onclick = () => {
+      document.querySelectorAll('.char-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentChar = ch;
+      renderAll(ch);
+    };
+    container.appendChild(btn);
+  });
+}
+
+function renderAll(ch) {
+  const sylData = fontData.syllables && fontData.syllables[ch];
+  if (!sylData) {
+    console.error(`'${ch}' 글리프 데이터를 찾을 수 없습니다.`);
+    return;
+  }
+
+  // 1. 원본 글리프
+  const rawBox = document.getElementById('box-raw');
+  rawBox.innerHTML = `
+    <svg viewBox="0 0 200 200">
+      <path d="${sylData.path}" fill="#94a3b8" transform="matrix(${m})" />
+    </svg>
+  `;
+
+  // 2. 자동 역분해
+  const seg = HangulAutoSegmenter.segmentGlyph(ch, sylData.path);
+  const segBox = document.getElementById('box-segmented');
+
+  let segHtml = `<svg viewBox="0 0 200 200">`;
+  if (seg.choPath) {
+    segHtml += `<path d="${seg.choPath}" fill="#38bdf8" transform="matrix(${m})" />`;
+  }
+  if (seg.jungPath) {
+    segHtml += `<path d="${seg.jungPath}" fill="#c084fc" transform="matrix(${m})" />`;
+  }
+  if (seg.jongPaths && seg.jongPaths.length > 0) {
+    if (seg.jongPaths.length === 1) {
+      segHtml += `<path d="${seg.jongPaths[0]}" fill="#fb923c" transform="matrix(${m})" />`;
+    } else {
+      segHtml += `<path d="${seg.jongPaths[0]}" fill="#fb923c" transform="matrix(${m})" />`;
+      segHtml += `<path d="${seg.jongPaths[1]}" fill="#f472b6" transform="matrix(${m})" />`;
+    }
+  }
+  segHtml += `</svg>`;
+  segBox.innerHTML = segHtml;
+
+  // 범례
+  const legendElem = document.getElementById('legend-segmented');
+  if (seg.jongPaths && seg.jongPaths.length > 1) {
+    legendElem.innerHTML = `
+      <div class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span><span>초성(${seg.dec.cho})</span></div>
+      <div class="legend-item"><span class="legend-dot" style="background: #c084fc;"></span><span>중성(${seg.dec.jung})</span></div>
+      <div class="legend-item"><span class="legend-dot" style="background: #fb923c;"></span><span>받침1</span></div>
+      <div class="legend-item"><span class="legend-dot" style="background: #f472b6;"></span><span>받침2</span></div>
+    `;
+  } else {
+    legendElem.innerHTML = `
+      <div class="legend-item"><span class="legend-dot" style="background: #38bdf8;"></span><span>초성(${seg.dec.cho})</span></div>
+      <div class="legend-item"><span class="legend-dot" style="background: #c084fc;"></span><span>중성(${seg.dec.jung})</span></div>
+      <div class="legend-item"><span class="legend-dot" style="background: #fb923c;"></span><span>종성(${seg.dec.jong || '-'})</span></div>
+    `;
+  }
+
+  // 3. 격리 마스킹 애니메이션
+  renderIsolatedStrokeAnim(ch, seg);
+}
+
+function renderIsolatedStrokeAnim(ch, seg) {
+  const plan = HangulStrokeComposer.composeStrokePlan(ch);
+  const strokes = plan.strokes;
+  const strokeDur = 0.65;
+  const gapDur = 0.2;
+
+  let defs = '';
+  let maskedGlyphs = '';
+  let animStyles = '';
+  let badgeSvg = '';
+
+  strokes.forEach((st, idx) => {
+    const maskId = `iso_mask_${ch}_${idx}`;
+    const color = PALETTE[idx % PALETTE.length];
+    const startTime = (idx * (strokeDur + gapDur)).toFixed(2);
+
+    let targetGlyphPath = '';
+    if (st.role === 'cho') {
+      targetGlyphPath = seg.choPath;
+    } else if (st.role === 'jung') {
+      targetGlyphPath = seg.jungPath;
+    } else if (st.role === 'jong') {
+      if (seg.jongPaths.length > 1) {
+        targetGlyphPath = st.bx < 100 ? seg.jongPaths[0] : seg.jongPaths[1];
+      } else {
+        targetGlyphPath = seg.jongPath;
+      }
+    }
+
+    defs += `
+      <mask id="${maskId}" maskUnits="userSpaceOnUse" x="0" y="0" width="200" height="200">
+        <path d="${st.d}" fill="none" stroke="white" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"
+              class="iso-stroke-${ch}-${idx}" />
+      </mask>
+    `;
+
+    maskedGlyphs += `
+      <g mask="url(#${maskId})">
+        <path d="${targetGlyphPath}" fill="${color}" transform="matrix(${m})" />
+      </g>
+    `;
+
+    badgeSvg += `
+      <g class="iso-badge-${ch}-${idx}">
+        <circle cx="${st.bx}" cy="${st.by}" r="8" fill="${color}" stroke="#0f172a" stroke-width="2" />
+        <text x="${st.bx}" y="${st.by + 3.5}" text-anchor="middle" font-size="9" font-weight="bold" fill="#070b14">${idx + 1}</text>
+      </g>
+    `;
+
+    animStyles += `
+      @keyframes isoDraw_${ch}_${idx} {
+        0% { stroke-dashoffset: ${st.len * 1.5}; opacity: 0; }
+        5% { opacity: 1; }
+        100% { stroke-dashoffset: 0; opacity: 1; }
+      }
+      .iso-stroke-${ch}-${idx} {
+        stroke-dasharray: ${st.len * 1.5};
+        stroke-dashoffset: ${st.len * 1.5};
+        animation: isoDraw_${ch}_${idx} ${strokeDur}s cubic-bezier(0.4, 0, 0.2, 1) ${startTime}s forwards;
+      }
+      @keyframes isoBadge_${ch}_${idx} {
+        0% { opacity: 0; transform: scale(0.3); }
+        70% { transform: scale(1.2); }
+        100% { opacity: 1; transform: scale(1); }
+      }
+      .iso-badge-${ch}-${idx} {
+        transform-origin: ${st.bx}px ${st.by}px;
+        animation: isoBadge_${ch}_${idx} 0.3s ease-out ${startTime}s forwards;
+        opacity: 0;
+      }
+    `;
+  });
+
+  const animBox = document.getElementById('box-anim');
+  animBox.innerHTML = `
+    <svg viewBox="0 0 200 200">
+      <style>${animStyles}</style>
+      <defs>${defs}</defs>
+      <path d="${seg.totalPath}" fill="#1e293b" opacity="0.4" transform="matrix(${m})" />
+      ${maskedGlyphs}
+      ${badgeSvg}
+    </svg>
+  `;
+}
+
+function replayAnimation() {
+  renderAll(currentChar);
+}
+
+initSelector();
+renderAll(currentChar);
+</script>
+
+</body>
+</html>

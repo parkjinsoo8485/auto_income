@@ -1,7 +1,12 @@
 """
 sync_composer.py - hangul_stroke_composer.js를 HTML 파일들에 동기화
 """
-import re, os
+import re, os, sys
+if sys.stdout.encoding != 'utf-8':
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+    except Exception:
+        pass
 
 COMPOSER_JS = os.path.join(os.path.dirname(__file__), '..', 'assets', 'hangul_stroke_composer.js')
 HTML_FILES = [

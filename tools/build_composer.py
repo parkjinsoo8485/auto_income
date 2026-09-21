@@ -69,22 +69,22 @@ composer_code = f'''/**
       {{ d: 'M 54,20 L 88,20 L 88,84', desc: '2획: 뒤 ㄱ' }}
     ],
     'ㄴ': [
-      {{ d: 'M 22,12 L 22,86 L 92,86', desc: '1획: 세로 후 가로' }}
+      {{ d: 'M 22,14 L 22,80 Q 22,86 28,86 L 90,86', desc: '1획: 세로 후 가로' }}
     ],
     'ㄷ': [
-      {{ d: 'M 16,18 L 88,18',         desc: '1획: 위 가로' }},
-      {{ d: 'M 20,18 L 20,86 L 90,86', desc: '2획: 세로 후 아래 가로' }}
+      {{ d: 'M 16,18 L 88,18',                         desc: '1획: 위 가로' }},
+      {{ d: 'M 22,18 L 22,80 Q 22,86 28,86 L 90,86',  desc: '2획: 세로 후 아래 가로' }}
     ],
     'ㄸ': [
-      {{ d: 'M 10,18 L 46,18',         desc: '1획: 앞 ㄷ 위' }},
-      {{ d: 'M 14,18 L 14,86 L 46,86', desc: '2획: 앞 ㄷ 아래' }},
-      {{ d: 'M 54,18 L 90,18',         desc: '3획: 뒤 ㄷ 위' }},
-      {{ d: 'M 58,18 L 58,86 L 90,86', desc: '4획: 뒤 ㄷ 아래' }}
+      {{ d: 'M 10,18 L 46,18',                         desc: '1획: 앞 ㄷ 위' }},
+      {{ d: 'M 14,18 L 14,80 Q 14,86 20,86 L 46,86',  desc: '2획: 앞 ㄷ 아래' }},
+      {{ d: 'M 54,18 L 90,18',                         desc: '3획: 뒤 ㄷ 위' }},
+      {{ d: 'M 58,18 L 58,80 Q 58,86 64,86 L 90,86',  desc: '4획: 뒤 ㄷ 아래' }}
     ],
     'ㄹ': [
-      {{ d: 'M 18,16 L 86,16 L 86,46', desc: '1획: ㄱ' }},
-      {{ d: 'M 18,46 L 86,46',         desc: '2획: 중간 가로' }},
-      {{ d: 'M 18,46 L 18,86 L 90,86', desc: '3획: ㄴ' }}
+      {{ d: 'M 18,16 L 86,16 L 86,46',                 desc: '1획: ㄱ' }},
+      {{ d: 'M 18,46 L 86,46',                         desc: '2획: 중간 가로' }},
+      {{ d: 'M 18,46 L 18,80 Q 18,86 26,86 L 90,86',  desc: '3획: ㄴ' }}
     ],
     'ㅁ': [
       {{ d: 'M 22,16 L 22,86',         desc: '1획: 왼 세로' }},
@@ -108,41 +108,41 @@ composer_code = f'''/**
       {{ d: 'M 54,86 L 90,86', desc: '8획: 뒤 ㅂ 아래 가로' }}
     ],
     'ㅅ': [
-      {{ d: 'M 50,14 L 16,86', desc: '1획: 왼 사선' }},
-      {{ d: 'M 42,42 L 86,86', desc: '2획: 오른 사선' }}
+      {{ d: 'M 50,14 Q 40,46 16,86', desc: '1획: 왼 사선' }},
+      {{ d: 'M 42,44 Q 60,64 84,86', desc: '2획: 오른 사선' }}
     ],
     'ㅆ': [
-      {{ d: 'M 32,16 L 10,84', desc: '1획: 앞 ㅅ 왼 사선' }},
-      {{ d: 'M 28,42 L 46,84', desc: '2획: 앞 ㅅ 오른 사선' }},
-      {{ d: 'M 70,16 L 52,84', desc: '3획: 뒤 ㅅ 왼 사선' }},
-      {{ d: 'M 66,42 L 90,84', desc: '4획: 뒤 ㅅ 오른 사선' }}
+      {{ d: 'M 32,16 Q 24,46 10,84', desc: '1획: 앞 ㅅ 왼 사선' }},
+      {{ d: 'M 26,44 Q 38,62 46,84', desc: '2획: 앞 ㅅ 오른 사선' }},
+      {{ d: 'M 70,16 Q 62,46 50,84', desc: '3획: 뒤 ㅅ 왼 사선' }},
+      {{ d: 'M 64,44 Q 78,62 90,84', desc: '4획: 뒤 ㅅ 오른 사선' }}
     ],
     'ㅇ': [
-      {{ d: 'M 50,14 C 26,14 14,30 14,50 C 14,70 26,86 50,86 C 74,86 86,70 86,50 C 86,30 74,14 50,14 Z', desc: '1획: 반시계 방향 원' }}
+      {{ d: 'M 50,14 C 27,14 15,30 15,50 C 15,70 27,86 50,86 C 73,86 85,70 85,50 C 85,30 73,14 50,14 Z', desc: '1획: 반시계 방향 원' }}
     ],
     'ㅈ': [
-      {{ d: 'M 16,20 L 84,20 L 50,54 L 16,86', desc: '1획: 가로 후 왼 사선' }},
-      {{ d: 'M 46,50 L 86,86',                 desc: '2획: 오른 사선' }}
+      {{ d: 'M 16,20 L 84,20 L 50,52 Q 38,68 16,86', desc: '1획: 가로 후 왼 사선' }},
+      {{ d: 'M 46,50 Q 64,68 84,86',                 desc: '2획: 오른 사선' }}
     ],
     'ㅉ': [
-      {{ d: 'M 10,20 L 46,20 L 28,52 L 10,84', desc: '1획: 앞 ㅈ 꺾임' }},
-      {{ d: 'M 26,48 L 46,84',                 desc: '2획: 앞 ㅈ 오른 사선' }},
-      {{ d: 'M 54,20 L 90,20 L 72,52 L 54,84', desc: '3획: 뒤 ㅈ 꺾임' }},
-      {{ d: 'M 70,48 L 90,84',                 desc: '4획: 뒤 ㅈ 오른 사선' }}
+      {{ d: 'M 10,20 L 46,20 L 28,52 Q 20,66 10,84', desc: '1획: 앞 ㅈ 꺾임' }},
+      {{ d: 'M 26,48 Q 36,64 46,84',                 desc: '2획: 앞 ㅈ 오른 사선' }},
+      {{ d: 'M 54,20 L 90,20 L 72,52 Q 64,66 54,84', desc: '3획: 뒤 ㅈ 꺾임' }},
+      {{ d: 'M 70,48 Q 80,64 90,84',                 desc: '4획: 뒤 ㅈ 오른 사선' }}
     ],
     'ㅊ': [
-      {{ d: 'M 36,8 L 64,8',                   desc: '1획: 꼭지 점획' }},
-      {{ d: 'M 16,28 L 84,28 L 50,58 L 16,88', desc: '2획: 가로 후 왼 사선' }},
-      {{ d: 'M 46,54 L 86,88',                 desc: '3획: 오른 사선' }}
+      {{ d: 'M 50,6 L 50,18',                         desc: '1획: 꼭지 점획' }},
+      {{ d: 'M 16,28 L 84,28 L 50,58 Q 38,72 16,88', desc: '2획: 가로 후 왼 사선' }},
+      {{ d: 'M 46,54 Q 64,70 84,88',                 desc: '3획: 오른 사선' }}
     ],
     'ㅋ': [
       {{ d: 'M 16,18 L 86,18 L 86,86', desc: '1획: ㄱ' }},
       {{ d: 'M 16,48 L 82,48',         desc: '2획: 중간 가로' }}
     ],
     'ㅌ': [
-      {{ d: 'M 16,18 L 86,18',         desc: '1획: 상 가로' }},
-      {{ d: 'M 16,48 L 82,48',         desc: '2획: 중 가로' }},
-      {{ d: 'M 20,18 L 20,86 L 88,86', desc: '3획: 세로 후 하 가로' }}
+      {{ d: 'M 16,18 L 86,18',                         desc: '1획: 상 가로' }},
+      {{ d: 'M 16,48 L 82,48',                         desc: '2획: 중 가로' }},
+      {{ d: 'M 20,18 L 20,82 Q 20,86 26,86 L 88,86',  desc: '3획: 세로 후 하 가로' }}
     ],
     'ㅍ': [
       {{ d: 'M 16,22 L 86,22', desc: '1획: 위 가로' }},
@@ -151,15 +151,15 @@ composer_code = f'''/**
       {{ d: 'M 14,82 L 88,82', desc: '4획: 아래 가로' }}
     ],
     'ㅎ': [
-      {{ d: 'M 38,10 L 62,10',                                                                              desc: '1획: 꼭지 점획' }},
-      {{ d: 'M 12,30 L 88,30',                                                                              desc: '2획: 가로' }},
-      {{ d: 'M 50,56 C 26,56 16,68 16,78 C 16,88 26,96 50,96 C 74,96 84,88 84,78 C 84,68 74,56 50,56 Z', desc: '3획: 원' }}
+      {{ d: 'M 50,6 L 50,18',                                                                                desc: '1획: 꼭지 점획' }},
+      {{ d: 'M 14,28 L 86,28',                                                                                desc: '2획: 가로' }},
+      {{ d: 'M 50,54 C 27,54 16,66 16,77 C 16,88 27,96 50,96 C 73,96 84,88 84,77 C 84,66 73,54 50,54 Z', desc: '3획: 원' }}
     ],
 
     // ── 모음 ──
     'ㅏ': [
       {{ d: 'M 58,4 L 58,98',  desc: '1획: 세로' }},
-      {{ d: 'M 58,50 L 96,50', desc: '2획: 가로' }}
+      {{ d: 'M 58,52 L 96,52', desc: '2획: 가로' }}
     ],
     'ㅐ': [
       {{ d: 'M 30,8 L 30,94',  desc: '1획: 왼 세로' }},
@@ -324,67 +324,83 @@ composer_code = f'''/**
     const slots = [];
 
     switch (type) {{
-      case SYLLABLE_TYPES.TYPE_1: {{ // 1형: 초성(좌측 0~45%) + 세로모음(우측 45~100%)
-        const isDoubleStem = [1, 3, 5, 7].includes(jungIdx); // ㅐ, ㅒ, ㅔ, ㅖ (2열 세로 기둥)
+      case SYLLABLE_TYPES.TYPE_1: {{ // 1형: 초성(좌측) + 세로모음(우측)
+        const isDoubleStem = [1, 3, 5, 7].includes(jungIdx); // ㅐ, ㅒ, ㅔ, ㅖ
         if (isDoubleStem) {{
-          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 18, w: 86, h: 160, type: 1 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 94, y: 14, w: 88, h: 172, type: 1 }});
+          slots.push({{ jamo: cho, role: 'cho', x: 20, y: 22, w: 88, h: 156, type: 1 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 92, y: 16, w: 88, h: 168, type: 1 }});
         }} else {{
-          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 18, w: 88, h: 160, type: 1 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 100, y: 14, w: 78, h: 172, type: 1 }});
+          // 고운돋움 실측 '사': 'ㅅ' x=[21, 112], 'ㅏ' 기둥 x=130.3, 가지 x=164.0
+          slots.push({{ jamo: cho, role: 'cho', x: 20, y: 22, w: 92, h: 156, type: 1 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 82, y: 16, w: 85, h: 168, type: 1 }});
         }}
         break;
       }}
-      case SYLLABLE_TYPES.TYPE_2: {{ // 2형: 초성(상단 0~45%) + 가로모음(하단 45~100%)
+      case SYLLABLE_TYPES.TYPE_2: {{ // 2형: 초성(상단) + 가로모음(하단)
         if (jungIdx === 8 || jungIdx === 12) {{ // ㅗ, ㅛ
-          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 14, w: 152, h: 90, type: 2 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 22, y: 98, w: 156, h: 48, type: 2 }});
+          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 22, w: 152, h: 84, type: 2 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 22, y: 104, w: 156, h: 48, type: 2 }});
         }} else if (jungIdx === 13 || jungIdx === 17) {{ // ㅜ, ㅠ
-          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 14, w: 152, h: 88, type: 2 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 22, y: 95, w: 156, h: 56, type: 2 }});
+          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 20, w: 152, h: 84, type: 2 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 22, y: 100, w: 156, h: 52, type: 2 }});
         }} else {{ // ㅡ
-          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 14, w: 152, h: 92, type: 2 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 22, y: 102, w: 156, h: 48, type: 2 }});
+          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 22, w: 152, h: 84, type: 2 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 22, y: 104, w: 156, h: 48, type: 2 }});
         }}
         break;
       }}
-      case SYLLABLE_TYPES.TYPE_3: {{ // 3형: 초성(좌상단 0~45%) + 복합모음(우·하단 45~100%)
+      case SYLLABLE_TYPES.TYPE_3: {{ // 3형: 초성(좌상단) + 복합모음(우·하단)
         const [subH, subV] = COMPOSITE_VOWELS[jung] || ['ㅡ', 'ㅣ'];
-        slots.push({{ jamo: cho, role: 'cho', x: 20, y: 14, w: 98, h: 80, type: 3 }});
-        slots.push({{ jamo: subH, role: 'jung_h', x: 18, y: 91, w: 104, h: 44, type: 3 }});
-        slots.push({{ jamo: subV, role: 'jung_v', x: 118, y: 14, w: 62, h: 172, type: 3 }});
+        if (subV === 'ㅣ') {{ // ㅚ (회, 외, 최), ㅟ (위, 귀, 취), ㅢ (의, 희)
+          // 고운돋움 실측 '회': 초성 x=[32, 117] 중심=75, 'ㅣ' 기둥 x=[129, 141] 중심=135.3
+          slots.push({{ jamo: cho, role: 'cho', x: 32, y: 24, w: 86, h: 86, type: 3 }});
+          slots.push({{ jamo: subH, role: 'jung_h', x: 24, y: 104, w: 108, h: 42, type: 3 }});
+          slots.push({{ jamo: subV, role: 'jung_v', x: 91, y: 24, w: 76, h: 152, type: 3 }});
+        }} else {{ // ㅘ (과, 와, 화), ㅙ (왜, 쾌), ㅝ (워, 궈), ㅞ (웨, 훼)
+          // 고운돋움 실측 '화', '과': 초성 중심=75, 'ㅏ' 기둥 x=131.3, 가지 끝 x=163.6
+          slots.push({{ jamo: cho, role: 'cho', x: 32, y: 24, w: 86, h: 86, type: 3 }});
+          slots.push({{ jamo: subH, role: 'jung_h', x: 24, y: 104, w: 104, h: 42, type: 3 }});
+          slots.push({{ jamo: subV, role: 'jung_v', x: 82, y: 24, w: 85, h: 152, type: 3 }});
+        }}
         break;
       }}
-      case SYLLABLE_TYPES.TYPE_4: {{ // 4형: 초성(상단 좌) + 세로모음(상단 우) + 종성(하단 전체 50~100%)
-        slots.push({{ jamo: cho, role: 'cho', x: 22, y: 16, w: 84, h: 78, type: 4 }});
-        slots.push({{ jamo: jung, role: 'jung', x: 108, y: 14, w: 72, h: 82, type: 4 }});
-        slots.push({{ jamo: jong, role: 'jong', x: 28, y: 108, w: 144, h: 76, type: 4 }});
+      case SYLLABLE_TYPES.TYPE_4: {{ // 4형: 초성(상단 좌) + 세로모음(상단 우) + 종성(하단)
+        // 고운돋움 실측 '안': 초성 x=[31, 99], 'ㅏ' 기둥 x=131.3, 종성 x=[62, 145]
+        slots.push({{ jamo: cho, role: 'cho', x: 24, y: 22, w: 82, h: 80, type: 4 }});
+        slots.push({{ jamo: jung, role: 'jung', x: 82, y: 16, w: 85, h: 92, type: 4 }});
+        slots.push({{ jamo: jong, role: 'jong', x: 34, y: 114, w: 132, h: 66, type: 4 }});
         break;
       }}
-      case SYLLABLE_TYPES.TYPE_5: {{ // 5형: 초성(상단 0~35%) + 가로모음(중단 35~65%) + 종성(하단 전체 65~100%)
-        // 글자 '문', '곰' 및 가로모음 받침 글자의 완벽한 3단 황금 분할
+      case SYLLABLE_TYPES.TYPE_5: {{ // 5형: 초성(상단) + 가로모음(중단) + 종성(하단)
+        // 고운돋움 실측 '곰': 초성 x=[56, 141], 'ㅗ' x=[28, 166], 'ㅁ' x=[58, 138]
         if (jungIdx === 13 || jungIdx === 17) {{ // ㅜ, ㅠ (문, 물, 눈, 국)
-          slots.push({{ jamo: cho, role: 'cho', x: 42, y: 12, w: 116, h: 58, type: 5 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 26, y: 84, w: 148, h: 44, type: 5 }});
-          slots.push({{ jamo: jong, role: 'jong', x: 38, y: 116, w: 124, h: 64, type: 5 }});
+          slots.push({{ jamo: cho, role: 'cho', x: 38, y: 16, w: 124, h: 56, type: 5 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 24, y: 76, w: 152, h: 42, type: 5 }});
+          slots.push({{ jamo: jong, role: 'jong', x: 34, y: 116, w: 132, h: 64, type: 5 }});
         }} else if (jungIdx === 8 || jungIdx === 12) {{ // ㅗ, ㅛ (곰, 손, 돈, 봄, 온, 꽃)
-          // 중성(ㅗ) 가로선과 종성(ㅁ) 상단 사이의 간격을 쾌적하게 넓혀 시각적 여백 확보
-          slots.push({{ jamo: cho, role: 'cho', x: 42, y: 12, w: 116, h: 48, type: 5 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 26, y: 64, w: 148, h: 38, type: 5 }});
-          slots.push({{ jamo: jong, role: 'jong', x: 38, y: 126, w: 124, h: 60, type: 5 }});
+          slots.push({{ jamo: cho, role: 'cho', x: 38, y: 16, w: 124, h: 52, type: 5 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 24, y: 70, w: 152, h: 42, type: 5 }});
+          slots.push({{ jamo: jong, role: 'jong', x: 34, y: 116, w: 132, h: 64, type: 5 }});
         }} else {{ // ㅡ (글, 등, 금, 은)
-          slots.push({{ jamo: cho, role: 'cho', x: 42, y: 12, w: 116, h: 58, type: 5 }});
-          slots.push({{ jamo: jung, role: 'jung', x: 26, y: 78, w: 148, h: 44, type: 5 }});
-          slots.push({{ jamo: jong, role: 'jong', x: 38, y: 116, w: 124, h: 64, type: 5 }});
+          slots.push({{ jamo: cho, role: 'cho', x: 38, y: 16, w: 124, h: 54, type: 5 }});
+          slots.push({{ jamo: jung, role: 'jung', x: 24, y: 74, w: 152, h: 42, type: 5 }});
+          slots.push({{ jamo: jong, role: 'jong', x: 34, y: 116, w: 132, h: 64, type: 5 }});
         }}
         break;
       }}
-      case SYLLABLE_TYPES.TYPE_6: {{ // 6형: 복합모음 + 받침 (원, 권, 월, 환, 광)
+      case SYLLABLE_TYPES.TYPE_6: {{ // 6형: 복합모음 + 받침 (원, 권, 월, 환, 광, 횡)
         const [subH, subV] = COMPOSITE_VOWELS[jung] || ['ㅡ', 'ㅣ'];
-        slots.push({{ jamo: cho, role: 'cho', x: 18, y: 14, w: 94, h: 54, type: 6 }});
-        slots.push({{ jamo: subH, role: 'jung_h', x: 16, y: 69, w: 98, h: 36, type: 6 }});
-        slots.push({{ jamo: subV, role: 'jung_v', x: 122, y: 14, w: 58, h: 102, type: 6 }});
-        slots.push({{ jamo: jong, role: 'jong', x: 34, y: 122, w: 144, h: 60, type: 6 }});
+        if (subV === 'ㅣ') {{ // ㅚ, ㅟ, ㅢ + 받침 (횡, 획, 휜)
+          slots.push({{ jamo: cho, role: 'cho', x: 28, y: 16, w: 84, h: 52, type: 6 }});
+          slots.push({{ jamo: subH, role: 'jung_h', x: 22, y: 68, w: 112, h: 34, type: 6 }});
+          slots.push({{ jamo: subV, role: 'jung_v', x: 91, y: 14, w: 76, h: 94, type: 6 }});
+          slots.push({{ jamo: jong, role: 'jong', x: 28, y: 116, w: 144, h: 68, type: 6 }});
+        }} else {{ // ㅘ, ㅙ, ㅝ, ㅞ + 받침 (광, 환, 권, 월)
+          slots.push({{ jamo: cho, role: 'cho', x: 24, y: 16, w: 84, h: 52, type: 6 }});
+          slots.push({{ jamo: subH, role: 'jung_h', x: 20, y: 68, w: 98, h: 34, type: 6 }});
+          slots.push({{ jamo: subV, role: 'jung_v', x: 82, y: 14, w: 85, h: 94, type: 6 }});
+          slots.push({{ jamo: jong, role: 'jong', x: 28, y: 116, w: 144, h: 68, type: 6 }});
+        }}
         break;
       }}
       default: {{
@@ -490,6 +506,20 @@ composer_code = f'''/**
         }}
 
         let rawStrokes = STROKE_DB[j] || [];
+        // 복합 모음(ㅘ, ㅚ, ㅟ 등)에서 가로모음(ㅗ, ㅜ)이 오른쪽 세로 기둥에 자연스럽게 닿도록 연결
+        if (slot.role === 'jung_h') {{
+          if (j === 'ㅗ') {{
+            rawStrokes = [
+              {{ d: 'M 48,6 L 48,92', desc: '1획: 세로' }},
+              {{ d: 'M 6,92 L 100,92', desc: '2획: 가로' }}
+            ];
+          }} else if (j === 'ㅜ') {{
+            rawStrokes = [
+              {{ d: 'M 6,8 L 100,8', desc: '1획: 가로' }},
+              {{ d: 'M 48,8 L 48,94', desc: '2획: 세로' }}
+            ];
+          }}
+        }}
         // 복합 모음(ㅝ, ㅞ 등)에서 세로모음(ㅓ, ㅔ)의 가로 가지 위치를 'ㅜ'의 높이에 맞춰 하향 조정
         if (slot.role === 'jung_v') {{
           if (j === 'ㅓ') {{
@@ -566,7 +596,32 @@ composer_code = f'''/**
     const strokeDur = 0.65 / opts.speed;
     const gapDur = 0.22 / opts.speed;
 
-    // ── 1. 동적 획순 스트로크(Strokes) 및 번호 마커 생성 ──
+    // ── 1. 정통 서예 캘리그라피 가변 획 두께 계산기 (Master Calligraphic Nib Shaper) ──
+    function getCalligraphicWidth(st, baseWidth) {{
+      const desc = st.desc || '';
+      const d = st.d || '';
+      if (desc.includes('꼭지') || desc.includes('점')) return 8.5;
+
+      const nums = d.replace(/[MCLZQAmclzqa]/g, ' ').trim().split(/[\\s,]+/).filter(Boolean).map(Number);
+      let totalDx = 0, totalDy = 0;
+      for (let i = 2; i < nums.length - 1; i += 2) {{
+        totalDx += Math.abs(nums[i] - nums[i - 2]);
+        totalDy += Math.abs(nums[i + 1] - nums[i - 1]);
+      }}
+
+      // 순수 가로획 (Horizontal stem): 날렵하고 단아한 7.5px
+      if (totalDx > totalDy * 2.2) return 7.5;
+      // 순수 세로획 (Vertical stem): 기둥을 묵직하고 당당히 세우는 13.8px
+      if (totalDy > totalDx * 2.2) return 13.8;
+      // 사선 (Diagonal): 9.5px
+      if (desc.includes('사선')) return 9.5;
+      // 원 (Circle/Oval): 10.5px
+      if (desc.includes('원')) return 10.5;
+      // 꺾임 (Turns, e.g. ㄱ, ㄴ, ㄷ, ㄹ 모서리): 11.2px
+      return 11.2;
+    }}
+
+    // ── 2. 동적 획순 스트로크(Strokes) 및 번호 마커 생성 ──
     let strokePaths = '';
     let strokeMarkers = '';
     let animStyles = '';
@@ -575,6 +630,7 @@ composer_code = f'''/**
       const color = PALETTE[idx % PALETTE.length];
       const startTime = (idx * (strokeDur + gapDur)).toFixed(2);
       const isVisible = opts.activeStroke === -1 || idx <= opts.activeStroke;
+      const stWidth = getCalligraphicWidth(st, opts.strokeWidth || 11);
 
       if (opts.animated) {{
         animStyles += `
@@ -589,9 +645,9 @@ composer_code = f'''/**
             100% {{ opacity: 1; transform: scale(1); }}
           }}
           .stroke-path-${{idx}} {{
-            stroke-dasharray: ${{st.len}};
-            stroke-dashoffset: ${{st.len}};
-            animation: strokeDraw_${{idx}} ${{strokeDur}}s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            stroke-dasharray: ${{Math.round(st.len * 1.05)}};
+            stroke-dashoffset: ${{Math.round(st.len * 1.05)}};
+            animation: strokeDraw_${{idx}} ${{strokeDur}}s cubic-bezier(0.35, 0, 0.25, 1) forwards;
             animation-delay: ${{startTime}}s;
           }}
           .stroke-badge-${{idx}} {{
@@ -609,7 +665,7 @@ composer_code = f'''/**
 
       strokePaths += `
         <path id="stroke_path_${{idx}}" class="${{pathClass}}" d="${{st.d}}"
-              fill="none" stroke="${{color}}" stroke-width="${{opts.strokeWidth}}"
+              fill="none" stroke="${{color}}" stroke-width="${{stWidth}}"
               stroke-linecap="round" stroke-linejoin="round"
               style="${{displayStyle}}"
               data-stroke-idx="${{idx}}" data-jamo="${{st.jamo}}" data-desc="${{st.desc}}"/>
@@ -618,8 +674,8 @@ composer_code = f'''/**
       if (opts.showNumbers) {{
         strokeMarkers += `
           <g id="stroke_badge_${{idx}}" class="${{markerClass}}" style="${{displayStyle}}">
-            <circle cx="${{st.bx}}" cy="${{st.by}}" r="10" fill="#0f172a" stroke="${{color}}" stroke-width="2" />
-            <text x="${{st.bx}}" y="${{st.by + 3.5}}" text-anchor="middle" font-size="9.5" font-weight="900" fill="#ffffff" font-family="'Inter', sans-serif">${{idx + 1}}</text>
+            <circle cx="${{st.bx}}" cy="${{st.by}}" r="8.5" fill="#0f172a" stroke="${{color}}" stroke-width="2" />
+            <text x="${{st.bx}}" y="${{st.by + 3.2}}" text-anchor="middle" font-size="9" font-weight="900" fill="#ffffff" font-family="'Gowun Dodum', 'Inter', sans-serif">${{idx + 1}}</text>
           </g>
         `;
       }}
@@ -637,6 +693,20 @@ composer_code = f'''/**
       `;
     }}
 
+    // 1-1. 고운돋움 폰트 실루엣 가이드 레이어 (선택적 옵션, 기본값은 순수 서예 획 렌더링)
+    let fontSilhouette = '';
+    if (opts.showSilhouette === true) {{
+      const syl = FONT_VECTORS.syllables && FONT_VECTORS.syllables[char];
+      if (syl && syl.p) {{
+        const mat = (FONT_VECTORS.meta && FONT_VECTORS.meta.matrix) || [0.17, 0, 0, -0.17, 18.0, 168.0];
+        fontSilhouette = `
+        <g id="hangul_font_silhouette" opacity="0.18">
+          <path d="${{syl.p}}" transform="matrix(${{mat.join(' ')}})" fill="#ffffff" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
+        </g>
+        `;
+      }}
+    }}
+
     return `
       <svg id="hangul_composer_svg" viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
         <defs>
@@ -649,6 +719,9 @@ composer_code = f'''/**
         <g id="hangul_grid_group">
           ${{gridElements}}
         </g>
+
+        <!-- 1-1. 고운돋움 폰트 실루엣 가이드 레이어 -->
+        ${{fontSilhouette}}
 
         <!-- 2. 컬러 획순 스트로크 레이어 (Sequential Animated Paths) -->
         <g id="hangul_strokes_group">

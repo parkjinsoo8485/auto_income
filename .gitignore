@@ -45,6 +45,12 @@ results_utf8.tsv
 sample_tsv.json
 debug_view.json
 
+# Node.js & Next.js
+node_modules/
+.next/
+out/
+*.log
+
 # System & IDE
 .DS_Store
 Thumbs.db
