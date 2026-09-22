@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>한글 전체 자모(40자) HanziWriter 검증 뷰어</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <!-- 로컬 파일(file://) 실행 시 CORS 방지를 위해 script 태그로 데이터 로드 -->
+  <script src="./hangul_strokes_db.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Pretendard", "Segoe UI", sans-serif; background: #f8fafc; color: #1e293b; padding: 24px; }
+    .header { text-align: center; margin-bottom: 24px; }
+    .header h1 { font-size: 26px; font-weight: 700; color: #0f172a; margin-bottom: 6px; }
+    .header p { color: #64748b; font-size: 14px; }
+    
+    .layout { display: flex; gap: 24px; max-width: 1100px; margin: 0 auto; }
+    .left-panel { flex: 1; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .right-panel { width: 360px; background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; position: sticky; top: 24px; height: fit-content; }
+    
+    .section-title { font-size: 15px; font-weight: 600; color: #475569; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+    .badge { background: #e0f2fe; color: #0369a1; font-size: 12px; padding: 2px 8px; border-radius: 9999px; }
+    
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 8px; margin-bottom: 24px; }
+    .jamo-btn { height: 44px; border: 1px solid #e2e8f0; background: #f8fafc; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; color: #334155; }
+    .jamo-btn:hover { background: #eff6ff; border-color: #93c5fd; color: #2563eb; transform: translateY(-1px); }
+    .jamo-btn.active { background: #2563eb; border-color: #2563eb; color: white; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.3); }
+
+    #hangul-target { border: 2px dashed #cbd5e1; border-radius: 12px; margin-bottom: 20px; background: #ffffff; }
+    .char-info { font-size: 20px; font-weight: 700; margin-bottom: 12px; color: #0f172a; }
+    .btn-group { display: flex; gap: 8px; width: 100%; margin-bottom: 12px; }
+    .btn-action { flex: 1; padding: 10px; font-size: 14px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-primary:hover { background: #1d4ed8; }
+    .btn-secondary { background: #f1f5f9; color: #334155; }
+    .btn-secondary:hover { background: #e2e8f0; }
+
+    .status-box { width: 100%; padding: 10px 12px; background: #f8fafc; border-radius: 6px; font-size: 13px; color: #64748b; text-align: center; border: 1px solid #f1f5f9; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+    .json-preview { margin-top: 16px; width: 100%; font-family: monospace; font-size: 11px; background: #0f172a; color: #e2e8f0; padding: 10px; border-radius: 6px; max-height: 140px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>한글 전체 자모(40자) HanziWriter 검증 뷰어</h1>
+  <p>자동 생성된 <code>hangul_strokes_db.json</code>의 각 획순 외곽선(strokes) 및 뼈대(medians) 실시간 렌더링</p>
+</div>
+
+<div class="layout">
+  <!-- 좌측: 자모 선택 그리드 -->
+  <div class="left-panel">
+    <div class="section-title">
+      <span>기본 자음 (14자)</span>
+      <span class="badge">1~4획</span>
+    </div>
+    <div class="grid" id="grid-basic-consonants"></div>
+
+    <div class="section-title">
+      <span>쌍자음 (5자)</span>
+      <span class="badge">2~8획</span>
+    </div>
+    <div class="grid" id="grid-double-consonants"></div>
+
+    <div class="section-title">
+      <span>기본 모음 (10자)</span>
+      <span class="badge">1~3획</span>
+    </div>
+    <div class="grid" id="grid-basic-vowels"></div>
+
+    <div class="section-title">
+      <span>복합 모음 (11자)</span>
+      <span class="badge">2~5획</span>
+    </div>
+    <div class="grid" id="grid-complex-vowels"></div>
+  </div>
+
+  <!-- 우측: HanziWriter 렌더러 및 퀴즈 컨트롤 -->
+  <div class="right-panel">
+    <div class="char-info" id="char-title">선택된 자모: ㄱ (1획)</div>
+    <div id="hangul-target"></div>
+    
+    <div class="btn-group">
+      <button class="btn-action btn-primary" onclick="playAnim()">애니메이션</button>
+      <button class="btn-action btn-secondary" onclick="startQuiz()">직접 쓰기 퀴즈</button>
+    </div>
+    
+    <div class="status-box" id="status-box">자모를 선택하고 애니메이션을 재생해보세요.</div>
+
+    <div class="json-preview" id="json-preview">// JSON 데이터 미리보기</div>
+  </div>
+</div>
+
+<script>
+  let STROKES_DB = null;
+  let currentWriter = null;
+  let currentChar = 'ㄱ';
+
+  const basicConsonants = ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅅ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'];
+  const doubleConsonants = ['ㄲ', 'ㄸ', 'ㅃ', 'ㅆ', 'ㅉ'];
+  const basicVowels = ['ㅏ', 'ㅑ', 'ㅓ', 'ㅕ', 'ㅗ', 'ㅛ', 'ㅜ', 'ㅠ', 'ㅡ', 'ㅣ'];
+  const complexVowels = ['ㅐ', 'ㅒ', 'ㅔ', 'ㅖ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅢ'];
+
+  // DB 초기화 함수
+  function initDatabase(data) {
+    STROKES_DB = data;
+    initGrids();
+    selectChar('ㄱ');
+  }
+
+  // 1. <script src="./hangul_strokes_db.js">로 이미 로드된 경우 즉시 실행 (file:// 프로토콜 호환)
+  if (window.HANGUL_STROKES_DB) {
+    initDatabase(window.HANGUL_STROKES_DB);
+  } else {
+    // 2. HTTP 서버 환경일 경우 fetch로 fallback
+    fetch('./hangul_strokes_db.json')
+      .then(res => res.json())
+      .then(data => initDatabase(data))
+      .catch(err => {
+        document.getElementById('status-box').textContent = 'DB 로드 실패: ' + err.message;
+      });
+  }
+
+  function initGrids() {
+    createButtons('grid-basic-consonants', basicConsonants);
+    createButtons('grid-double-consonants', doubleConsonants);
+    createButtons('grid-basic-vowels', basicVowels);
+    createButtons('grid-complex-vowels', complexVowels);
+  }
+
+  function createButtons(containerId, list) {
+    const container = document.getElementById(containerId);
+    list.forEach(c => {
+      const btn = document.createElement('button');
+      btn.className = 'jamo-btn';
+      btn.id = 'btn-' + c;
+      btn.textContent = c;
+      btn.onclick = () => selectChar(c);
+      container.appendChild(btn);
+    });
+  }
+
+  function selectChar(c) {
+    if (!STROKES_DB || !STROKES_DB[c]) return;
+    currentChar = c;
+
+    // 액티브 스타일 변경
+    document.querySelectorAll('.jamo-btn').forEach(b => b.classList.remove('active'));
+    const targetBtn = document.getElementById('btn-' + c);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    const charData = STROKES_DB[c];
+    document.getElementById('char-title').textContent = `선택된 자모: ${c} (${charData.strokeCount}획)`;
+    document.getElementById('status-box').textContent = `${c} 준비 완료 (${charData.strokeCount}개 획)`;
+    document.getElementById('json-preview').textContent = JSON.stringify(charData, null, 2);
+
+    renderHanziWriter(c, charData);
+  }
+
+  function renderHanziWriter(char, data) {
+    document.getElementById('hangul-target').innerHTML = '';
+    currentWriter = HanziWriter.create('hangul-target', char, {
+      width: 260,
+      height: 260,
+      showOutline: true,
+      showCharacter: false,
+      strokeColor: '#2563eb',
+      outlineColor: '#e2e8f0',
+      strokeAnimationSpeed: 1.2,
+      delayBetweenStrokes: 250,
+      charDataLoader: function(c, onComplete) {
+        onComplete(data);
+      }
+    });
+
+    // 즉시 애니메이션 1회 자동 재생
+    setTimeout(() => {
+      if (currentWriter) currentWriter.animateCharacter();
+    }, 150);
+  }
+
+  function playAnim() {
+    if (currentWriter) {
+      document.getElementById('status-box').textContent = `${currentChar} 애니메이션 재생 중...`;
+      currentWriter.animateCharacter({
+        onComplete: () => {
+          document.getElementById('status-box').textContent = '애니메이션 완료!';
+        }
+      });
+    }
+  }
+
+  function startQuiz() {
+    if (!currentWriter) return;
+    const statusBox = document.getElementById('status-box');
+    statusBox.textContent = `'${currentChar}'의 획순을 따라 마우스/터치로 써보세요!`;
+    currentWriter.quiz({
+      onMistake: (strokeData) => {
+        statusBox.textContent = `틀렸습니다! (오답 횟수: ${strokeData.mistakesOnStroke}회)`;
+      },
+      onCorrectStroke: (strokeData) => {
+        statusBox.textContent = `정답! (${strokeData.strokeNum + 1} / ${STROKES_DB[currentChar].strokeCount} 획)`;
+      },
+      onComplete: (summaryData) => {
+        statusBox.textContent = `축하합니다! 완성했습니다! (총 오답: ${summaryData.totalMistakes}회)`;
+      }
+    });
+  }
+</script>
+
+</body>
+</html>

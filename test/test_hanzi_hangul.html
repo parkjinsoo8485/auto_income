@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>HanziWriter 한글 'ㄱ' 테스트</title>
+  <!-- HanziWriter 라이브러리 로드 -->
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <style>
+    body { display: flex; flex-direction: column; align-items: center; padding-top: 50px; font-family: sans-serif; background: #f8fafc; }
+    .card { background: white; padding: 24px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; flex-direction: column; align-items: center; }
+    #hangul-target { border: 2px dashed #cbd5e1; border-radius: 8px; margin-bottom: 20px; background: white; }
+    .btn-group { display: flex; gap: 10px; }
+    button { padding: 10px 20px; font-size: 15px; font-weight: 600; cursor: pointer; background: #3b82f6; color: white; border: none; border-radius: 6px; transition: background 0.2s; }
+    button:hover { background: #2563eb; }
+    .status { margin-top: 15px; font-size: 14px; color: #64748b; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>'ㄱ' 획순 애니메이션 및 퀴즈 테스트</h2>
+    <div style="margin-bottom: 15px; display: flex; gap: 8px;">
+      <button style="background: #475569; font-size: 13px; padding: 6px 14px;" onclick="switchStyle('gungseo')">붓글씨(궁서체 곡선)</button>
+      <button style="background: #94a3b8; font-size: 13px; padding: 6px 14px;" onclick="switchStyle('gothic')">기본 고딕(직선)</button>
+    </div>
+    
+    <div id="hangul-target"></div>
+    
+    <div class="btn-group">
+      <button onclick="writer.animateCharacter()">애니메이션 보기</button>
+      <button onclick="startQuiz()">퀴즈 모드 (직접 쓰기)</button>
+    </div>
+    <div class="status" id="status-box">버튼을 눌러 테스트해보세요.</div>
+  </div>
+
+  <script>
+    // 사용자 정의 궁서체 곡선 'ㄱ' 데이터
+    const giyeokGungseo = {
+      "strokes": [
+        "M 200,750 Q 400,780 650,750 Q 750,730 750,650 Q 700,450 650,250 Q 630,200 600,250 Q 650,450 650,620 Q 450,650 200,650 Z"
+      ],
+      "medians": [
+        [
+          [250, 700],
+          [480, 720],
+          [690, 690],
+          [650, 480],
+          [625, 250]
+        ]
+      ]
+    };
+
+    const giyeokGothic = {
+      "strokes": [
+        "M 200,800 L 800,800 L 800,200 L 650,200 L 650,650 L 200,650 Z"
+      ],
+      "medians": [
+        [
+          [275, 725],
+          [500, 725],
+          [725, 725],
+          [725, 500],
+          [725, 275]
+        ]
+      ]
+    };
+
+    let currentStyle = 'gungseo';
+    let currentData = giyeokGungseo;
+
+    // 2. HanziWriter 렌더링 엔진 가동
+    function createWriter() {
+      document.getElementById('hangul-target').innerHTML = '';
+      window.writer = HanziWriter.create('hangul-target', 'ㄱ', {
+        width: 300,
+        height: 300,
+        showOutline: true,
+        showCharacter: false,
+        strokeColor: '#2563eb',
+        outlineColor: '#e2e8f0',
+        strokeAnimationSpeed: 1.2,
+        delayBetweenStrokes: 300,
+        charDataLoader: function(char, onComplete) {
+          onComplete(currentData);
+        }
+      });
+    }
+
+    function switchStyle(style) {
+      currentStyle = style;
+      currentData = (style === 'gungseo') ? giyeokGungseo : giyeokGothic;
+      createWriter();
+      document.getElementById('status-box').textContent = `${style === 'gungseo' ? '궁서체 곡선' : '기본 고딕'} 모드로 전환되었습니다.`;
+    }
+
+    createWriter();
+
+    function startQuiz() {
+      const statusBox = document.getElementById('status-box');
+      statusBox.textContent = "화면의 윤곽선을 따라 'ㄱ'을 마우스나 터치로 써보세요!";
+      writer.quiz({
+        onMistake: function(strokeData) {
+          statusBox.textContent = `틀렸습니다! (실수 횟수: ${strokeData.mistakesOnStroke})`;
+        },
+        onCorrectStroke: function(strokeData) {
+          statusBox.textContent = `잘하셨습니다! (${strokeData.strokeNum + 1}번째 획 완성)`;
+        },
+        onComplete: function(summaryData) {
+          statusBox.textContent = `축하합니다! 완벽하게 작성하셨습니다! 총 실수: ${summaryData.totalMistakes}회`;
+        }
+      });
+    }
+  </script>
+</body>
+</html>
