@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jamo Assembly Architecture Prototype</title>
+  <style>
+    :root {
+      --bg-dark: #070b14;
+      --card-bg: rgba(15, 23, 42, 0.82);
+      --accent-blue: #38bdf8;
+    }
+    
+    body {
+      background-color: var(--bg-dark);
+      color: white;
+      font-family: 'Pretendard', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px;
+      margin: 0;
+    }
+
+    .canvas-container {
+      background-color: var(--card-bg);
+      border: 1px solid rgba(56, 189, 248, 0.22);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 24px;
+      position: relative;
+    }
+
+    svg {
+      width: 300px;
+      height: 300px;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 25px 25px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    /* 가이드라인 (정중앙 십자선) */
+    .guideline {
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
+
+    .controls {
+      display: flex;
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    button {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: var(--accent-blue);
+      color: var(--bg-dark);
+    }
+
+    select {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--accent-blue);
+      color: white;
+      padding: 10px;
+      border-radius: 8px;
+    }
+  </style>
+  <script src="core_jamo_data.js"></script>
+</head>
+<body>
+
+  <h1>자모 조립형 듀얼 벡터 엔진</h1>
+  <p>완성형 폰트의 통짜 마스킹 한계를 극복한 자모 단위 조립 아키텍처</p>
+
+  <div class="controls">
+    <select id="charSelect">
+      <option value="ga">가 (ㄱ+ㅏ)</option>
+      <option value="go">고 (ㄱ+ㅗ)</option>
+      <option value="ggot">꽃 (ㄲ+ㅗ+ㅊ)</option>
+    </select>
+  </div>
+
+  <div class="canvas-container">
+    <svg id="drawArea" viewBox="0 0 200 200">
+      <line x1="100" y1="0" x2="100" y2="200" class="guideline"/>
+      <line x1="0" y1="100" x2="200" y2="100" class="guideline"/>
+      
+      <defs id="jamo_defs"></defs>
+      <g id="assembled_char"></g>
+    </svg>
+  </div>
+
+  <div class="controls">
+    <button id="btnPlay">▶ 애니메이션 재생</button>
+  </div>
+
+  <script>
+    // 조합 사전 (Layout Assembly Dictionary)
+    const CHAR_ASSEMBLY = {
+      'ga': [
+        { jamo: 'cho_g', transform: 'translate(20, 40) scale(1.0)' },
+        { jamo: 'jung_a', transform: 'translate(95, 30) scale(1.0)' }
+      ],
+      'go': [
+        { jamo: 'cho_g', transform: 'translate(45, 10) scale(1.1, 0.8)' },
+        { jamo: 'jung_o', transform: 'translate(40, 95) scale(1.2, 1.0)' }
+      ],
+      'ggot': [
+        { jamo: 'cho_gg', transform: 'translate(30, 10) scale(1.4, 0.8)' },
+        { jamo: 'jung_o', transform: 'translate(30, 80) scale(1.4, 0.7)' },
+        { jamo: 'jong_ch', transform: 'translate(30, 125) scale(1.4, 0.8)' }
+      ]
+    };
+
+    let allStrokes = [];
+    let animationFrameId;
+    let globalProgress = 0;
+    let isAnimating = false;
+    let startTimestamp = null;
+    const TOTAL_DURATION = 3500; // 3.5초
+
+    function init() {
+      document.getElementById('charSelect').addEventListener('change', buildCharacter);
+      document.getElementById('btnPlay').addEventListener('click', startAnimation);
+      buildCharacter();
+    }
+
+    function buildCharacter() {
+      cancelAnimationFrame(animationFrameId);
+      isAnimating = false;
+      globalProgress = 0;
+      allStrokes = [];
+
+      const charKey = document.getElementById('charSelect').value;
+      const components = CHAR_ASSEMBLY[charKey];
+      
+      const defs = document.getElementById('jamo_defs');
+      const container = document.getElementById('assembled_char');
+      
+      defs.innerHTML = '';
+      container.innerHTML = '';
+
+      components.forEach((comp, compIdx) => {
+        const jamoData = JAMO_DATA[comp.jamo];
+        if (!jamoData) return;
+
+        // 1. Group for Jamo
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('transform', comp.transform);
+
+        // 2. Create Mask
+        const maskId = `mask_${comp.jamo}_${compIdx}`;
+        const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+        mask.setAttribute('id', maskId);
+        mask.setAttribute('maskUnits', 'userSpaceOnUse');
+        
+        jamoData.strokes.forEach((st, stIdx) => {
+          const brush = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          brush.setAttribute('d', st.median);
+          brush.setAttribute('fill', 'none');
+          brush.setAttribute('stroke', 'white'); // White reveals the mask
+          brush.setAttribute('stroke-width', '24'); // Thick enough to cover the stylized outline
+          brush.setAttribute('stroke-linecap', 'round');
+          brush.setAttribute('stroke-linejoin', 'round');
+          
+          const maxOffset = st.length + 12; // Radius is 12
+          brush.setAttribute('stroke-dasharray', `${st.length} ${st.length + 150}`);
+          brush.setAttribute('stroke-dashoffset', maxOffset); // Start hidden
+          
+          brush.dataset.length = st.length;
+          brush.dataset.maxOffset = maxOffset;
+          
+          mask.appendChild(brush);
+          allStrokes.push(brush);
+        });
+        defs.appendChild(mask);
+
+        // 3. Render Stylized Outline with Mask applied
+        const outline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        outline.setAttribute('d', jamoData.outline);
+        outline.setAttribute('fill', 'var(--accent-blue)');
+        outline.setAttribute('mask', `url(#${maskId})`);
+        
+        g.appendChild(outline);
+
+        // 4. (Optional) Show faint skeleton for debugging
+        const skeleton = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        skeleton.setAttribute('d', jamoData.outline);
+        skeleton.setAttribute('fill', 'none');
+        skeleton.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+        skeleton.setAttribute('stroke-width', '1');
+        g.appendChild(skeleton);
+
+        container.appendChild(g);
+      });
+
+      updateStrokes(0);
+    }
+
+    function startAnimation() {
+      if (isAnimating) return;
+      isAnimating = true;
+      globalProgress = 0;
+      startTimestamp = null;
+      animationFrameId = requestAnimationFrame(step);
+    }
+
+    function step(timestamp) {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const elapsed = timestamp - startTimestamp;
+      
+      globalProgress = Math.min(elapsed / TOTAL_DURATION, 1.0);
+      updateStrokes(globalProgress);
+
+      if (globalProgress < 1.0) {
+        animationFrameId = requestAnimationFrame(step);
+      } else {
+        isAnimating = false;
+      }
+    }
+
+    function updateStrokes(progress) {
+      const totalStrokes = allStrokes.length;
+      if (totalStrokes === 0) return;
+      
+      const strokeSpan = 1.0 / totalStrokes;
+
+      allStrokes.forEach((brush, idx) => {
+        const stStart = idx * strokeSpan;
+        const stEnd = (idx + 1) * strokeSpan;
+        
+        let stProg = 0;
+        if (progress >= stEnd) {
+          stProg = 1.0;
+        } else if (progress > stStart) {
+          stProg = (progress - stStart) / strokeSpan;
+        }
+        
+        const maxOffset = parseFloat(brush.dataset.maxOffset);
+        
+        if (stProg === 0) {
+          brush.style.display = 'none';
+          brush.setAttribute('opacity', '0');
+        } else {
+          brush.style.display = 'block';
+          brush.setAttribute('opacity', '1');
+        }
+        
+        const offset = maxOffset * (1.0 - stProg);
+        brush.setAttribute('stroke-dashoffset', offset);
+      });
+    }
+
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>

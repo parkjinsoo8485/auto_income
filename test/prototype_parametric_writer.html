@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>파라메트릭 한글 획순 조립 엔진 (300음절 검증)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #090d16;
+      --panel-bg: rgba(21, 29, 45, 0.85);
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-amber: #f59e0b;
+      --accent-green: #10b981;
+      --text-main: #f8fafc;
+      --text-dim: #94a3b8;
+      --border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Pretendard', sans-serif;
+      margin: 0;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .header-bar {
+      text-align: center;
+      max-width: 900px;
+      margin-bottom: 24px;
+    }
+
+    .header-bar h1 {
+      font-size: 28px;
+      font-weight: 800;
+      margin: 0 0 8px 0;
+      background: linear-gradient(135deg, #38bdf8, #818cf8, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .header-bar p {
+      color: var(--text-dim);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    .main-layout {
+      display: flex;
+      gap: 24px;
+      max-width: 1200px;
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    /* 왼쪽: 뷰어 & 컨트롤 */
+    .left-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .char-input {
+      background: rgba(15, 23, 42, 0.8);
+      border: 2px solid var(--accent-blue);
+      border-radius: 10px;
+      color: white;
+      font-size: 24px;
+      font-weight: 800;
+      width: 70px;
+      height: 54px;
+      text-align: center;
+      outline: none;
+    }
+
+    .char-input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
+    }
+
+    button {
+      background: linear-gradient(135deg, #2563eb, #0284c7);
+      border: none;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 14px 24px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
+    }
+
+    button.btn-replay {
+      background: linear-gradient(135deg, #10b981, #059669);
+    }
+
+    .stage-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: #050811;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+    }
+
+    svg#stage {
+      width: 320px;
+      height: 320px;
+      background-image: 
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+      background-size: 20px 20px;
+      border-radius: 8px;
+    }
+
+    .guide-cross {
+      stroke: rgba(255, 255, 255, 0.15);
+      stroke-width: 1;
+      stroke-dasharray: 4 4;
+    }
+
+    .info-badge {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 6px 14px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 20px;
+      color: #38bdf8;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* 변환 파라미터 인스펙터 */
+    .param-inspector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .param-box {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      font-size: 12px;
+    }
+
+    .param-box h4 {
+      margin: 0 0 6px 0;
+      color: var(--accent-cyan);
+      font-size: 13px;
+    }
+
+    .param-box .coord {
+      color: var(--text-dim);
+      font-family: monospace;
+      line-height: 1.5;
+    }
+
+    /* 오른쪽: 300음절 갤러리 */
+    .right-column {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .gallery-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .category-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-color);
+      color: var(--text-dim);
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--accent-blue);
+      color: white;
+      border-color: var(--accent-blue);
+    }
+
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 6px;
+    }
+
+    .grid-cell {
+      background: rgba(15, 23, 42, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .grid-cell:hover {
+      background: var(--accent-blue);
+      color: white;
+      transform: scale(1.1);
+      z-index: 2;
+    }
+
+    .grid-cell.selected {
+      background: var(--accent-cyan);
+      color: #04101d;
+      font-weight: 900;
+      border-color: white;
+    }
+  </style>
+  <script src="parametric_jamo_db.js"></script>
+  <script src="hangul_parametric_engine.js"></script>
+</head>
+<body>
+
+  <div class="header-bar">
+    <h1>파라메트릭(Parametric) 한글 자모 조립 엔진</h1>
+    <p>40개 기본 자모 뼈대(100x100 Bounding Box) + 6대 모임꼴 변환 행렬(Matrix Transformation) $\rightarrow$ 300음절 검증</p>
+  </div>
+
+  <div class="main-layout">
+    <!-- 왼쪽: 스테이지 & 조작 -->
+    <div class="left-column">
+      <div class="card">
+        <div class="input-row">
+          <input type="text" id="targetChar" class="char-input" value="과" maxlength="1" />
+          <button id="btnRender">조립 및 렌더링</button>
+          <button id="btnPlayAnim" class="btn-replay">▶ 획순 애니메이션</button>
+        </div>
+
+        <div class="stage-wrapper">
+          <svg id="stage" viewBox="0 0 200 200">
+            <!-- 가이드라인 (정중앙 십자선) -->
+            <line x1="100" y1="0" x2="100" y2="200" class="guide-cross" />
+            <line x1="0" y1="100" x2="200" y2="100" class="guide-cross" />
+            
+            <defs id="stageDefs"></defs>
+            <g id="charLayer"></g>
+          </svg>
+          <div id="typeBadge" class="info-badge">모임꼴: 분석 대기</div>
+        </div>
+
+        <div class="param-inspector" id="paramInspector">
+          <!-- 변환 행렬 실시간 수치 표시 -->
+        </div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 300음절 데이터셋 갤러리 -->
+    <div class="right-column">
+      <div class="card">
+        <div class="gallery-header">
+          <h3 style="margin:0; font-size:16px;">상용 및 고난도 300음절 검증 세트</h3>
+          <span id="charCount" style="color:var(--text-dim); font-size:13px;">총 300자</span>
+        </div>
+
+        <div class="category-tabs" id="categoryTabs">
+          <button class="tab-btn active" data-cat="all">전체 (300자)</button>
+          <button class="tab-btn" data-cat="type1">세로모음/좌우 (가~히)</button>
+          <button class="tab-btn" data-cat="type3">가로모음/상하 (고~휴)</button>
+          <button class="tab-btn" data-cat="type5">섞임/복합 (과~의)</button>
+          <button class="tab-btn" data-cat="jong">받침 결합 (강~풀)</button>
+          <button class="tab-btn" data-cat="complex">고난도/겹받침 (닭~꽃)</button>
+        </div>
+
+        <div class="char-grid" id="charGrid" style="margin-top:14px;">
+          <!-- 300개 음절 셀이 동적으로 생성됩니다 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 300개 대표 상용 및 고난도 음절 데이터베이스
+    const DATASET_300 = [
+      // 1. 세로모음/좌우결합 (받침 없음) 50자
+      '가','나','다','라','마','바','사','아','자','차','카','타','파','하',
+      '개','내','대','래','매','배','새','애','재','채','캐','태','패','해',
+      '거','너','더','러','머','버','서','어','저','처','커','터','퍼','허',
+      '게','네','데','레','메','베','세','에',
+      // 2. 가로모음/상하결합 (받침 없음) 50자
+      '고','노','도','로','모','보','소','오','조','초','코','토','포','호',
+      '교','뇨','료','묘','쇼','요','죠','효',
+      '구','누','두','루','무','부','수','우','주','추','쿠','투','푸','후',
+      '규','류','뮤','슈','유','튜','휴',
+      '그','느','드','르','므','브','스','으','즈','츠','크','트','프','흐',
+      // 3. 섞임/복합결합 (과, 궈, 뇌, 의 등) 50자
+      '과','놔','돠','봐','좌','화','쾌','쇄','돼','왜','쾌',
+      '궈','둬','뤄','뭐','숴','워','줘','훠','궤','웨','훼',
+      '괴','뇌','되','뢰','뫼','뵈','쇠','외','죄','최','퇴','회',
+      '귀','뒤','뤼','뷔','쉬','위','쥐','취','퀴','튀','휘',
+      '의','희','늬','씌',
+      // 4. 일반 받침 결합 (강, 눈, 문, 달 등) 80자
+      '강','낭','당','랑','망','방','상','앙','장','창','캉','탕','팡','항',
+      '간','난','단','란','만','반','산','안','잔','찬','칸','탄','판','한',
+      '갈','날','달','랄','말','발','살','알','잘','찰','칼','탈','팔','할',
+      '감','남','담','람','맘','밤','삼','암','잠','참','캄','탐','팜','함',
+      '갑','납','답','랍','밥','삽','압','잡','찹','탑','합',
+      '갓','낫','닷','맛','밧','삿','앗','잣','찻','탓','핫',
+      '곰','눈','돈','론','몸','본','손','온','존','촌','통','풍','홍',
+      // 5. 겹받침 및 고난도 복합 결합 70자
+      '과','광','괭','굉','괵','궉','권','궐','궤','귐','귓','귀',
+      '꽃','꽂','꺾','낚','닦','묶','깎',
+      '닭','맑','붉','얽','앍','늙',
+      '삶','젊','닮','굶',
+      '넓','밟','덟','엷',
+      '흙','값','없','삯','몫','앉','얹',
+      '끊','끓','잃','싫','앓',
+      '홑','훑','읊','돐','돝','닻','덫',
+      '빛','낮','낯','맞','젖','짖','잦','쫓','쪽','찍','뿍','쏙'
+    ];
+
+    let engine;
+    let currentAssembled = null;
+    let allStrokes = [];
+    let animationFrameId = null;
+    let isAnimating = false;
+    let startTimestamp = null;
+    const ANIM_DURATION = 2600; // 2.6초
+
+    function init() {
+      engine = new HangulParametricEngine(PARAMETRIC_JAMO_DB);
+      
+      document.getElementById('btnRender').addEventListener('click', () => {
+        const char = document.getElementById('targetChar').value.trim() || '과';
+        renderChar(char);
+      });
+
+      document.getElementById('btnPlayAnim').addEventListener('click', startStrokeAnimation);
+
+      document.getElementById('targetChar').addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') {
+          const char = e.target.value.trim() || '과';
+          renderChar(char);
+        }
+      });
+
+      setupCategoryTabs();
+      buildGrid('all');
+      
+      // 최초 기본 글자 '과' 렌더링 및 애니메이션 시작
+      renderChar('과');
+    }
+
+    function renderChar(char) {
+      if (!char) return;
+      document.getElementById('targetChar').value = char;
+
+      // 1. 엔진 조립
+      const result = engine.assemble(char);
+      if (!result) {
+        alert('한글 음절(가~힣)만 입력 가능합니다.');
+        return;
+      }
+      currentAssembled = result;
+
+      // 2. UI 정보 업데이트
+      document.getElementById('typeBadge').textContent = `모임꼴: ${result.typeDesc} (${result.layoutType})`;
+      updateParamInspector(result);
+
+      // 3. SVG 렌더링 (Mask 및 Outline)
+      drawSVG(result);
+
+      // 4. 선택된 셀 하이라이트
+      document.querySelectorAll('.grid-cell').forEach(cell => {
+        if (cell.textContent === char) {
+          cell.classList.add('selected');
+          cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          cell.classList.remove('selected');
+        }
+      });
+
+      // 5. 획순 애니메이션 자동 시작
+      startStrokeAnimation();
+    }
+
+    function updateParamInspector(result) {
+      const container = document.getElementById('paramInspector');
+      container.innerHTML = '';
+
+      result.parts.forEach(p => {
+        const box = document.createElement('div');
+        box.className = 'param-box';
+        box.innerHTML = `
+          <h4>${p.role} (${p.char})</h4>
+          <div class="coord">이동: (${p.matrix.tx}px, ${p.matrix.ty}px)</div>
+          <div class="coord">배율: (${Math.round(p.matrix.sx * 100)}%, ${Math.round(p.matrix.sy * 100)}%)</div>
+          <div class="coord">획수: ${p.data.strokes.length}획</div>
+        `;
+        container.appendChild(box);
+      });
+    }
+
+    function drawSVG(result) {
+      cancelAnimationFrame(animationFrameId);
+      isAnimating = false;
+      allStrokes = [];
+
+      const defs = document.getElementById('stageDefs');
+      const layer = document.getElementById('charLayer');
+      defs.innerHTML = '';
+      layer.innerHTML = '';
+
+      result.parts.forEach((part, partIdx) => {
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('transform', part.transformStr);
+
+        const maskId = `mask_${result.char}_${partIdx}`;
+        const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+        mask.setAttribute('id', maskId);
+        mask.setAttribute('maskUnits', 'userSpaceOnUse');
+
+        part.data.strokes.forEach((st) => {
+          const brush = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          brush.setAttribute('d', st.d);
+          brush.setAttribute('fill', 'none');
+          brush.setAttribute('stroke', 'white');
+          brush.setAttribute('stroke-width', '30');
+          brush.setAttribute('stroke-linecap', 'round');
+          brush.setAttribute('stroke-linejoin', 'round');
+
+          const len = st.len;
+          const maxOffset = len + 15;
+          brush.setAttribute('stroke-dasharray', `${len} ${len + 150}`);
+          brush.setAttribute('stroke-dashoffset', maxOffset);
+
+          brush.dataset.length = len;
+          brush.dataset.maxOffset = maxOffset;
+
+          mask.appendChild(brush);
+          allStrokes.push(brush);
+        });
+        defs.appendChild(mask);
+
+        // 자모 외곽선 (Outline)
+        const outline = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        outline.setAttribute('d', part.data.outline);
+        // 부위별 산뜻한 컬러 그라데이션
+        const colors = ['#38bdf8', '#818cf8', '#f59e0b'];
+        outline.setAttribute('fill', colors[partIdx % colors.length]);
+        outline.setAttribute('mask', `url(#${maskId})`);
+        g.appendChild(outline);
+
+        // 희미한 뼈대 (미완성 획 가이드)
+        const skeleton = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        skeleton.setAttribute('d', part.data.outline);
+        skeleton.setAttribute('fill', 'none');
+        skeleton.setAttribute('stroke', 'rgba(255,255,255,0.08)');
+        skeleton.setAttribute('stroke-width', '1');
+        g.appendChild(skeleton);
+
+        layer.appendChild(g);
+      });
+
+      updateStrokeProgress(0);
+    }
+
+    function startStrokeAnimation() {
+      if (isAnimating) cancelAnimationFrame(animationFrameId);
+      isAnimating = true;
+      startTimestamp = null;
+      animationFrameId = requestAnimationFrame(animStep);
+    }
+
+    function animStep(timestamp) {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const elapsed = timestamp - startTimestamp;
+      const progress = Math.min(elapsed / ANIM_DURATION, 1.0);
+
+      updateStrokeProgress(progress);
+
+      if (progress < 1.0) {
+        animationFrameId = requestAnimationFrame(animStep);
+      } else {
+        isAnimating = false;
+      }
+    }
+
+    function updateStrokeProgress(progress) {
+      const total = allStrokes.length;
+      if (total === 0) return;
+      const span = 1.0 / total;
+
+      allStrokes.forEach((brush, idx) => {
+        const start = idx * span;
+        const end = (idx + 1) * span;
+
+        let p = 0;
+        if (progress >= end) p = 1.0;
+        else if (progress > start) p = (progress - start) / span;
+
+        const maxOffset = parseFloat(brush.dataset.maxOffset);
+        if (p === 0) {
+          brush.style.display = 'none';
+        } else {
+          brush.style.display = 'block';
+        }
+        brush.setAttribute('stroke-dashoffset', maxOffset * (1.0 - p));
+      });
+    }
+
+    function buildGrid(category) {
+      const grid = document.getElementById('charGrid');
+      grid.innerHTML = '';
+
+      let list = DATASET_300;
+      if (category === 'type1') {
+        list = DATASET_300.filter(c => {
+          const info = engine.decompose(c);
+          return info && engine.VERTICAL_JUNGS.includes(info.jungIdx) && !info.hasJong;
+        });
+      } else if (category === 'type3') {
+        list = DATASET_300.filter(c => {
+          const info = engine.decompose(c);
+          return info && engine.HORIZONTAL_JUNGS.includes(info.jungIdx) && !info.hasJong;
+        });
+      } else if (category === 'type5') {
+        list = DATASET_300.filter(c => {
+          const info = engine.decompose(c);
+          return info && engine.MIXED_JUNGS.includes(info.jungIdx) && !info.hasJong;
+        });
+      } else if (category === 'jong') {
+        list = DATASET_300.filter(c => {
+          const info = engine.decompose(c);
+          return info && info.hasJong;
+        });
+      } else if (category === 'complex') {
+        list = ['꽃','꽂','꺾','낚','닦','묶','깎','닭','맑','붉','얽','삶','젊','닮','굶','넓','밟','흙','값','없','삯','몫','앉','끊','끓','닻','빛','쪽','쏙'];
+      }
+
+      document.getElementById('charCount').textContent = `표시: ${list.length}자`;
+
+      list.forEach(c => {
+        const cell = document.createElement('div');
+        cell.className = 'grid-cell';
+        cell.textContent = c;
+        cell.addEventListener('click', () => renderChar(c));
+        grid.appendChild(cell);
+      });
+    }
+
+    function setupCategoryTabs() {
+      const tabs = document.querySelectorAll('.tab-btn');
+      tabs.forEach(t => {
+        t.addEventListener('click', () => {
+          tabs.forEach(btn => btn.classList.remove('active'));
+          t.classList.add('active');
+          buildGrid(t.dataset.cat);
+        });
+      });
+    }
+
+    window.addEventListener('load', init);
+  </script>
+</body>
+</html>

@@ -158,58 +158,106 @@ def segment_hangul(char):
     jung_groups = []
     cho_groups = []
 
-    # 2. 종성 분리 (has_jong 일 때)
-    # 종성은 글리프 전체 Y 기준 하단에 위치함. 중심점(cy)이 전체 높이의 하위 45% 이하인 경우 종성으로 배정
-    jong_split_cy = total_min_y + total_h * 0.45 if has_jong else -9999
+    # ── 2. 가로 모음(ㅗ, ㅛ, ㅜ, ㅠ, ㅡ)의 절대 경계선 분리 ──
+    if v_type == 2:
+        # 가로막대(Horizontal stem)는 groups 중 가로폭(w)이 가장 넓은 패스
+        h_bar = max(groups, key=lambda g: g['w'])
+        bar_min_y = h_bar['minY']
+        bar_max_y = h_bar['maxY']
 
-    remaining_groups = []
-    for g in groups:
-        if has_jong and g['cy'] <= jong_split_cy and g['maxY'] <= total_min_y + total_h * 0.55:
-            jong_groups.append(g)
-        else:
-            remaining_groups.append(g)
+        jung_groups = [h_bar]
+        cho_groups = []
+        jong_groups = []
 
-    # 3. 중성(모음) 분리
-    if v_type == 1:
-        # 세로 모음: 우측에 위치하는 그룹 (X_min > 초성 경계선 또는 X_cx > total_min_x + total_w * 0.6)
-        jung_candidates = []
+        for g in groups:
+            if g == h_bar:
+                continue
+            if has_jong and g['maxY'] <= bar_min_y + 15:
+                # 가로막대 아래에 완전히 위치하는 요소 -> 종성(받침)
+                jong_groups.append(g)
+            elif g['minY'] >= bar_max_y - 15:
+                # 가로막대 위에 완전히 위치하는 요소 -> 초성
+                cho_groups.append(g)
+            else:
+                # 가로막대와 Y축이 겹치는 돌기 ('ㅗ'의 상단 기둥 등)
+                if g['cy'] > h_bar['cy']:
+                    cho_groups.append(g)
+                else:
+                    if has_jong:
+                        jong_groups.append(g)
+                    else:
+                        jung_groups.append(g)
+
+    # ── 3. 세로 모음(ㅏ, ㅐ, ㅑ, ㅒ, ㅓ, ㅔ, ㅕ, ㅖ, ㅣ)의 절대 경계선 분리 ──
+    elif v_type == 1:
+        # 우측 세로 기둥 후보군: 우측에 위치하며 글리프 상단(maxY > 60%)까지 연장된 요소
+        jung_groups = []
         non_jung = []
-        for g in remaining_groups:
-            if g['cx'] > total_min_x + total_w * 0.55 and g['h'] > total_h * 0.35:
-                jung_candidates.append(g)
+        for g in groups:
+            if g['cx'] > total_min_x + total_w * 0.50 and g['maxY'] > total_min_y + total_h * 0.60:
+                jung_groups.append(g)
             else:
                 non_jung.append(g)
-        jung_groups = jung_candidates
-        cho_groups = non_jung
 
-    elif v_type == 2:
-        # 가로 모음: 상단 초성과 하단(또는 바닥) 사이의 가로형 그룹 (w > total_w * 0.5)
-        # 초성은 그 위에 위치함
-        remaining_groups.sort(key=lambda g: g['cy'])
-        if len(remaining_groups) >= 2:
-            # 가장 가로 비율(w/h)이 크거나 가로로 넓은 것을 중성으로 선택
-            jung_cand = max(remaining_groups, key=lambda g: g['w'] if g['cy'] < total_max_y - 150 else 0)
-            jung_groups = [jung_cand]
-            cho_groups = [g for g in remaining_groups if g != jung_cand]
+        # non_jung 중에서 종성(하단)과 초성(상단) 분리
+        jong_groups = []
+        cho_groups = []
+        if has_jong:
+            jong_split_cy = total_min_y + total_h * 0.45
+            for g in non_jung:
+                if g['cy'] <= jong_split_cy and g['maxY'] <= total_min_y + total_h * 0.55:
+                    jong_groups.append(g)
+                else:
+                    cho_groups.append(g)
         else:
-            cho_groups = remaining_groups
+            cho_groups = non_jung
 
+    # ── 4. 복합 모음(ㅘ, ㅙ, ㅚ, ㅝ, ㅞ, ㅟ, ㅢ) 분리 ──
     else:
-        # 복합 모음: 우측 세로 요소 + 중앙 가로 요소
-        remaining_groups.sort(key=lambda g: g['cx'])
-        jung_cands = []
-        cho_cands = []
-        for g in remaining_groups:
-            # 우측 끝자락 세로획
-            if g['cx'] > total_min_x + total_w * 0.65 and g['h'] > total_h * 0.35:
-                jung_cands.append(g)
-            elif g['cy'] < total_min_y + total_h * 0.60 and g['w'] > total_w * 0.40:
-                # 아래쪽에 깔린 가로 요소
-                jung_cands.append(g)
+        # 우측 세로 기둥(상단 연장) + 중간 가로 요소
+        jung_groups = []
+        non_jung = []
+        for g in groups:
+            if g['cx'] > total_min_x + total_w * 0.60 and g['maxY'] > total_min_y + total_h * 0.60:
+                # 우측 세로 기둥
+                jung_groups.append(g)
+            elif (g['cx'] > total_min_x + total_w * 0.25 and
+                  g['cy'] > total_min_y + total_h * 0.25 and 
+                  g['cy'] < total_min_y + total_h * 0.65 and 
+                  g['w'] > total_w * 0.42):
+                # 중간에 위치한 가로 요소 ('ㅗ', 'ㅜ')
+                jung_groups.append(g)
             else:
-                cho_cands.append(g)
-        jung_groups = jung_cands
-        cho_groups = cho_cands
+                non_jung.append(g)
+
+        jong_groups = []
+        cho_groups = []
+        if has_jong:
+            jong_split_cy = total_min_y + total_h * 0.40
+            for g in non_jung:
+                if g['cy'] <= jong_split_cy and g['maxY'] <= total_min_y + total_h * 0.50:
+                    jong_groups.append(g)
+                else:
+                    cho_groups.append(g)
+        else:
+            cho_groups = non_jung
+
+    # 4. 특수 케이스: 폰트 외곽선에서 중성('ㅜ'/'ㅠ')과 종성('ㅁ'/'ㄹ'/'ㅂ' 등)이 물리적으로 합쳐진 경우
+    is_unified = False
+    unified_path = ""
+    split_y_ratio = 0.58 # 200px 기준 약 116~120px 지점
+
+    if has_jong and len(jong_groups) == 0:
+        # 중성 그룹 중 하단(total_min_y 근처)까지 연장되어 있는 큰 서브패스가 있는지 확인
+        for jg in list(jung_groups):
+            if jg['minY'] <= total_min_y + 50 and jg['h'] >= total_h * 0.45:
+                # 중성과 종성이 결합된 패스로 판정
+                is_unified = True
+                unified_path = jg['d']
+                # 슬롯 구조상 중성 하단과 종성 상단 사이 분할선 계산
+                # 폰트 좌표계에서 Y 분할선 (스크린 변환 시 대략 58% 지점)
+                split_y_ratio = 0.58
+                break
 
     # 종성 겹받침 정렬 (좌측 자음 -> 우측 자음)
     if len(jong_groups) > 1:
@@ -221,24 +269,31 @@ def segment_hangul(char):
         'choPath': ''.join(g['d'] for g in cho_groups),
         'jungPath': ''.join(g['d'] for g in jung_groups),
         'jongPaths': [g['d'] for g in jong_groups],
+        'choPaths': [g['d'] for g in cho_groups],
+        'jungPaths': [g['d'] for g in jung_groups],
         'totalPath': path_str,
+        'isUnifiedJungJong': is_unified,
+        'unifiedPath': unified_path,
+        'splitY_ratio': split_y_ratio,
         'counts': {
             'cho': len(cho_groups),
             'jung': len(jung_groups),
-            'jong': len(jong_groups)
+            'jong': len(jong_groups) if not is_unified else 1
         }
     }
 
-# 검증
-test_list = ['가', '고', '과', '강', '곰', '광', '값', '꽃', '닭', '한', '빛', '꿈', '책', '집']
-print(f"{'글자':^4} | {'초':^2} {'중':^2} {'종':^3} | {'초그룹':^5} {'중그룹':^5} {'종그룹':^5} | {'결과':^4}")
-print("-" * 50)
-for ch in test_list:
-    res = segment_hangul(ch)
-    if res:
-        c = res['counts']
-        valid = (c['cho'] > 0 and c['jung'] > 0 and (not res['jong'] or c['jong'] > 0))
-        mark = "OK" if valid else "FAIL"
-        print(f"{ch:^4} | {res['cho']:^2} {res['jung']:^2} {res['jong'] or '-':^3} | {c['cho']:^5} {c['jung']:^5} {c['jong']:^5} | {mark:^4}")
-    else:
-        print(f"{ch:^4} | NOT FOUND")
+if __name__ == '__main__':
+    # 대표 15개 음절 검증
+    test_list = ['가', '고', '과', '강', '곰', '광', '값', '꽃', '닭', '한', '빛', '꿈', '책', '집', '물']
+    print(f"{'글자':^4} | {'초':^2} {'중':^2} {'종':^3} | {'초그룹':^5} {'중그룹':^5} {'종그룹':^5} | {'결합여부':^6} | {'결과':^4}")
+    print("-" * 65)
+    for ch in test_list:
+        res = segment_hangul(ch)
+        if res:
+            c = res['counts']
+            valid = (c['cho'] > 0 and c['jung'] > 0 and (not res['jong'] or c['jong'] > 0))
+            mark = "OK" if valid else "FAIL"
+            unif = "UNIFIED" if res['isUnifiedJungJong'] else "SEPARATE"
+            print(f"{ch:^4} | {res['cho']:^2} {res['jung']:^2} {res['jong'] or '-':^3} | {c['cho']:^5} {c['jung']:^5} {c['jong']:^5} | {unif:^8} | {mark:^4}")
+        else:
+            print(f"{ch:^4} | NOT FOUND")

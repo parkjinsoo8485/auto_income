@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>궁서체 153개 자소 '중심선 수집기 & 에디터' (Gungsuh Median Studio)</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <script src="hangul_150_parts_warehouse.js"></script>
+  <style>
+    @font-face {
+      font-family: 'GungsuhFont';
+      src: url('assets/fonts/Gungsuh.ttf') format('truetype');
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: #090d16;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    header {
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+      padding: 10px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 {
+      font-size: 16px;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'GungsuhFont', serif;
+    }
+    .header-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .main-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    /* 1. 좌측 153개 부품 탐색기 */
+    .sidebar {
+      width: 380px;
+      background: #0f172a;
+      border-right: 1px solid #1e293b;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .filter-tabs {
+      display: flex;
+      background: #1e293b;
+      padding: 6px;
+      gap: 4px;
+      border-bottom: 1px solid #334155;
+    }
+    .tab-btn {
+      flex: 1;
+      padding: 7px 2px;
+      font-size: 11px;
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      border-radius: 6px;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .tab-btn.active {
+      background: #0284c7;
+      color: white;
+    }
+    .parts-grid-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 8px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
+      gap: 6px;
+      align-content: start;
+    }
+    .part-item {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 6px 2px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .part-item:hover {
+      background: #2563eb;
+      border-color: #38bdf8;
+      transform: translateY(-2px);
+    }
+    .part-item.active {
+      background: #0284c7;
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+    .part-item.modified::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 6px;
+      height: 6px;
+      background: #10b981;
+      border-radius: 50%;
+    }
+    .part-char {
+      font-size: 20px;
+      font-weight: bold;
+      color: #f8fafc;
+      font-family: 'GungsuhFont', "Gungsuh", "Batang", serif;
+    }
+    .part-label {
+      font-size: 9px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    /* 2. 중앙 & 우측: 중심선 인터랙티브 에디터 */
+    .content-area {
+      flex: 1;
+      display: flex;
+      gap: 20px;
+      padding: 18px 24px;
+      overflow-y: auto;
+      align-items: flex-start;
+      justify-content: center;
+    }
+    .panel {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+    }
+    .editor-panel {
+      width: 480px;
+    }
+    .preview-panel {
+      width: 380px;
+    }
+    .panel-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e2e8f0;
+      width: 100%;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .canvas-box {
+      width: 440px;
+      height: 440px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+      user-select: none;
+    }
+    svg.interactive-svg {
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+    .point-handle {
+      cursor: grab;
+      transition: r 0.12s;
+    }
+    .point-handle:hover {
+      r: 24;
+    }
+    .point-handle:active {
+      cursor: grabbing;
+    }
+    .hanzi-box {
+      width: 340px;
+      height: 340px;
+      background: #ffffff;
+      border-radius: 10px;
+      box-shadow: inset 0 0 0 1px #cbd5e1;
+      position: relative;
+    }
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+      width: 100%;
+      justify-content: center;
+    }
+    button.btn {
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+    button.btn:hover { background: #1d4ed8; }
+    button.btn.green { background: #059669; }
+    button.btn.green:hover { background: #047857; }
+    button.btn.gray { background: #475569; }
+    button.btn.gray:hover { background: #334155; }
+    button.btn.purple { background: #7c3aed; }
+    button.btn.purple:hover { background: #6d28d9; }
+    button.btn.amber { background: #d97706; }
+    button.btn.amber:hover { background: #b45309; }
+    .stroke-selector {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+    .stroke-tab {
+      padding: 4px 10px;
+      font-size: 11px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .stroke-tab.active {
+      background: #2563eb;
+      color: white;
+      border-color: #38bdf8;
+    }
+    .status-bar {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-top: 10px;
+      font-size: 12px;
+      color: #38bdf8;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .tip-text {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 6px;
+      line-height: 1.4;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>
+      <span>궁서체 153개 자소 '중심선 수집기 & 에디터'</span>
+    </h1>
+    <div class="header-actions">
+      <button class="btn purple" onclick="resetAllToCalibrated()">🔄 1차 보정값으로 전체 새로고침</button>
+      <button class="btn amber" onclick="resetToInitial()">현재 자소 초기화</button>
+      <button class="btn green" onclick="downloadAllCollectedJson()">📥 전체 153개 데이터 JSON 다운로드</button>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- 1. 좌측 153개 자소 부품 선택 리스트 -->
+    <div class="sidebar">
+      <div class="filter-tabs">
+        <button class="tab-btn active" onclick="setTab('all')">전체 (153)</button>
+        <button class="tab-btn" onclick="setTab('cho')">초성 (57)</button>
+        <button class="tab-btn" onclick="setTab('jung')">중성 (42)</button>
+        <button class="tab-btn" onclick="setTab('jong')">종성 (54)</button>
+      </div>
+      <div class="parts-grid-scroll" id="parts-grid"></div>
+    </div>
+
+    <!-- 2. 중앙: 중심선 인터랙티브 드래그 에디터 -->
+    <div class="content-area">
+      <div class="panel editor-panel">
+        <div class="panel-title">
+          <span>궁서체 외곽선 + 중심선(Medians) 편집기</span>
+          <span id="current-part-badge" style="font-size:12px; color:#38bdf8; font-family:monospace;">Cho_T1_ㄱ</span>
+        </div>
+
+        <!-- 획 전환 탭 -->
+        <div class="stroke-selector" id="stroke-selector-bar"></div>
+
+        <!-- 인터랙티브 SVG 캔버스 (1024x1024) -->
+        <div class="canvas-box" id="editor-canvas-box">
+          <svg class="interactive-svg" viewBox="0 0 1024 1024" id="editor-svg">
+            <!-- 1024 격자 가이드 -->
+            <line x1="0" y1="512" x2="1024" y2="512" stroke="#1e293b" stroke-dasharray="6 6" />
+            <line x1="512" y1="0" x2="512" y2="1024" stroke="#1e293b" stroke-dasharray="6 6" />
+            <rect id="editor-bbox-rect" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6 6" opacity="0.4" />
+
+            <!-- HanziWriter 좌표계: scale(1, -1) translate(0, -900) -->
+            <g transform="scale(1, -1) translate(0, -900)">
+              <!-- 궁서체 원본 외곽선 (Gungsuh.ttf 베지에 패스) -->
+              <path id="gungsuh-outline-path" fill="#1e1b4b" stroke="#818cf8" stroke-width="5" opacity="0.9" />
+
+              <!-- 중심선 궤적들 (Polylines) -->
+              <g id="medians-paths-group"></g>
+
+              <!-- 인터랙티브 드래그 점들 (Handles) -->
+              <g id="medians-handles-group"></g>
+            </g>
+          </svg>
+        </div>
+
+        <div class="tip-text">
+          💡 <strong>조작법:</strong> 
+          • <strong>마우스 드래그</strong>: 중심선 제어점 이동 (실시간 궤적 반영)<br>
+          • <strong>더블클릭</strong>: 새로운 제어점 추가 / <strong>우클릭</strong>: 제어점 삭제
+        </div>
+
+        <div class="status-bar" id="editor-status">
+          <span>제어점을 드래그하여 궁서체 한가운데에 맞춰주세요.</span>
+          <button class="btn gray" style="padding:4px 8px; font-size:11px;" onclick="copyCurrentJson()">JSON 복사</button>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn green" onclick="saveCurrentPart()">💾 이 자소 저장</button>
+          <button class="btn purple" onclick="toggleGungsuhFill()">외곽선 채우기 토글</button>
+          <button class="btn gray" onclick="addStrokeToCurrent()">+ 새 획 추가</button>
+        </div>
+      </div>
+
+      <!-- 3. 우측: HanziWriter 실시간 렌더링 검증 -->
+      <div class="panel preview-panel">
+        <div class="panel-title">
+          <span>HanziWriter 실시간 검증</span>
+          <span style="font-size:11px; background:#059669; padding:2px 6px; border-radius:10px;">실시간 연동</span>
+        </div>
+
+        <div class="hanzi-box" id="hanzi-preview-box"></div>
+
+        <div class="btn-row" style="margin-top:14px;">
+          <button class="btn" onclick="playPreviewAnim()">획순 애니메이션 재생</button>
+          <button class="btn purple" onclick="toggleShowAllStrokes()">전체 획 표시/숨기기</button>
+          <button class="btn green" onclick="startPreviewQuiz()">쓰기 퀴즈 테스트</button>
+        </div>
+
+        <div class="info-box" style="margin-top:14px; width:100%; font-size:12px; line-height:1.6;">
+          <div>선택 부품: <span class="val" id="info-part-id" style="color:#38bdf8;">Cho_T1_ㄱ</span></div>
+          <div>폰트 서체: <span class="val" style="color:#f59e0b; font-family:'GungsuhFont',serif;">궁서체 (Gungsuh.ttf)</span></div>
+          <div>총 획수: <span class="val" id="info-stroke-count">1획</span></div>
+          <div>현재 획 점 수: <span class="val" id="info-point-count">5개 점</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const originalWarehouse = (window.HANGUL_150_WAREHOUSE && window.HANGUL_150_WAREHOUSE.parts) || {};
+    
+    // LocalStorage에서 이전에 수집/편집한 데이터 불러오기
+    let customDb = {};
+    try {
+      const saved = localStorage.getItem('hangul_150_custom_medians');
+      if (saved) customDb = JSON.parse(saved);
+    } catch (e) {
+      console.warn("LocalStorage 로드 실패:", e);
+    }
+
+    const partKeys = Object.keys(originalWarehouse);
+    let currentTab = 'all';
+    let selectedPartId = 'Cho_T1_ㄱ';
+    let activeStrokeIdx = 0;
+    let previewWriter = null;
+
+    // 현재 작업 중인 자소 데이터 객체
+    let currentPartData = null;
+
+    function getActivePartData(id) {
+      if (customDb[id]) {
+        return JSON.parse(JSON.stringify(customDb[id]));
+      }
+      return JSON.parse(JSON.stringify(originalWarehouse[id]));
+    }
+
+    function init() {
+      renderSidebar();
+      selectPart(selectedPartId);
+    }
+
+    function setTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderSidebar();
+    }
+
+    function renderSidebar() {
+      const grid = document.getElementById('parts-grid');
+      grid.innerHTML = '';
+
+      partKeys.forEach(id => {
+        const item = originalWarehouse[id];
+        if (currentTab !== 'all' && item.role !== currentTab) return;
+
+        const isModified = !!customDb[id];
+        const div = document.createElement('div');
+        div.className = `part-item ${id === selectedPartId ? 'active' : ''} ${isModified ? 'modified' : ''}`;
+        div.id = `item-${id}`;
+        div.onclick = () => selectPart(id);
+
+        let typeBadge = '';
+        if (item.role === 'cho') typeBadge = `초${item.formType}`;
+        else if (item.role === 'jung') typeBadge = `중${item.formType}`;
+        else if (item.role === 'jong') typeBadge = `종${item.formType}`;
+
+        div.innerHTML = `
+          <span class="part-char">${item.char}</span>
+          <span class="part-label">${typeBadge}</span>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function selectPart(id) {
+      selectedPartId = id;
+      currentPartData = getActivePartData(id);
+      activeStrokeIdx = 0;
+
+      document.querySelectorAll('.part-item').forEach(el => el.classList.remove('active'));
+      const activeEl = document.getElementById(`item-${id}`);
+      if (activeEl) activeEl.classList.add('active');
+
+      document.getElementById('current-part-badge').innerText = id;
+      document.getElementById('info-part-id').innerText = id;
+      document.getElementById('info-stroke-count').innerText = `${currentPartData.medians.length}획`;
+
+      // 가이드 박스 표시
+      const rect = document.getElementById('editor-bbox-rect');
+      rect.setAttribute('x', currentPartData.box.x);
+      rect.setAttribute('y', 900 - (currentPartData.box.y + currentPartData.box.h));
+      rect.setAttribute('width', currentPartData.box.w);
+      rect.setAttribute('height', currentPartData.box.h);
+
+      // 궁서체 외곽선 렌더링
+      const pathEl = document.getElementById('gungsuh-outline-path');
+      pathEl.setAttribute('d', currentPartData.gungsuhOutline || currentPartData.strokes[0]);
+
+      renderStrokeTabs();
+      renderEditor();
+      updateHanziPreview();
+    }
+
+    const STROKE_COLORS = ['#ef4444', '#f59e0b', '#10b981', '#06b6d4', '#8b5cf6', '#ec4899', '#f97316'];
+
+    function renderStrokeTabs() {
+      const bar = document.getElementById('stroke-selector-bar');
+      bar.innerHTML = '';
+
+      currentPartData.medians.forEach((_, idx) => {
+        const btn = document.createElement('button');
+        btn.className = `stroke-tab ${idx === activeStrokeIdx ? 'active' : ''}`;
+        btn.style.borderLeft = `4px solid ${STROKE_COLORS[idx % STROKE_COLORS.length]}`;
+        btn.innerText = `${idx + 1}번째 획`;
+        btn.onclick = () => {
+          activeStrokeIdx = idx;
+          renderStrokeTabs();
+          renderEditor();
+        };
+        bar.appendChild(btn);
+      });
+    }
+
+    let draggingPoint = null; // { strokeIdx, pointIdx }
+
+    function renderEditor() {
+      const pathsGroup = document.getElementById('medians-paths-group');
+      const handlesGroup = document.getElementById('medians-handles-group');
+      pathsGroup.innerHTML = '';
+      handlesGroup.innerHTML = '';
+
+      currentPartData.medians.forEach((stroke, sIdx) => {
+        const color = STROKE_COLORS[sIdx % STROKE_COLORS.length];
+        const isCurrent = (sIdx === activeStrokeIdx);
+
+        // 1. 중심선 폴리라인
+        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+        poly.setAttribute('points', stroke.map(p => p.join(',')).join(' '));
+        poly.setAttribute('fill', 'none');
+        poly.setAttribute('stroke', color);
+        poly.setAttribute('stroke-width', isCurrent ? '16' : '10');
+        poly.setAttribute('stroke-linecap', 'round');
+        poly.setAttribute('stroke-linejoin', 'round');
+        poly.setAttribute('opacity', isCurrent ? '0.95' : '0.45');
+        pathsGroup.appendChild(poly);
+
+        // 2. 제어점들 (현재 선택된 획에 강조 표시)
+        stroke.forEach((pt, pIdx) => {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('cx', pt[0]);
+          circle.setAttribute('cy', pt[1]);
+          circle.setAttribute('r', isCurrent ? (pIdx === 0 ? '22' : '16') : '10');
+          circle.setAttribute('fill', pIdx === 0 ? '#ffffff' : color);
+          circle.setAttribute('stroke', color);
+          circle.setAttribute('stroke-width', '4');
+          circle.setAttribute('class', 'point-handle');
+          circle.dataset.strokeIdx = sIdx;
+          circle.dataset.pointIdx = pIdx;
+
+          // 드래그 이벤트
+          circle.addEventListener('mousedown', (e) => {
+            e.stopPropagation();
+            activeStrokeIdx = sIdx;
+            draggingPoint = { strokeIdx: sIdx, pointIdx: pIdx };
+            renderStrokeTabs();
+          });
+
+          // 우클릭 삭제 이벤트
+          circle.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (currentPartData.medians[sIdx].length <= 2) {
+              alert("획에는 최소 2개의 점이 필요합니다.");
+              return;
+            }
+            currentPartData.medians[sIdx].splice(pIdx, 1);
+            renderEditor();
+            updateHanziPreview();
+          });
+
+          handlesGroup.appendChild(circle);
+
+          // 번호 라벨
+          if (isCurrent) {
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', pt[0]);
+            text.setAttribute('y', pt[1] - 20);
+            text.setAttribute('fill', '#ffffff');
+            text.setAttribute('font-size', '26');
+            text.setAttribute('font-weight', 'bold');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('pointer-events', 'none');
+            text.textContent = (pIdx + 1);
+            handlesGroup.appendChild(text);
+          }
+        });
+      });
+
+      const currentPts = currentPartData.medians[activeStrokeIdx] || [];
+      document.getElementById('info-point-count').innerText = `${currentPts.length}개 점`;
+    }
+
+    // 마우스 드래그 좌표 변환 및 이동
+    const svgEl = document.getElementById('editor-svg');
+
+    svgEl.addEventListener('mousemove', (e) => {
+      if (!draggingPoint) return;
+      const rect = svgEl.getBoundingClientRect();
+      const clientX = e.clientX - rect.left;
+      const clientY = e.clientY - rect.top;
+
+      const rawSvgX = (clientX / rect.width) * 1024;
+      const rawSvgY = (clientY / rect.height) * 1024;
+
+      // HanziWriter 역변환: y_hanzi = 900 - y_screen
+      const hanziX = Math.round(rawSvgX);
+      const hanziY = Math.round(900 - rawSvgY);
+
+      currentPartData.medians[draggingPoint.strokeIdx][draggingPoint.pointIdx] = [hanziX, hanziY];
+      renderEditor();
+
+      document.getElementById('editor-status').firstElementChild.innerText = 
+        `${draggingPoint.strokeIdx + 1}획 ${draggingPoint.pointIdx + 1}번 점 이동 중: [${hanziX}, ${hanziY}]`;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (draggingPoint) {
+        draggingPoint = null;
+        document.getElementById('editor-status').firstElementChild.innerText = '이동 완료! 실시간 미리보기에 반영되었습니다.';
+        updateHanziPreview();
+      }
+    });
+
+    // 더블클릭 시 현재 활성 획에 새 점 추가
+    svgEl.addEventListener('dblclick', (e) => {
+      const rect = svgEl.getBoundingClientRect();
+      const clientX = e.clientX - rect.left;
+      const clientY = e.clientY - rect.top;
+
+      const rawSvgX = (clientX / rect.width) * 1024;
+      const rawSvgY = (clientY / rect.height) * 1024;
+      const hanziX = Math.round(rawSvgX);
+      const hanziY = Math.round(900 - rawSvgY);
+
+      if (!currentPartData.medians[activeStrokeIdx]) {
+        currentPartData.medians[activeStrokeIdx] = [];
+      }
+      currentPartData.medians[activeStrokeIdx].push([hanziX, hanziY]);
+      renderEditor();
+      updateHanziPreview();
+      document.getElementById('editor-status').firstElementChild.innerText = `새 제어점 추가됨: [${hanziX}, ${hanziY}]`;
+    });
+
+    // HanziWriter 미리보기 갱신
+    let isCharShown = false;
+
+    // HanziWriter 미리보기 갱신 (모든 획이 1:1로 렌더링되도록 수정)
+    function updateHanziPreview() {
+      const box = document.getElementById('hanzi-preview-box');
+      box.innerHTML = '';
+
+      const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+      // 각 메디안 획마다 1:1로 외곽선 패스 매핑 (보이지 않는 획 발생 100% 방지)
+      const strokesPayload = currentPartData.medians.map((_, i) => {
+        return (currentPartData.strokes && currentPartData.strokes[i]) || outline;
+      });
+
+      const payload = {
+        strokes: strokesPayload,
+        medians: currentPartData.medians
+      };
+
+      previewWriter = HanziWriter.create('hanzi-preview-box', currentPartData.char, {
+        width: 340,
+        height: 340,
+        padding: 10,
+        showOutline: true,
+        showCharacter: false,
+        strokeColor: '#0284c7',
+        outlineColor: '#cbd5e1',
+        strokeAnimationSpeed: 1.2,
+        delayBetweenStrokes: 180,
+        charDataLoader: function(char, onComplete) {
+          onComplete(payload);
+        }
+      });
+    }
+
+    function playPreviewAnim() {
+      if (previewWriter) {
+        previewWriter.animateCharacter();
+      }
+    }
+
+    function toggleShowAllStrokes() {
+      if (!previewWriter) return;
+      isCharShown = !isCharShown;
+      if (isCharShown) {
+        previewWriter.showCharacter();
+      } else {
+        previewWriter.hideCharacter();
+      }
+    }
+
+    function startPreviewQuiz() {
+      if (previewWriter) previewWriter.quiz();
+    }
+
+    // 데이터 저장 / 복사 / 다운로드 기능
+    function saveCurrentPart() {
+      customDb[selectedPartId] = JSON.parse(JSON.stringify(currentPartData));
+      localStorage.setItem('hangul_150_custom_medians', JSON.stringify(customDb));
+      renderSidebar();
+      alert(`[${selectedPartId}] 중심선 데이터가 브라우저에 저장되었습니다!`);
+    }
+
+    function copyCurrentJson() {
+      const json = JSON.stringify(currentPartData, null, 2);
+      navigator.clipboard.writeText(json).then(() => {
+        alert(`${selectedPartId}의 데이터가 클립보드에 복사되었습니다!`);
+      });
+    }
+
+    function resetToInitial() {
+      if (confirm(`[${selectedPartId}]를 1차 보정 초기값으로 되돌리시겠습니까?`)) {
+        delete customDb[selectedPartId];
+        localStorage.setItem('hangul_150_custom_medians', JSON.stringify(customDb));
+        selectPart(selectedPartId);
+        renderSidebar();
+      }
+    }
+
+    function resetAllToCalibrated() {
+      if (confirm("이전에 브라우저에 임시 저장된 캐시를 지우고, 새로 보정된 1차 정밀 일치 데이터로 전체 새로고침하시겠습니까?")) {
+        localStorage.removeItem('hangul_150_custom_medians');
+        customDb = {};
+        renderSidebar();
+        selectPart(selectedPartId);
+        alert("1차 정밀 일치 데이터로 전체 새로고침되었습니다!");
+      }
+    }
+
+    function downloadAllCollectedJson() {
+      // 153개 전체 데이터 병합 (커스텀 수정본 우선)
+      const fullWarehouse = JSON.parse(JSON.stringify(originalWarehouse));
+      Object.keys(customDb).forEach(k => {
+        fullWarehouse[k] = customDb[k];
+      });
+
+      const exportData = {
+        meta: {
+          title: "Hangul 153-Parts Collected Medians",
+          font: "Gungsuh.ttf",
+          exportedAt: new Date().toISOString(),
+          modifiedCount: Object.keys(customDb).length,
+          totalCount: Object.keys(fullWarehouse).length
+        },
+        parts: fullWarehouse
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `hangul_150_warehouse_collected_${new Date().toISOString().slice(0,10)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    let isFilled = true;
+    function toggleGungsuhFill() {
+      isFilled = !isFilled;
+      document.getElementById('gungsuh-outline-path').setAttribute('fill', isFilled ? '#1e1b4b' : 'none');
+    }
+
+    function addStrokeToCurrent() {
+      const newStroke = [
+        [currentPartData.box.x + 50, currentPartData.box.y + 100],
+        [currentPartData.box.x + 200, currentPartData.box.y + 100]
+      ];
+      currentPartData.medians.push(newStroke);
+      activeStrokeIdx = currentPartData.medians.length - 1;
+      renderStrokeTabs();
+      renderEditor();
+      updateHanziPreview();
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>

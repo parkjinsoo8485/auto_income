@@ -9,6 +9,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 @font-face {
+  font-family: 'Gungsuh';
+  src: url('assets/fonts/Gungsuh.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
   font-family: 'Gowun Dodum';
   src: url('assets/fonts/GowunDodum.ttf') format('truetype');
   font-weight: normal;
@@ -33,7 +39,7 @@
 body {
   background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0a0f1e 60%, #020617 100%);
   color: var(--text);
-  font-family: 'Gowun Dodum', 'Noto Sans KR', 'Inter', sans-serif;
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Noto Sans KR', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   min-height: 100vh;
   margin: 0;
   padding: 24px 16px;
@@ -42,6 +48,14 @@ body {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
+}
+
+/* ── 획순 연습 전용 폰트 (Stroke Practice & Tracing Font: 궁서체) ── */
+.stroke-practice-font,
+.stroke-char-tab,
+.stroke-practice-char,
+#hangul_composer_svg .practice-font {
+  font-family: 'Gungsuh', '궁서', serif;
 }
 
 /* ── PHONE FRAME SHELL ── */
@@ -677,8 +691,10 @@ body {
 
   </div> <!-- /screen-wrapper -->
   <!-- Home Indicator Bar -->
-  <div class="phone-home-indicator"></div>
 </div> <!-- /mobile-device -->
+
+<script src="hangul_variant_dispatcher.js"></script>
+<script src="hangul_variant_data.js"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════
@@ -9427,8 +9443,45 @@ function toggleBookmark(id){
     return { bx, by, angle };
   }
 
-  // 9. 음절 획순 계획(Stroke Plan) 조립기
+  // 9. 음절 획순 계획(Stroke Plan) 조립기 - 벌림 자소(Variant Glyphs) 기반 무왜곡 조합
   function composeStrokePlan(char) {
+    if (typeof HangulVariantDispatcher !== 'undefined' && typeof HangulVariantData !== 'undefined') {
+      const vDec = HangulVariantDispatcher.decompose(char);
+      if (vDec && vDec.isHangul) {
+        const keys = HangulVariantDispatcher.getVariantKeys(vDec);
+        const plan = [];
+        keys.forEach(k => {
+          const rawStrokes = HangulVariantData.getVariantStrokes(k.key, k.jamo, k.role, k.formType);
+          rawStrokes.forEach(st => {
+            plan.push({
+              jamo: k.jamo,
+              role: k.role,
+              desc: st.desc,
+              d: st.d,
+              len: st.len || estimatePathLength(st.d),
+              bx: st.bx,
+              by: st.by,
+              angle: 0
+            });
+          });
+        });
+
+        // ── 스마트 뱃지 번호 겹침 방지 (De-overlap) ──
+        for (let i = 0; i < plan.length; i++) {
+          for (let j = 0; j < i; j++) {
+            const dx = plan[i].bx - plan[j].bx;
+            const dy = plan[i].by - plan[j].by;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 18) {
+              plan[i].by += 10;
+            }
+          }
+        }
+
+        return { char, dec: vDec, slots: [], strokes: plan };
+      }
+    }
+
     const dec = decomposeHangul(char);
     const slots = getLayoutSlots(dec);
     const plan = [];
@@ -9448,7 +9501,6 @@ function toggleBookmark(id){
         }
 
         let rawStrokes = STROKE_DB[j] || [];
-        // 복합 모음(ㅘ, ㅚ, ㅟ 등)에서 가로모음(ㅗ, ㅜ)이 오른쪽 세로 기둥에 자연스럽게 닿도록 연결
         if (slot.role === 'jung_h') {
           if (j === 'ㅗ') {
             rawStrokes = [
@@ -9462,7 +9514,6 @@ function toggleBookmark(id){
             ];
           }
         }
-        // 복합 모음(ㅝ, ㅞ 등)에서 세로모음(ㅓ, ㅔ)의 가로 가지 위치를 'ㅜ'의 높이에 맞춰 하향 조정
         if (slot.role === 'jung_v') {
           if (j === 'ㅓ') {
             rawStrokes = [
@@ -9535,8 +9586,8 @@ function toggleBookmark(id){
     const comp = composeStrokePlan(char);
     const strokes = comp.strokes;
 
-    const strokeDur = 0.65 / opts.speed;
-    const gapDur = 0.22 / opts.speed;
+    const strokeDur = 0.38 / opts.speed;
+    const gapDur = 0.12 / opts.speed;
 
     // ── 1. 정통 서예 캘리그라피 가변 획 두께 계산기 (Master Calligraphic Nib Shaper) ──
     function getCalligraphicWidth(st, baseWidth) {
@@ -9551,16 +9602,19 @@ function toggleBookmark(id){
         totalDy += Math.abs(nums[i + 1] - nums[i - 1]);
       }
 
-      // 순수 가로획 (Horizontal stem): 날렵하고 단아한 7.5px
-      if (totalDx > totalDy * 2.2) return 7.5;
-      // 순수 세로획 (Vertical stem): 기둥을 묵직하고 당당히 세우는 13.8px
-      if (totalDy > totalDx * 2.2) return 13.8;
-      // 사선 (Diagonal): 9.5px
-      if (desc.includes('사선')) return 9.5;
-      // 원 (Circle/Oval): 10.5px
-      if (desc.includes('원')) return 10.5;
-      // 꺾임 (Turns, e.g. ㄱ, ㄴ, ㄷ, ㄹ 모서리): 11.2px
-      return 11.2;
+      // ── 궁서체 붓글씨 캘리그라피 가변 획 두께 (Gungsuh Calligraphic Weight Modulation) ──
+      // 순수 세로획 (Vertical stem): 붓을 묵직하게 눌러 곧게 세우는 14.5px
+      if (totalDy > totalDx * 2.2) return 14.5;
+      // 순수 가로획 (Horizontal stem): 궁서체 특유의 날렵하고 섬세한 6.5px
+      if (totalDx > totalDy * 2.2) return 6.5;
+      // 꼭지/점: 8.5px
+      if (desc.includes('꼭지') || desc.includes('점')) return 8.5;
+      // 사선/빗침 (Diagonal): 9.2px
+      if (desc.includes('사선') || desc.includes('빗침')) return 9.2;
+      // 원 (Circle/Oval): 9.2px
+      if (desc.includes('원') || desc.includes('이응')) return 9.2;
+      // 꺾임 (Turns, e.g. ㄱ, ㄴ, ㄷ, ㄹ 모서리): 11.0px
+      return 11.0;
     }
 
     // ── 2. 동적 획순 스트로크(Strokes) 및 번호 마커 생성 ──
@@ -9617,7 +9671,7 @@ function toggleBookmark(id){
         strokeMarkers += `
           <g id="stroke_badge_${idx}" class="${markerClass}" style="${displayStyle}">
             <circle cx="${st.bx}" cy="${st.by}" r="8.5" fill="#0f172a" stroke="${color}" stroke-width="2" />
-            <text x="${st.bx}" y="${st.by + 3.2}" text-anchor="middle" font-size="9" font-weight="900" fill="#ffffff" font-family="'Gowun Dodum', 'Inter', sans-serif">${idx + 1}</text>
+            <text x="${st.bx}" y="${st.by + 3.2}" text-anchor="middle" font-size="9" font-weight="800" fill="#ffffff" font-family="'Inter', -apple-system, sans-serif">${idx + 1}</text>
           </g>
         `;
       }
@@ -9635,19 +9689,12 @@ function toggleBookmark(id){
       `;
     }
 
-    // 1-1. 고운돋움 폰트 실루엣 가이드 레이어 (선택적 옵션, 기본값은 순수 서예 획 렌더링)
-    let fontSilhouette = '';
-    if (opts.showSilhouette === true) {
-      const syl = FONT_VECTORS.syllables && FONT_VECTORS.syllables[char];
-      if (syl && syl.p) {
-        const mat = (FONT_VECTORS.meta && FONT_VECTORS.meta.matrix) || [0.17, 0, 0, -0.17, 18.0, 168.0];
-        fontSilhouette = `
-        <g id="hangul_font_silhouette" opacity="0.18">
-          <path d="${syl.p}" transform="matrix(${mat.join(' ')})" fill="#ffffff" stroke="rgba(255,255,255,0.06)" stroke-width="0.5"/>
-        </g>
-        `;
-      }
-    }
+    // 1-1. 정통 궁서체 획순 연습 가이드 폰트 레이어 (Gungsuh Stroke Practice Underlay Guide)
+    const practiceGuide = `
+      <g id="hangul_practice_guide" opacity="0.16" style="pointer-events:none;">
+        <text x="100" y="152" text-anchor="middle" font-size="142" font-weight="normal" font-family="'Gungsuh', '궁서', serif" fill="#ffffff">${char}</text>
+      </g>
+    `;
 
     return `
       <svg id="hangul_composer_svg" viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
@@ -9662,8 +9709,8 @@ function toggleBookmark(id){
           ${gridElements}
         </g>
 
-        <!-- 1-1. 고운돋움 폰트 실루엣 가이드 레이어 -->
-        ${fontSilhouette}
+        <!-- 1-1. 정통 궁서체 획순 연습 가이드 실루엣 (Gungsuh Practice Underlay) -->
+        ${practiceGuide}
 
         <!-- 2. 컬러 획순 스트로크 레이어 (Sequential Animated Paths) -->
         <g id="hangul_strokes_group">

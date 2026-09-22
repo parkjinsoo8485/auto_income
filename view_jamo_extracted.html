@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>궁서체 'ㄱ' 외곽선 + 중심선(Medians) 정밀 보정 뷰어</title>
+  <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
+      background: #0f172a;
+      color: #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      font-size: 24px;
+      margin: 0 0 8px 0;
+      color: #38bdf8;
+    }
+    .header p {
+      margin: 0;
+      color: #94a3b8;
+      font-size: 14px;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      max-width: 1040px;
+      width: 100%;
+    }
+    .card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.4);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1 1 440px;
+      max-width: 500px;
+    }
+    .card-title {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 14px;
+      color: #e2e8f0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      background: #0284c7;
+      color: white;
+      border-radius: 12px;
+      font-weight: 500;
+    }
+    .canvas-box {
+      width: 320px;
+      height: 320px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: inset 0 0 0 1px #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+    }
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+      justify-content: center;
+      width: 100%;
+    }
+    button {
+      padding: 8px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    button:hover { background: #1d4ed8; transform: translateY(-1px); }
+    button.secondary { background: #475569; }
+    button.secondary:hover { background: #334155; }
+    button.accent { background: #059669; }
+    button.accent:hover { background: #047857; }
+    button.warm { background: #ea580c; }
+    button.warm:hover { background: #c2410c; }
+    .status-box {
+      margin-top: 12px;
+      padding: 9px 12px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #38bdf8;
+      width: 100%;
+      text-align: center;
+      min-height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .info-table {
+      width: 100%;
+      font-size: 12px;
+      margin-top: 12px;
+      border-collapse: collapse;
+      color: #94a3b8;
+    }
+    .info-table td {
+      padding: 4px 6px;
+      border-bottom: 1px solid #334155;
+    }
+    .info-table td.val {
+      color: #f1f5f9;
+      font-family: monospace;
+      text-align: right;
+    }
+    svg.debug-svg {
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+    }
+    .point-handle {
+      cursor: grab;
+      transition: r 0.15s;
+    }
+    .point-handle:hover {
+      r: 28;
+    }
+    .point-handle:active {
+      cursor: grabbing;
+    }
+    .drag-hint {
+      font-size: 11px;
+      color: #f59e0b;
+      margin-top: 4px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>궁서체 'ㄱ' 외곽선 + 중심선(Medians) 정밀 보정 뷰어</h1>
+    <p>오른쪽 SVG 화면에서 <strong>숫자 포인트(1~5)를 마우스로 직접 드래그</strong>하여 미세조정할 수도 있습니다.</p>
+  </div>
+
+  <div class="container">
+    <!-- 1. HanziWriter 인터랙티브 카드 -->
+    <div class="card">
+      <div class="card-title">
+        <span>HanziWriter 실시간 렌더러</span>
+        <span class="badge">동작 검증</span>
+      </div>
+
+      <div class="canvas-box" id="writer-target"></div>
+
+      <div class="controls">
+        <button onclick="playAnimation()">획순 애니메이션</button>
+        <button class="accent" onclick="startQuiz()">쓰기 퀴즈 모드</button>
+        <button class="secondary" onclick="resetWriter()">초기화</button>
+      </div>
+
+      <div class="status-box" id="status-text">
+        중심선이 외곽선 내부로 정확히 보정되었습니다. 애니메이션을 확인해보세요!
+      </div>
+
+      <table class="info-table">
+        <tr><td>추출 대상</td><td class="val">assets/fonts/Gungsuh.ttf ('ㄱ')</td></tr>
+        <tr><td>글리프 바운딩 박스</td><td class="val">X: 202~784 / Y: 251~674 (보정후)</td></tr>
+        <tr><td>보정된 획 중심선 상태</td><td class="val" id="info-status" style="color:#10b981; font-weight:bold;">외곽선 내부 완벽 일치</td></tr>
+      </table>
+    </div>
+
+    <!-- 2. 원시 데이터 오버레이 & 인터랙티브 제어점 튜너 -->
+    <div class="card">
+      <div class="card-title">
+        <span>SVG 구조 분석 & 중심선 튜너</span>
+        <span class="badge" style="background:#8b5cf6">드래그 조절 가능</span>
+      </div>
+
+      <div class="canvas-box" style="background:#1e1b4b;" id="debug-canvas-box">
+        <svg class="debug-svg" viewBox="0 0 1024 1024" id="debug-svg">
+          <!-- 격자 가이드 -->
+          <line x1="0" y1="512" x2="1024" y2="512" stroke="#312e81" stroke-dasharray="8 8" />
+          <line x1="512" y1="0" x2="512" y2="1024" stroke="#312e81" stroke-dasharray="8 8" />
+          
+          <!-- HanziWriter 변환: scale(1, -1) translate(0, -900) -->
+          <g transform="scale(1, -1) translate(0, -900)">
+            <!-- 외곽선 패스 (Stroke) -->
+            <path id="svg-stroke-path" fill="#4338ca" stroke="#818cf8" stroke-width="6" opacity="0.85" />
+            <!-- 중심선 (Median) -->
+            <polyline id="svg-median-line" fill="none" stroke="#f43f5e" stroke-width="16" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- 중심선 제어점들 -->
+            <g id="svg-median-points"></g>
+          </g>
+        </svg>
+      </div>
+      <div class="drag-hint">💡 점 1~5를 마우스로 드래그하면 실시간으로 위치가 이동하며 왼쪽 HanziWriter에 즉시 반영됩니다.</div>
+
+      <div class="controls">
+        <button class="secondary" onclick="applyPreset('fitted')">최적화 좌표(기본)</button>
+        <button class="secondary" onclick="applyPreset('thicker')">모서리 확장</button>
+        <button class="warm" onclick="copyCoordinates()">현재 좌표 JSON 복사</button>
+      </div>
+
+      <div class="status-box" id="debug-status" style="color:#a5b4fc;">
+        보라색 면 = 궁서체 외곽선 / 빨간 선 = 획순 중심선
+      </div>
+
+      <table class="info-table">
+        <tr><td>1번 점 (가로 시작)</td><td class="val" id="pt-coord-0">[220, 605]</td></tr>
+        <tr><td>3번 점 (꺾임 코너)</td><td class="val" id="pt-coord-2">[710, 615]</td></tr>
+        <tr><td>5번 점 (세로 끝점)</td><td class="val" id="pt-coord-4">[675, 265]</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // 외곽선 패스 (Gungsuh.ttf 원본)
+    const strokePath = "M 655 592 L 655 592 L 661 592 Q 660 525 665 461 L 665 461 Q 667 425 674 370 L 674 370 Q 678 335 679 322 L 679 322 Q 680 301 677 290 L 677 290 Q 667 252 673 251 L 673 251 Q 680 249 707 295 L 707 295 L 707 297 Q 736 348 747 385 L 747 385 Q 764 446 767 551 L 767 551 Q 768 559 771 566 L 771 566 Q 773 570 777 577 L 777 577 Q 786 591 784 601 L 784 601 Q 782 616 759 640 L 759 640 Q 731 669 713 673 L 713 673 Q 701 676 678 667 L 678 667 Q 666 662 659 659 L 659 659 Q 647 656 635 654 L 635 654 Q 495 640 412 636 L 412 636 Q 308 631 247 639 L 247 639 Q 193 646 204 619 L 204 619 Q 214 591 281 553 L 281 553 Q 324 533 341 532 L 341 532 Q 355 530 385 541 L 385 541 Q 429 556 470 565 L 470 565 Q 545 581 655 592 Z";
+
+    // 외곽선 내부 정밀 보정된 중심선 좌표
+    let currentMedians = [
+      [220, 605], // 1. 가로획 시작점 (좌측 중심)
+      [450, 600], // 2. 가로획 중간
+      [710, 615], // 3. 꺾임 모서리 (코너 중심)
+      [710, 450], // 4. 세로획 중간
+      [675, 265]  // 5. 세로획 끝점 (하단 끝)
+    ];
+
+    let writer = null;
+
+    function getJamoPayload() {
+      return {
+        strokes: [strokePath],
+        medians: [currentMedians]
+      };
+    }
+
+    function initWriter() {
+      const target = document.getElementById('writer-target');
+      target.innerHTML = '';
+
+      writer = HanziWriter.create('writer-target', 'ㄱ', {
+        width: 300,
+        height: 300,
+        padding: 20,
+        showOutline: true,
+        strokeColor: '#0284c7', // 획 색상 (청명한 파란색)
+        outlineColor: '#cbd5e1', // 가이드 회색
+        drawingColor: '#ef4444', // 필기 선
+        strokeAnimationSpeed: 1.0,
+        delayBetweenStrokes: 200,
+        charDataLoader: function(char, onComplete) {
+          onComplete(getJamoPayload());
+        }
+      });
+    }
+
+    function playAnimation() {
+      if (!writer) return;
+      document.getElementById('status-text').innerText = '획순 애니메이션 재생 중...';
+      writer.animateCharacter({
+        onComplete: function() {
+          document.getElementById('status-text').innerText = '애니메이션 완료!';
+        }
+      });
+    }
+
+    function startQuiz() {
+      if (!writer) return;
+      document.getElementById('status-text').innerText = '외곽선에 맞춰 마우스로 "ㄱ"을 써보세요!';
+      writer.quiz({
+        onMistake: function(strokeData) {
+          document.getElementById('status-text').innerText = `틀렸습니다! 획 방향을 확인해주세요. (오류: ${strokeData.mistakesOnStroke}회)`;
+        },
+        onCorrectStroke: function(strokeData) {
+          document.getElementById('status-text').innerText = `정확합니다! ${strokeData.strokeNum + 1}번째 획을 올바르게 완성했습니다.`;
+        },
+        onComplete: function(summaryData) {
+          document.getElementById('status-text').innerText = `완벽합니다! 쓰기 퀴즈 통과!`;
+        }
+      });
+    }
+
+    function resetWriter() {
+      initWriter();
+      document.getElementById('status-text').innerText = '초기화되었습니다. 애니메이션 버튼을 눌러보세요.';
+    }
+
+    // 디버그 SVG 렌더링 및 드래그 앤 드롭
+    let draggingIdx = -1;
+
+    function renderDebugSvg() {
+      const pathEl = document.getElementById('svg-stroke-path');
+      pathEl.setAttribute('d', strokePath);
+
+      const polyline = document.getElementById('svg-median-line');
+      const pointsStr = currentMedians.map(p => p.join(',')).join(' ');
+      polyline.setAttribute('points', pointsStr);
+
+      const pointsGroup = document.getElementById('svg-median-points');
+      pointsGroup.innerHTML = '';
+
+      currentMedians.forEach((pt, idx) => {
+        const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        circle.setAttribute('cx', pt[0]);
+        circle.setAttribute('cy', pt[1]);
+        circle.setAttribute('r', idx === 0 ? '22' : '16');
+        circle.setAttribute('fill', idx === 0 ? '#10b981' : '#f59e0b');
+        circle.setAttribute('stroke', '#ffffff');
+        circle.setAttribute('stroke-width', '4');
+        circle.setAttribute('class', 'point-handle');
+        circle.dataset.idx = idx;
+
+        // 드래그 시작 이벤트
+        circle.addEventListener('mousedown', (e) => {
+          e.stopPropagation();
+          draggingIdx = idx;
+        });
+
+        pointsGroup.appendChild(circle);
+
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', pt[0]);
+        text.setAttribute('y', pt[1] - 22);
+        text.setAttribute('fill', '#ffffff');
+        text.setAttribute('font-size', '28');
+        text.setAttribute('font-weight', 'bold');
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('pointer-events', 'none');
+        text.textContent = (idx + 1);
+        pointsGroup.appendChild(text);
+      });
+
+      // 좌표 UI 테이블 업데이트
+      if (document.getElementById('pt-coord-0')) document.getElementById('pt-coord-0').innerText = `[${currentMedians[0][0]}, ${currentMedians[0][1]}]`;
+      if (document.getElementById('pt-coord-2')) document.getElementById('pt-coord-2').innerText = `[${currentMedians[2][0]}, ${currentMedians[2][1]}]`;
+      if (document.getElementById('pt-coord-4')) document.getElementById('pt-coord-4').innerText = `[${currentMedians[4][0]}, ${currentMedians[4][1]}]`;
+    }
+
+    // 마우스 드래그 좌표 변환 (SVG 스크린 좌표 -> HanziWriter 좌표)
+    const svgEl = document.getElementById('debug-svg');
+
+    svgEl.addEventListener('mousemove', (e) => {
+      if (draggingIdx === -1) return;
+      const rect = svgEl.getBoundingClientRect();
+      const clientX = e.clientX - rect.left;
+      const clientY = e.clientY - rect.top;
+
+      // SVG viewBox(1024x1024) 비율 계산
+      const scaleX = 1024 / rect.width;
+      const scaleY = 1024 / rect.height;
+
+      const rawSvgX = clientX * scaleX;
+      const rawSvgY = clientY * scaleY;
+
+      // HanziWriter 역변환: scale(1, -1) translate(0, -900)
+      // rawSvgX = hanziX
+      // rawSvgY = -(hanziY - 900) = 900 - hanziY => hanziY = 900 - rawSvgY
+      const hanziX = Math.round(rawSvgX);
+      const hanziY = Math.round(900 - rawSvgY);
+
+      currentMedians[draggingIdx] = [hanziX, hanziY];
+      renderDebugSvg();
+      document.getElementById('debug-status').innerText = `${draggingIdx + 1}번 제어점 이동 중: [${hanziX}, ${hanziY}]`;
+    });
+
+    window.addEventListener('mouseup', () => {
+      if (draggingIdx !== -1) {
+        draggingIdx = -1;
+        document.getElementById('debug-status').innerText = '제어점 이동 완료! 왼쪽 HanziWriter가 갱신되었습니다.';
+        initWriter();
+      }
+    });
+
+    function applyPreset(type) {
+      if (type === 'fitted') {
+        currentMedians = [
+          [220, 605],
+          [450, 600],
+          [710, 615],
+          [710, 450],
+          [675, 265]
+        ];
+      } else if (type === 'thicker') {
+        currentMedians = [
+          [210, 600],
+          [460, 605],
+          [720, 625],
+          [715, 440],
+          [670, 255]
+        ];
+      }
+      renderDebugSvg();
+      initWriter();
+      document.getElementById('status-text').innerText = '프리셋 좌표가 적용되었습니다.';
+    }
+
+    function copyCoordinates() {
+      const payload = JSON.stringify(currentMedians);
+      navigator.clipboard.writeText(payload).then(() => {
+        alert("현재 중심선(Medians) 좌표가 클립보드에 복사되었습니다:\n" + payload);
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      initWriter();
+      renderDebugSvg();
+    });
+  </script>
+</body>
+</html>

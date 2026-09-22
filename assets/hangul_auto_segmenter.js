@@ -173,53 +173,100 @@
     let jungGroups = [];
     let choGroups = [];
 
-    // 2. 종성(받침) 분리
-    // 종성은 글리프 하단에 위치 (중심 cy가 전체 높이의 하위 45% 이하이고 maxY가 상단 55%를 넘지 않음)
-    const jongSplitCy = dec.hasJong ? totalMinY + totalH * 0.45 : -9999;
-    const remainingGroups = [];
+    // ── 2. 가로 모음(ㅗ, ㅛ, ㅜ, ㅠ, ㅡ)의 절대 경계선 분리 ──
+    if (vType === 2) {
+      const hBar = groups.reduce((maxG, g) => (g.w > maxG.w ? g : maxG), groups[0]);
+      const barMinY = hBar.minY;
+      const barMaxY = hBar.maxY;
 
-    groups.forEach(g => {
-      if (dec.hasJong && g.cy <= jongSplitCy && g.maxY <= totalMinY + totalH * 0.55) {
-        jongGroups.push(g);
-      } else {
-        remainingGroups.push(g);
-      }
-    });
+      jungGroups = [hBar];
+      choGroups = [];
+      jongGroups = [];
 
-    // 3. 중성(모음) 및 초성 분리
-    if (vType === 1) {
-      // 세로 모음: 우측 영역에 위치하며 세로로 긴 그룹
-      remainingGroups.forEach(g => {
-        if (g.cx > totalMinX + totalW * 0.55 && g.h > totalH * 0.35) {
-          jungGroups.push(g);
-        } else {
+      groups.forEach(g => {
+        if (g === hBar) return;
+        if (dec.hasJong && g.maxY <= barMinY + 15) {
+          jongGroups.push(g);
+        } else if (g.minY >= barMaxY - 15) {
           choGroups.push(g);
+        } else {
+          if (g.cy > hBar.cy) {
+            choGroups.push(g);
+          } else {
+            if (dec.hasJong) jongGroups.push(g);
+            else jungGroups.push(g);
+          }
         }
       });
-    } else if (vType === 2) {
-      // 가로 모음: 가로로 넓은 그룹 (w > totalW * 0.45)
-      // 남은 그룹 중 y 중심이 상대적으로 아래인 가로 부재
-      remainingGroups.sort((a, b) => a.cy - b.cy);
-      if (remainingGroups.length >= 2) {
-        const jungCand = remainingGroups.reduce((maxG, g) => {
-          return (g.w > maxG.w && g.cy < totalMaxY - 100) ? g : maxG;
-        }, remainingGroups[0]);
-        jungGroups.push(jungCand);
-        choGroups = remainingGroups.filter(g => g !== jungCand);
+
+    // ── 3. 세로 모음(ㅏ, ㅐ, ㅑ, ㅒ, ㅓ, ㅔ, ㅕ, ㅖ, ㅣ)의 절대 경계선 분리 ──
+    } else if (vType === 1) {
+      const nonJung = [];
+      groups.forEach(g => {
+        if (g.cx > totalMinX + totalW * 0.50 && g.maxY > totalMinY + totalH * 0.60) {
+          jungGroups.push(g);
+        } else {
+          nonJung.push(g);
+        }
+      });
+
+      if (dec.hasJong) {
+        const jongSplitCy = totalMinY + totalH * 0.45;
+        nonJung.forEach(g => {
+          if (g.cy <= jongSplitCy && g.maxY <= totalMinY + totalH * 0.55) {
+            jongGroups.push(g);
+          } else {
+            choGroups.push(g);
+          }
+        });
       } else {
-        choGroups = remainingGroups;
+        choGroups = nonJung;
       }
+
+    // ── 4. 복합 모음(ㅘ, ㅙ, ㅚ, ㅝ, ㅞ, ㅟ, ㅢ) 분리 ──
     } else {
-      // 복합 모음: 우측 세로부재 + 중간 가로부재
-      remainingGroups.forEach(g => {
-        if (g.cx > totalMinX + totalW * 0.65 && g.h > totalH * 0.35) {
+      const nonJung = [];
+      groups.forEach(g => {
+        if (g.cx > totalMinX + totalW * 0.60 && g.maxY > totalMinY + totalH * 0.60) {
           jungGroups.push(g);
-        } else if (g.cy < totalMinY + totalH * 0.60 && g.w > totalW * 0.40) {
+        } else if (g.cx > totalMinX + totalW * 0.25 &&
+                   g.cy > totalMinY + totalH * 0.25 &&
+                   g.cy < totalMinY + totalH * 0.65 &&
+                   g.w > totalW * 0.42) {
           jungGroups.push(g);
         } else {
-          choGroups.push(g);
+          nonJung.push(g);
         }
       });
+
+      if (dec.hasJong) {
+        const jongSplitCy = totalMinY + totalH * 0.40;
+        nonJung.forEach(g => {
+          if (g.cy <= jongSplitCy && g.maxY <= totalMinY + totalH * 0.50) {
+            jongGroups.push(g);
+          } else {
+            choGroups.push(g);
+          }
+        });
+      } else {
+        choGroups = nonJung;
+      }
+    }
+
+    // 4. 특수 케이스: 폰트 외곽선에서 중성('ㅜ'/'ㅠ')과 종성('ㅁ'/'ㄹ'/'ㅂ' 등)이 물리적으로 합쳐진 경우
+    let isUnified = false;
+    let unifiedPath = '';
+    let splitYRatio = 0.58;
+
+    if (dec.hasJong && jongGroups.length === 0) {
+      for (let jg of jungGroups) {
+        if (jg.minY <= totalMinY + 50 && jg.h >= totalH * 0.45) {
+          isUnified = true;
+          unifiedPath = jg.d;
+          splitYRatio = 0.58;
+          break;
+        }
+      }
     }
 
     // 종성 겹받침인 경우 좌측 자음 -> 우측 자음 정렬
@@ -227,7 +274,6 @@
       jongGroups.sort((a, b) => a.cx - b.cx);
     }
 
-    // 폴백(Fallback): 만약 서브패스가 부울 합병되어 종성이 분리되지 않은 경우 (예: '꿈' 등)
     let choPath = choGroups.map(g => g.d).join('');
     let jungPath = jungGroups.map(g => g.d).join('');
     let jongPaths = jongGroups.map(g => g.d);
@@ -246,10 +292,13 @@
       jongPaths,
       jongPath: jongPaths.join(''),
       totalPath: glyphPath,
+      isUnifiedJungJong: isUnified,
+      unifiedPath: unifiedPath,
+      splitYRatio: splitYRatio,
       counts: {
         cho: choGroups.length,
         jung: jungGroups.length,
-        jong: jongGroups.length
+        jong: isUnified ? 1 : jongGroups.length
       }
     };
   }

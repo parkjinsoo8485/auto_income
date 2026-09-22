@@ -1,5 +1,27 @@
 {
   "dependencies": {
     "opentype.js": "^2.0.0"
-  }
+  },
+  "name": "auto_income",
+  "version": "1.0.0",
+  "description": "구글 플레이스토어 AdMob 기반 어학/학습 앱을 **JSON 설정 파일 하나로 100% 무인 생성/변형/빌드/패키징**하는 Python 오케스트레이터 시스템입니다.",
+  "main": "build_hangul_strokes_db.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/parkjinsoo8485/auto_income.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/parkjinsoo8485/auto_income/issues"
+  },
+  "homepage": "https://github.com/parkjinsoo8485/auto_income#readme"
 }

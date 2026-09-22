@@ -481,6 +481,35 @@
         }
 
         let rawStrokes = STROKE_DB[j] || [];
+
+        // [핵심 조판 문맥 규칙] 초성 'ㄱ', 'ㄲ', 'ㅋ' 세로모음 결합 시 대각선 꼬리 완벽 정합
+        if (slot.role === 'cho') {
+          const isVertType = (slot.type === 1 || slot.type === 4 || slot.type === 3 || slot.type === 6);
+          if (j === 'ㄱ' && isVertType) {
+            rawStrokes = [
+              { d: 'M 16,22 L 88,22 Q 76,54 18,102', desc: '1획: 가로 후 대각선 꺾임' }
+            ];
+          } else if (j === 'ㄲ' && isVertType) {
+            rawStrokes = [
+              { d: 'M 10,22 L 46,22 Q 38,54 10,100', desc: '1획: 앞 ㄱ 대각선' },
+              { d: 'M 54,22 L 90,22 Q 80,54 52,100', desc: '2획: 뒤 ㄱ 대각선' }
+            ];
+          } else if (j === 'ㅋ' && isVertType) {
+            rawStrokes = [
+              { d: 'M 16,22 L 88,22 Q 76,54 18,102', desc: '1획: 가로 후 대각선 꺾임' },
+              { d: 'M 18,52 L 78,52', desc: '2획: 중간 가로' }
+            ];
+          }
+        }
+
+        // [핵심 조판 문맥 규칙] 종성 'ㅅ' 끝단 연장
+        if (slot.role === 'jong' && j === 'ㅅ') {
+          rawStrokes = [
+            { d: 'M 50,14 Q 40,46 12,90', desc: '1획: 왼 사선' },
+            { d: 'M 42,44 Q 60,64 92,92', desc: '2획: 오른 사선' }
+          ];
+        }
+
         // 복합 모음(ㅘ, ㅚ, ㅟ 등)에서 가로모음(ㅗ, ㅜ)이 오른쪽 세로 기둥에 자연스럽게 닿도록 연결
         if (slot.role === 'jung_h') {
           if (j === 'ㅗ') {

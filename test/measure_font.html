@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@800&display=swap" rel="stylesheet">
+  <style>
+    body { margin: 0; background: black; }
+    svg { width: 200px; height: 200px; }
+  </style>
+</head>
+<body>
+  <svg id="svg" viewBox="0 0 200 200">
+    <text id="txt" x="100" y="155" font-family="'Nanum Gothic', sans-serif" font-size="160" font-weight="800" text-anchor="middle" fill="white">꽃</text>
+  </svg>
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.has('char')) {
+      document.getElementById('txt').textContent = urlParams.get('char');
+    }
+  </script>
+</body>
+</html>
