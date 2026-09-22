@@ -93,14 +93,14 @@ function makeCircleStroke(cx, cy, rX, rY, thickness = 70) {
   // 12시 방향 (cx, cy + outerRy)에서 시작하는 완전한 도넛 패스
   const path = `M ${cx},${cy + outerRy} A ${outerRx} ${outerRy} 0 1 0 ${cx} ${cy - outerRy} A ${outerRx} ${outerRy} 0 1 0 ${cx} ${cy + outerRy} M ${cx},${cy + innerRy} A ${innerRx} ${innerRy} 0 1 1 ${cx} ${cy - innerRy} A ${innerRx} ${innerRy} 0 1 1 ${cx} ${cy + innerRy} Z`;
   
-  // 12시 방향(cx, cy + rY)에서 시작하여 화면상 반시계방향(11시 -> 9시 -> 6시 -> 3시 -> 12시)으로 매끄럽게 회전
-  const steps = 16;
+  // 정 북 방향(cx, cy + rY) 12시 정점에서 시작하여 원래의 회전 방향으로 32단계 정밀 회전
+  const steps = 32;
   const median = [];
   for (let i = 0; i <= steps; i++) {
     const angle = (2 * Math.PI * i) / steps;
-    // i=0 일 때 (cx, cy + rY) = 정확한 12시 정점
-    // angle 증가 시 화면상 왼쪽(반시계)으로 회전
-    const x = Math.round(cx + rX * Math.sin(angle));
+    // i=0 일 때 (cx, cy + rY) = 정확한 정 북(12시) 정점
+    // 원래 회전 방향 (cx - rX * sin) 복원 및 32단계 세밀화로 점프 방지
+    const x = Math.round(cx - rX * Math.sin(angle));
     const y = Math.round(cy + rY * Math.cos(angle));
     median.push([x, y]);
   }
