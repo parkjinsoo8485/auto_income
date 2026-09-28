@@ -232,7 +232,7 @@
     .stroke-selector {
       display: flex;
       gap: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       width: 100%;
       overflow-x: auto;
       padding-bottom: 2px;
@@ -252,6 +252,48 @@
       color: white;
       border-color: #38bdf8;
     }
+    .point-controls {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 6px 10px;
+      flex-wrap: wrap;
+    }
+    .point-controls .pc-label {
+      font-size: 11px;
+      color: #64748b;
+      flex-shrink: 0;
+    }
+    .point-controls .pc-count {
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      min-width: 32px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .pc-btn {
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.15s;
+      flex-shrink: 0;
+    }
+    .pc-btn.add  { background: #059669; color: white; }
+    .pc-btn.add:hover  { background: #047857; }
+    .pc-btn.del  { background: #dc2626; color: white; }
+    .pc-btn.del:hover  { background: #b91c1c; }
+    .pc-btn.del-stroke { background: #7c3aed; color: white; }
+    .pc-btn.del-stroke:hover { background: #6d28d9; }
+    .pc-divider { width: 1px; height: 18px; background: #334155; flex-shrink: 0; }
     .status-bar {
       width: 100%;
       background: #0f172a;
@@ -273,6 +315,235 @@
       line-height: 1.4;
       width: 100%;
     }
+    .badge-status {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: sans-serif;
+    }
+    .badge-status.connected {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .badge-status.disconnected {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+    #toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 99999;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 10px 16px;
+      border-radius: 8px;
+      background: #1e293b;
+      color: #f1f5f9;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+      border: 1px solid #334155;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: auto;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .toast.success { border-color: #059669; background: #064e3b; color: #a7f3d0; }
+    .toast.warning { border-color: #d97706; background: #78350f; color: #fde68a; }
+    .toast.info { border-color: #0284c7; background: #0c4a6e; color: #bae6fd; }
+
+    /* ─── 획순 진행 및 획 두께 컨트롤 패널 ─────────────────────── */
+    .stroke-progress-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+      width: 100%;
+      background: #0b1329;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      padding: 10px 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    }
+    .sp-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .sp-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .sp-label strong {
+      color: #38bdf8;
+    }
+    .sp-steps {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .sp-step-btn {
+      padding: 3px 9px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #cbd5e1;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sp-step-btn:hover {
+      border-color: #38bdf8;
+      color: white;
+    }
+    .sp-step-btn.active {
+      background: #0284c7;
+      color: white;
+      border-color: #38bdf8;
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+    }
+    .sp-slider-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-grow: 1;
+      max-width: 260px;
+    }
+    .sp-slider {
+      flex-grow: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #1e293b;
+      outline: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+    }
+    .sp-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #38bdf8;
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+      border: 2px solid white;
+    }
+    .sp-slider-val {
+      font-size: 12px;
+      font-weight: 700;
+      color: #38bdf8;
+      font-family: monospace;
+      min-width: 38px;
+      text-align: right;
+    }
+    .sp-preset-btn {
+      padding: 2px 7px;
+      font-size: 10px;
+      font-weight: 600;
+      border: 1px solid #334155;
+      background: #1e293b;
+      color: #94a3b8;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sp-preset-btn:hover {
+      border-color: #38bdf8;
+      color: white;
+    }
+    .sp-mode-group {
+      display: inline-flex;
+      border: 1px solid #334155;
+      border-radius: 5px;
+      overflow: hidden;
+      background: #0f172a;
+    }
+    .sp-mode-btn {
+      padding: 2px 7px;
+      font-size: 11px;
+      font-weight: 700;
+      border: none;
+      background: transparent;
+      color: #94a3b8;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sp-mode-btn.active {
+      background: #0284c7;
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }
+    .sp-pills-wrap {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .sp-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 1px 7px;
+      font-size: 10px;
+      font-family: monospace;
+      font-weight: 700;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      background: #0f172a;
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sp-pill:hover {
+      border-color: #38bdf8;
+      color: #ffffff;
+    }
+    .sp-pill.active {
+      border-color: #38bdf8;
+      background: #0369a1;
+      color: #ffffff;
+      box-shadow: 0 0 6px rgba(56, 189, 248, 0.5);
+    }
+    .sp-toggle-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: #cbd5e1;
+      cursor: pointer;
+      user-select: none;
+    }
+    .sp-toggle-label input {
+      accent-color: #38bdf8;
+      cursor: pointer;
+    }
+
   </style>
 </head>
 <body>
@@ -280,13 +551,17 @@
   <header>
     <h1>
       <span>궁서체 153개 자소 '중심선 수집기 & 에디터'</span>
+      <span id="server-status-badge" class="badge-status disconnected">🟠 브라우저 로컬 저장</span>
     </h1>
     <div class="header-actions">
+      <button class="btn green" onclick="saveAllToDisk()" title="수정된 모든 자소 데이터를 hangul_150_parts_warehouse.json 및 .js 파일에 즉시 영구 저장합니다.">💾 디스크 파일에 영구 동기화</button>
       <button class="btn purple" onclick="resetAllToCalibrated()">🔄 1차 보정값으로 전체 새로고침</button>
       <button class="btn amber" onclick="resetToInitial()">현재 자소 초기화</button>
-      <button class="btn green" onclick="downloadAllCollectedJson()">📥 전체 153개 데이터 JSON 다운로드</button>
+      <button class="btn gray" onclick="downloadAllCollectedJson()">📥 전체 JSON 다운로드</button>
     </div>
   </header>
+
+  <div id="toast-container"></div>
 
   <div class="main-layout">
     <!-- 1. 좌측 153개 자소 부품 선택 리스트 -->
@@ -311,6 +586,80 @@
         <!-- 획 전환 탭 -->
         <div class="stroke-selector" id="stroke-selector-bar"></div>
 
+        <!-- 점 수 조작 인라인 컨트롤 (총획과 독립) -->
+        <div class="point-controls" id="point-controls-bar">
+          <span class="pc-label">현재 획 점 수:</span>
+          <span class="pc-count" id="pc-count-display">-</span>
+          <button class="pc-btn add" onclick="addPointToCurrentStroke()" title="현재 활성 획의 끝에 점 추가">＋ 점 추가</button>
+          <button class="pc-btn del" onclick="removeLastPointFromCurrentStroke()" title="현재 활성 획의 마지막 점 제거 (최소 2개 유지)">－ 점 제거</button>
+          <div class="pc-divider"></div>
+          <button class="pc-btn del-stroke" onclick="deleteCurrentStroke()" title="현재 선택된 획 전체를 삭제합니다 (최소 1획 유지)">🗑 현재 획 삭제</button>
+        </div>
+
+        <!-- 획순 진행 및 획 두께 조절 컨트롤러 -->
+        <div class="stroke-progress-panel" id="stroke-progress-panel">
+          <!-- 1행: 획순 단계 제어 & 순차 애니메이션 -->
+          <div class="sp-row">
+            <span class="sp-label">✏️ <strong>획순 진행</strong>:</span>
+            <div class="sp-steps" id="sp-step-buttons"></div>
+            <button class="sp-step-btn" id="sp-btn-play" style="background:#0284c7; color:white; border-color:#38bdf8;" onclick="playStrokeProgressAnim()">▶ 순차 획순 재생</button>
+            <button class="sp-step-btn" onclick="resetStrokeProgress()" title="1획 상태로 되돌리기">⏮ 처음</button>
+          </div>
+
+          <!-- 2행: 획 두께 (Stroke Width) 조절 & 모드 선택 & 프리셋 -->
+          <div class="sp-row">
+            <span class="sp-label">📏 <strong id="stroke-width-target-label">획 두께 (1획)</strong>:</span>
+            <div class="sp-mode-group">
+              <button class="sp-mode-btn active" id="sp-mode-stroke" onclick="setStrokeWidthMode('stroke')" title="현재 활성화된 획의 두께만 조절합니다.">선택 획</button>
+              <button class="sp-mode-btn" id="sp-mode-all" onclick="setStrokeWidthMode('all')" title="이 자소의 모든 획 두께를 일괄 조절합니다.">전체 획</button>
+            </div>
+            <div class="sp-slider-wrap">
+              <input type="range" class="sp-slider" id="stroke-width-slider" min="10" max="80" value="34" oninput="onStrokeWidthSlider(this.value)">
+              <span class="sp-slider-val" id="stroke-width-val">34px</span>
+            </div>
+            <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(16)">극세(16)</button>
+            <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(22)" style="color:#38bdf8; font-weight:700;">가늘게(22)</button>
+            <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(34)">기본(34)</button>
+            <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(46)">두껍게(46)</button>
+            <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(60)">굵게(60)</button>
+            <button class="sp-preset-btn" style="background:#701a75; color:#f0abfc; border-color:#d946ef; font-weight:bold;" onclick="preventStrokeBleedingMode()" title="획이 겹치는 부위에서 다른 획으로 색이 번지지 않도록 Voronoi 영역 격리 및 정밀 두께를 즉시 최적화합니다.">🛡️ 획 번짐 방지 정밀 모드</button>
+            <button class="sp-preset-btn" style="background:#0c4a6e; color:#7dd3fc; border-color:#0284c7; font-weight:bold;" onclick="optimizeForDoubleJongsung()" title="받침이 2개 있는 겹받침의 획 겹침/번짐을 방지하는 정밀 22px 모드로 즉시 최적화합니다.">🎯 겹받침 정밀(22px)</button>
+            <button class="sp-preset-btn" style="background:#1e1b4b; color:#a5b4fc; border-color:#6366f1; font-weight:bold;" onclick="autoFitStrokeWidthsToFontUI()" title="바탕 궁서체 외곽선의 실제 물리적 두께를 기하학적으로 측정하여 각 획의 굵기를 글씨체에 맞게 100% 자동 설정합니다.">🪄 글씨체 맞춤 자동 굵기</button>
+            <button class="sp-preset-btn" style="background:#064e3b; color:#6ee7b7; border-color:#10b981; font-weight:bold;" onclick="fillOutlineFully()" title="궁서체 외곽선 형태 그대로 내부가 100% 빈틈없이 가득 채워지도록 중심선 굵기와 외곽선 마스크 클립을 일괄 적용합니다.">🎨 외곽선 100% 꽉 채우기</button>
+          </div>
+
+          <!-- 2-1행: 각 획별 두께 모니터링 알약(Pills) 바 -->
+          <div class="sp-row" style="margin-top:-2px; margin-bottom:2px;">
+            <span class="sp-label" style="font-size:11px; color:#64748b;">획별 두께:</span>
+            <div class="sp-pills-wrap" id="sp-stroke-width-pills"></div>
+          </div>
+
+          <!-- 3행: 표시 레이어 토글 -->
+          <div class="sp-row" style="margin-top:2px;">
+            <span class="sp-label">👁️ <strong>표시 레이어</strong>:</span>
+            <label class="sp-toggle-label">
+              <input type="checkbox" id="chk-real-strokes" checked onchange="toggleRealStrokes(this.checked)">
+              <span>중심선 획 채우기 (실시간)</span>
+            </label>
+            <label class="sp-toggle-label">
+              <input type="checkbox" id="chk-mask-clip" checked onchange="toggleMaskClip(this.checked)">
+              <span style="color:#a7f3d0; font-weight:bold;">외곽선 마스크 클립 (외곽선 형태 그대로 꽉 채우기)</span>
+            </label>
+            <label class="sp-toggle-label">
+              <input type="checkbox" id="chk-outline" checked onchange="toggleOutline(this.checked)">
+              <span>궁서체 외곽선 테두리</span>
+            </label>
+            <label class="sp-toggle-label">
+              <input type="checkbox" id="chk-skeleton" checked onchange="toggleSkeleton(this.checked)">
+              <span>골격선 & 제어점</span>
+            </label>
+            <label class="sp-toggle-label">
+              <input type="checkbox" id="chk-badges" checked onchange="toggleBadges(this.checked)">
+              <span>획순 번호(①..⑥)</span>
+            </label>
+          </div>
+        </div>
+
         <!-- 인터랙티브 SVG 캔버스 (1024x1024) -->
         <div class="canvas-box" id="editor-canvas-box">
           <svg class="interactive-svg" viewBox="0 0 1024 1024" id="editor-svg">
@@ -320,23 +669,37 @@
             <rect id="editor-bbox-rect" fill="none" stroke="#38bdf8" stroke-width="2" stroke-dasharray="6 6" opacity="0.4" />
 
             <!-- HanziWriter 좌표계: scale(1, -1) translate(0, -900) -->
-            <g transform="scale(1, -1) translate(0, -900)">
+            <g id="hanzi-coord-group" transform="scale(1, -1) translate(0, -900)">
+              <!-- 외곽선 마스킹 클립패스 (반드시 transform 그룹 내부에 위치해야 1:1로 정확히 일치함) -->
+              <defs id="editor-defs">
+                <clipPath id="editor-outline-clip">
+                  <path id="editor-outline-clip-path" d="" />
+                </clipPath>
+              </defs>
+
               <!-- 궁서체 원본 외곽선 (Gungsuh.ttf 베지에 패스) -->
-              <path id="gungsuh-outline-path" fill="#1e1b4b" stroke="#818cf8" stroke-width="5" opacity="0.9" />
+              <path id="gungsuh-outline-path" fill="#1e1b4b" stroke="#818cf8" stroke-width="4" opacity="0.65" />
+
+              <!-- 중심선 위치 & 길이 & 두께 기반 실제 획 렌더링 레이어 (외곽선 클립 마스크 적용) -->
+              <g id="real-strokes-group" clip-path="url(#editor-outline-clip)" pointer-events="none"></g>
 
               <!-- 중심선 궤적들 (Polylines) -->
-              <g id="medians-paths-group"></g>
+              <g id="medians-paths-group" pointer-events="none"></g>
 
               <!-- 인터랙티브 드래그 점들 (Handles) -->
               <g id="medians-handles-group"></g>
             </g>
+
+            <!-- 스크린 좌표계 (상하반전 없는 획순 번호 뱃지 ①..⑥) -->
+            <g id="stroke-badges-group" pointer-events="none"></g>
           </svg>
         </div>
 
         <div class="tip-text">
           💡 <strong>조작법:</strong> 
           • <strong>마우스 드래그</strong>: 중심선 제어점 이동 (실시간 궤적 반영)<br>
-          • <strong>더블클릭</strong>: 새로운 제어점 추가 / <strong>우클릭</strong>: 제어점 삭제
+          • <strong>더블클릭</strong>: 새로운 제어점 추가 / <strong>우클릭</strong>: 제어점 삭제<br>
+          • <span style="color:#f87171;">🔴 빨간 점</span> = 외곽선 이탈! → <strong>🎯 중심 자동 정렬</strong> 버튼으로 수정하세요.
         </div>
 
         <div class="status-bar" id="editor-status">
@@ -348,6 +711,9 @@
           <button class="btn green" onclick="saveCurrentPart()">💾 이 자소 저장</button>
           <button class="btn purple" onclick="toggleGungsuhFill()">외곽선 채우기 토글</button>
           <button class="btn gray" onclick="addStrokeToCurrent()">+ 새 획 추가</button>
+          <button class="btn" style="background:#4f46e5; color:#ffffff;" onclick="autoFitStrokeWidthsToFontUI()" title="궁서체 원본 외곽선의 실제 물리적 두께를 기하학적으로 정밀 측정하여 각 획의 굵기를 글씨체에 맞게 100% 자동 설정합니다.">🪄 글씨체 두께 자동 맞춤</button>
+          <button class="btn amber" onclick="autoAlignMedianToCenter()" title="각 획의 중심선 제어점을 외곽선 내부 중앙 골격으로 자동 스냅합니다.">🎯 중심 자동 정렬</button>
+          <button class="btn" style="background:#0891b2;" onclick="autoAlignCurrentStroke()" title="현재 선택 획만 중심 보정">🎯 현재 획만 정렬</button>
         </div>
       </div>
 
@@ -356,8 +722,6 @@
         <div class="panel-title">
           <span>HanziWriter 실시간 검증</span>
           <span style="font-size:11px; background:#059669; padding:2px 6px; border-radius:10px;">실시간 연동</span>
-        </div>
-
         <div class="hanzi-box" id="hanzi-preview-box"></div>
 
         <div class="btn-row" style="margin-top:14px;">
@@ -397,11 +761,180 @@
     // 현재 작업 중인 자소 데이터 객체
     let currentPartData = null;
 
-    function getActivePartData(id) {
-      if (customDb[id]) {
-        return JSON.parse(JSON.stringify(customDb[id]));
+    // ─── 획순 진행 및 획 두께 전역 상태 ────────────────────────────────
+    let currentStrokeWidth = 34; // 기본 획 두께 (px)
+    let strokeWidthMode = 'stroke'; // 'stroke' (선택 획만) | 'all' (자소 전체 획 일괄)
+    let currentStrokeProgress = 999; // 현재 표시할 획순 단계 (1..N, 999는 전체)
+    let showRealStrokes = true; // 중심선 획 채우기 레이어
+    let showOutline = true; // 궁서체 원본 외곽선 레이어
+    let showSkeleton = true; // 중심선 골격선 및 제어점 레이어
+    let showBadges = true; // 획순 번호 뱃지 레이어
+    let isProgressAnimating = false;
+    let progressAnimTimer = null;
+
+    // 겹받침 여부 판별 (받침 2개 글자: ㄳ, ㄵ, ㄶ, ㄺ, ㄻ, ㄼ, ㄽ, ㄾ, ㄿ, ㅀ, ㅄ 등)
+    function isDoubleJongsungPart(partData) {
+      if (!partData) return false;
+      const doubleJongs = ['ㄳ','ㄵ','ㄶ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅄ'];
+      if (partData.role === 'jong') {
+        if (doubleJongs.includes(partData.char)) return true;
+        if (partData.char && partData.char.length > 1) return true;
+        if (partData.medians && partData.medians.length >= 5) return true;
       }
-      return JSON.parse(JSON.stringify(originalWarehouse[id]));
+      return false;
+    }
+
+    // 점 (px, py)에서 선분 (x1, y1)-(x2, y2)까지의 최단 거리
+    function distPointToSegment(px, py, x1, y1, x2, y2) {
+      const l2 = (x2 - x1)**2 + (y2 - y1)**2;
+      if (l2 === 0) return Math.hypot(px - x1, py - y1);
+      const t = Math.max(0, Math.min(1, ((px - x1)*(x2 - x1) + (py - y1)*(y2 - y1)) / l2));
+      return Math.hypot(px - (x1 + t*(x2 - x1)), py - (y1 + t*(y2 - y1)));
+    }
+
+    /**
+     * ★ 핵심 알고리즘: 바탕 글씨체 외곽선으로부터 획의 실제 물리적 두께를 기하학적으로 자동 측정
+     * - 메디안 중심선 점들과 외곽선 폴리곤 경계 사이의 내접원 반경(Inscribed Radius)을 실시간 측정
+     * - 겹받침 글자는 인접 획 침범을 원천 차단하는 슬림 두께(18~24px)로 자동 최적화
+     * - 일반 초성/중성의 단독 획은 궁서체 본래의 풍부한 두께(26~48px)를 그대로 살려 자동 산출
+     */
+    function calculateFontFittedStrokeWidth(median, polygons, role, char) {
+      if (!median || median.length === 0) return 30;
+      if (!polygons || polygons.length === 0) return 30;
+
+      const edges = [];
+      polygons.forEach(p => {
+        for (let i = 0; i < p.length - 1; i++) {
+          edges.push([p[i][0], p[i][1], p[i+1][0], p[i+1][1]]);
+        }
+      });
+      if (edges.length === 0) return 30;
+
+      // 각 메디안 점에서 가장 가까운 외곽선 에지까지의 거리(반지름 R) 측정
+      const radii = median.map(([px, py]) => {
+        let minD = Infinity;
+        for (let k = 0; k < edges.length; k++) {
+          const e = edges[k];
+          const d = distPointToSegment(px, py, e[0], e[1], e[2], e[3]);
+          if (d < minD) minD = d;
+        }
+        return minD;
+      });
+
+      radii.sort((a, b) => a - b);
+      // 양 끝점(시작점/끝점 모서리 10%)을 제외한 본선 영역의 내접원 반지름 중앙값
+      const startIdx = Math.floor(radii.length * 0.10);
+      const endIdx = Math.ceil(radii.length * 0.90);
+      const midSlice = radii.slice(startIdx, endIdx);
+      const medianR = midSlice[Math.floor(midSlice.length / 2)] || radii[Math.floor(radii.length / 2)] || 15;
+
+      const isDouble = (role === 'jong') && (
+        ['ㄳ','ㄵ','ㄶ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅄ'].includes(char) || (char && char.length > 1)
+      );
+
+      let w;
+      if (isDouble) {
+        // 겹받침 글자: 획간 간격을 고려하여 외곽선 내부를 꽉 채우는 22~30px 맞춤
+        w = Math.round(medianR * 1.6);
+        w = Math.max(20, Math.min(30, w));
+      } else if (role === 'jong') {
+        // 일반 종성(단받침): 외곽선 벽까지 100% 꽉 채우는 28~45px 맞춤
+        w = Math.round(medianR * 1.85);
+        w = Math.max(26, Math.min(48, w));
+      } else {
+        // 초성 및 중성: 궁서체 본래 외곽선의 도톰한 붓글씨 면을 100% 가득 채우는 36~65px 맞춤
+        w = Math.round(medianR * 2.1);
+        w = Math.max(32, Math.min(68, w));
+      }
+      return w;
+    }
+
+    // 자소 데이터의 모든 획을 바탕 글씨체 외곽선에 맞춰 자동 계산
+    function autoCalculateStrokeWidths(partData) {
+      if (!partData || !partData.medians) return [];
+      const outline = partData.gungsuhOutline || (partData.strokes && partData.strokes[0]);
+      const polygons = parseSVGPathToPolygon(outline);
+
+      return partData.medians.map((median, sIdx) => {
+        let strokePoly = polygons;
+        if (partData.strokes && partData.strokes[sIdx]) {
+          const sp = parseSVGPathToPolygon(partData.strokes[sIdx]);
+          if (sp.length > 0) strokePoly = sp;
+        }
+        return calculateFontFittedStrokeWidth(median, strokePoly, partData.role, partData.char);
+      });
+    }
+
+    // 각 획별 두께 배열 strokeWidths 보장 (설정값 없으면 바탕 글씨체 외곽선에 맞춰 100% 자동 산출)
+    function ensureStrokeWidths(partData) {
+      if (!partData || !partData.medians) return;
+      const count = partData.medians.length;
+
+      if (!partData.strokeWidths || !Array.isArray(partData.strokeWidths) || partData.strokeWidths.length !== count) {
+        if (Array.isArray(partData.strokeWidths) && partData.strokeWidths.length > 0) {
+          const newArr = [];
+          for (let i = 0; i < count; i++) {
+            newArr.push(partData.strokeWidths[i] || 30);
+          }
+          partData.strokeWidths = newArr;
+        } else {
+          // 바탕 글씨체 외곽선 형상에 맞춰 자동으로 획별 두께 산출!
+          const computed = autoCalculateStrokeWidths(partData);
+          if (computed && computed.length === count) {
+            partData.strokeWidths = computed;
+          } else {
+            const isDouble = isDoubleJongsungPart(partData);
+            partData.strokeWidths = new Array(count).fill(isDouble ? 22 : 34);
+          }
+        }
+      }
+    }
+
+    // 원클릭: 바탕 글씨체(궁서체 외곽선) 형상에 맞춰 획 굵기를 자동으로 즉시 맞춤
+    function autoFitStrokeWidthsToFontUI() {
+      if (!currentPartData) return;
+      ensureStrokeWidths(currentPartData);
+      const computed = autoCalculateStrokeWidths(currentPartData);
+      if (!computed || computed.length === 0) return;
+
+      if (strokeWidthMode === 'stroke') {
+        const newW = computed[activeStrokeIdx] || 24;
+        currentPartData.strokeWidths[activeStrokeIdx] = newW;
+        currentStrokeWidth = newW;
+        showToast(`[${selectedPartId}] ${activeStrokeIdx + 1}번째 획이 바탕 글씨체 두께(${newW}px)로 자동 맞춤되었습니다.`, 'success');
+      } else {
+        currentPartData.strokeWidths = computed;
+        currentStrokeWidth = computed[activeStrokeIdx] || computed[0];
+        const detailStr = computed.map((w, i) => `${i+1}획:${w}px`).join(' ');
+        showToast(`[${selectedPartId}] 전체 획이 바탕 글씨체에 맞게 자동 맞춤되었습니다! (${detailStr})`, 'success');
+      }
+
+      updateStrokeWidthUI();
+      renderStrokeTabs();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+    }
+
+    function getActivePartData(id) {
+      const orig = originalWarehouse[id] ? JSON.parse(JSON.stringify(originalWarehouse[id])) : null;
+      if (customDb[id]) {
+        const custom = JSON.parse(JSON.stringify(customDb[id]));
+        // 원본의 분리된 개별 strokes가 있다면 customDb에도 최신 분리 strokes를 동기화 (외곽선 블리딩/겹침 방지)
+        if (orig && orig.strokes && orig.strokes.length > 0) {
+          custom.strokes = orig.strokes;
+        }
+        // Cho_T1_ㅉ 이전 왜곡 데이터 자동 보정 (4획의 Y가 500 미만으로 떨어진 이전 왜곡값일 경우 최신 보정값 적용)
+        if (id === 'Cho_T1_ㅉ' && custom.medians && custom.medians[3] && custom.medians[3][2] && custom.medians[3][2][1] < 500) {
+          if (orig && orig.medians) {
+            custom.medians = JSON.parse(JSON.stringify(orig.medians));
+            customDb[id] = custom;
+            localStorage.setItem('hangul_150_custom_medians', JSON.stringify(customDb));
+          }
+        }
+        return custom;
+      }
+      return orig;
     }
 
     function init() {
@@ -446,7 +979,10 @@
     function selectPart(id) {
       selectedPartId = id;
       currentPartData = getActivePartData(id);
+      ensureStrokeWidths(currentPartData);
       activeStrokeIdx = 0;
+      currentStrokeProgress = currentPartData.medians.length;
+      stopStrokeProgressAnim();
 
       document.querySelectorAll('.part-item').forEach(el => el.classList.remove('active'));
       const activeEl = document.getElementById(`item-${id}`);
@@ -465,9 +1001,25 @@
 
       // 궁서체 외곽선 렌더링
       const pathEl = document.getElementById('gungsuh-outline-path');
-      pathEl.setAttribute('d', currentPartData.gungsuhOutline || currentPartData.strokes[0]);
+      const outlineD = currentPartData.gungsuhOutline || currentPartData.strokes[0];
+      pathEl.setAttribute('d', outlineD);
+      pathEl.style.display = showOutline ? 'block' : 'none';
+
+      // 외곽선 마스크 클립패스 및 획별 Voronoi 클립패스 동기화 (획 간 번짐 100% 방지)
+      updateEditorDefs();
+
+      const realGroup = document.getElementById('real-strokes-group');
+      if (realGroup) {
+        if (useMaskClip) {
+          realGroup.setAttribute('clip-path', 'url(#editor-outline-clip)');
+        } else {
+          realGroup.removeAttribute('clip-path');
+        }
+      }
 
       renderStrokeTabs();
+      renderProgressButtons();
+      updateStrokeWidthUI();
       renderEditor();
       updateHanziPreview();
     }
@@ -478,97 +1030,647 @@
       const bar = document.getElementById('stroke-selector-bar');
       bar.innerHTML = '';
 
+      ensureStrokeWidths(currentPartData);
+
       currentPartData.medians.forEach((_, idx) => {
+        const sw = (currentPartData.strokeWidths && currentPartData.strokeWidths[idx]) || currentStrokeWidth;
         const btn = document.createElement('button');
         btn.className = `stroke-tab ${idx === activeStrokeIdx ? 'active' : ''}`;
         btn.style.borderLeft = `4px solid ${STROKE_COLORS[idx % STROKE_COLORS.length]}`;
-        btn.innerText = `${idx + 1}번째 획`;
+        btn.innerHTML = `${idx + 1}번째 획 <span style="font-size:10px; opacity:0.75; font-family:monospace;">(${sw}px)</span>`;
         btn.onclick = () => {
           activeStrokeIdx = idx;
           renderStrokeTabs();
+          updateStrokeWidthUI();
           renderEditor();
         };
         bar.appendChild(btn);
       });
     }
 
+    // ─── 획순 진행 스텝 버튼 & 슬라이더 렌더링 ──────────────────────────
+    function renderProgressButtons() {
+      const container = document.getElementById('sp-step-buttons');
+      if (!container) return;
+      container.innerHTML = '';
+
+      const totalStrokes = currentPartData.medians.length;
+
+      for (let i = 1; i <= totalStrokes; i++) {
+        const btn = document.createElement('button');
+        btn.className = `sp-step-btn ${currentStrokeProgress === i ? 'active' : ''}`;
+        btn.id = `sp-step-btn-${i}`;
+        btn.innerText = `${i}획`;
+        btn.title = `1획부터 ${i}획까지 누적 표시`;
+        btn.onclick = () => {
+          stopStrokeProgressAnim();
+          setStrokeProgress(i);
+        };
+        container.appendChild(btn);
+      }
+
+      const allBtn = document.createElement('button');
+      allBtn.className = `sp-step-btn ${currentStrokeProgress >= totalStrokes ? 'active' : ''}`;
+      allBtn.id = 'sp-step-btn-all';
+      allBtn.innerText = `전체 (${totalStrokes}획)`;
+      allBtn.onclick = () => {
+        stopStrokeProgressAnim();
+        setStrokeProgress(totalStrokes);
+      };
+      container.appendChild(allBtn);
+    }
+
+    function setStrokeProgress(step) {
+      currentStrokeProgress = step;
+      activeStrokeIdx = Math.min(activeStrokeIdx, step - 1);
+      updateProgressButtonsHighlight();
+      renderStrokeTabs();
+      updateStrokeWidthUI();
+      renderEditor();
+    }
+
+    function resetStrokeProgress() {
+      stopStrokeProgressAnim();
+      setStrokeProgress(1);
+      showToast("1번째 획부터 표시됩니다.", "info");
+    }
+
+    function updateProgressButtonsHighlight() {
+      const totalStrokes = currentPartData.medians.length;
+      for (let i = 1; i <= totalStrokes; i++) {
+        const btn = document.getElementById(`sp-step-btn-${i}`);
+        if (btn) btn.classList.toggle('active', currentStrokeProgress === i);
+      }
+      const allBtn = document.getElementById('sp-step-btn-all');
+      if (allBtn) allBtn.classList.toggle('active', currentStrokeProgress >= totalStrokes);
+    }
+
+    // ─── 정밀 획 두께 조절 UI 및 상태 동기화 ────────────────────────────
+    function updateStrokeWidthUI() {
+      if (!currentPartData) return;
+      ensureStrokeWidths(currentPartData);
+      const activeW = currentPartData.strokeWidths[activeStrokeIdx] || currentStrokeWidth || 34;
+
+      const slider = document.getElementById('stroke-width-slider');
+      if (slider) slider.value = activeW;
+      const display = document.getElementById('stroke-width-val');
+      if (display) display.innerText = `${activeW}px`;
+
+      const targetLabel = document.getElementById('stroke-width-target-label');
+      if (targetLabel) {
+        targetLabel.innerText = (strokeWidthMode === 'stroke')
+          ? `획 두께 (${activeStrokeIdx + 1}획)`
+          : `획 두께 (전체 ${currentPartData.medians.length}획)`;
+      }
+
+      const btnStroke = document.getElementById('sp-mode-stroke');
+      const btnAll = document.getElementById('sp-mode-all');
+      if (btnStroke) btnStroke.classList.toggle('active', strokeWidthMode === 'stroke');
+      if (btnAll) btnAll.classList.toggle('active', strokeWidthMode === 'all');
+
+      renderStrokeWidthPills();
+      syncHanziWriterStrokeWidth();
+    }
+
+    function renderStrokeWidthPills() {
+      const container = document.getElementById('sp-stroke-width-pills');
+      if (!container || !currentPartData || !currentPartData.strokeWidths) return;
+      container.innerHTML = '';
+
+      currentPartData.strokeWidths.forEach((w, idx) => {
+        const pill = document.createElement('button');
+        pill.className = `sp-pill ${idx === activeStrokeIdx ? 'active' : ''}`;
+        pill.innerHTML = `<span style="color:${STROKE_COLORS[idx % STROKE_COLORS.length]};">●</span> ${idx + 1}획: ${w}px`;
+        pill.title = `${idx + 1}번째 획 선택 (두께 ${w}px)`;
+        pill.onclick = () => {
+          activeStrokeIdx = idx;
+          renderStrokeTabs();
+          updateStrokeWidthUI();
+          renderEditor();
+        };
+        container.appendChild(pill);
+      });
+    }
+
+    function setStrokeWidthMode(mode) {
+      strokeWidthMode = mode;
+      updateStrokeWidthUI();
+      showToast(mode === 'stroke' ? '선택 획 개별 두께 조절 모드입니다.' : '모든 획 일괄 두께 조절 모드입니다.', 'info');
+    }
+
+    function onStrokeWidthSlider(val) {
+      const w = parseInt(val);
+      currentStrokeWidth = w;
+      ensureStrokeWidths(currentPartData);
+
+      if (strokeWidthMode === 'all') {
+        currentPartData.strokeWidths.fill(w);
+      } else {
+        currentPartData.strokeWidths[activeStrokeIdx] = w;
+      }
+      currentPartData.strokeWidth = w;
+
+      updateStrokeWidthUI();
+      renderStrokeTabs();
+      renderEditor();
+      saveCurrentPart(true);
+    }
+
+    function applyStrokeWidthPreset(w) {
+      currentStrokeWidth = w;
+      ensureStrokeWidths(currentPartData);
+
+      if (strokeWidthMode === 'all') {
+        currentPartData.strokeWidths.fill(w);
+        showToast(`모든 획 두께가 ${w}px로 일괄 설정되었습니다.`, 'info');
+      } else {
+        currentPartData.strokeWidths[activeStrokeIdx] = w;
+        showToast(`${activeStrokeIdx + 1}번째 획 두께가 ${w}px로 설정되었습니다.`, 'info');
+      }
+      currentPartData.strokeWidth = w;
+
+      updateStrokeWidthUI();
+      renderStrokeTabs();
+      renderEditor();
+      saveCurrentPart(true);
+    }
+
+    // 겹받침 최적화: 겹받침(2개 받침)은 획이 좁게 모여있으므로 22px 정밀 모드로 일괄 스냅
+    function optimizeForDoubleJongsung() {
+      ensureStrokeWidths(currentPartData);
+      currentPartData.strokeWidths.fill(22);
+      currentStrokeWidth = 22;
+      currentPartData.strokeWidth = 22;
+
+      updateStrokeWidthUI();
+      renderStrokeTabs();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`[${selectedPartId}] 겹받침 획 침범 방지 최적화(22px) 완료!`, 'success');
+    }
+
+    // 획 겹침 부위 색 번짐 0% 완전 격리 정밀 모드
+    function preventStrokeBleedingMode() {
+      if (!currentPartData) return;
+      ensureStrokeWidths(currentPartData);
+
+      const totalStrokes = currentPartData.medians.length;
+      if (totalStrokes > 1) {
+        // 각 획의 인접 거리 기반 정밀 두께 산정
+        const safeWidths = currentPartData.medians.map((m, sIdx) => {
+          let minDist = Infinity;
+          currentPartData.medians.forEach((otherM, oIdx) => {
+            if (oIdx === sIdx) return;
+            m.forEach(pA => {
+              otherM.forEach(pB => {
+                const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
+                if (d < minDist) minDist = d;
+              });
+            });
+          });
+          return Math.max(18, Math.min(30, Math.round(minDist * 0.72)));
+        });
+        currentPartData.strokeWidths = safeWidths;
+        currentStrokeWidth = safeWidths[activeStrokeIdx] || safeWidths[0];
+      } else {
+        currentPartData.strokeWidths = [34];
+        currentStrokeWidth = 34;
+      }
+      currentPartData.strokeWidth = currentStrokeWidth;
+
+      useMaskClip = true;
+      const chk = document.getElementById('chk-mask-clip');
+      if (chk) chk.checked = true;
+
+      updateStrokeWidthUI();
+      renderStrokeTabs();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`[${selectedPartId}] 획 겹침 부위 색 번짐 0% 정밀 격리 완료!`, 'success');
+    }
+
+    // HanziWriter 내부 렌더링: 획 번짐 방지 및 궁서체 외곽선 형태 동기화
+    function syncHanziWriterStrokeWidth() {
+      const box = document.getElementById('hanzi-preview-box');
+      if (!box || !currentPartData) return;
+      const totalStrokes = currentPartData.medians.length;
+
+      const paths = box.querySelectorAll('svg path');
+      paths.forEach((p, pIdx) => {
+        const sw = p.getAttribute('stroke-width');
+        if (sw && parseInt(sw) > 0) {
+          if (totalStrokes === 1) {
+            // 단일 획 자소: 궁서체 외곽선 꺾임/삐침 형태 그대로 100% 꽉 채움
+            if (parseInt(sw) < 180) {
+              p.setAttribute('stroke-width', '200');
+              p.style.strokeWidth = '200px';
+            }
+          } else {
+            // 다획 자소: 인접 획으로 색이 번지지 않도록 사용자가 지정한 정밀 두께를 엄격히 준수
+            const targetW = (currentPartData.strokeWidths && currentPartData.strokeWidths[pIdx]) || currentStrokeWidth || 34;
+            const safeW = Math.max(20, Math.min(targetW, 60));
+            p.setAttribute('stroke-width', `${safeW}`);
+            p.style.strokeWidth = `${safeW}px`;
+          }
+        }
+      });
+    }
+
+    function setStrokeWidth(w) {
+      onStrokeWidthSlider(w);
+    }
+
+    function toggleRealStrokes(show) {
+      showRealStrokes = show;
+      renderEditor();
+    }
+
+    let useMaskClip = true;
+    function toggleMaskClip(show) {
+      useMaskClip = show;
+      const group = document.getElementById('real-strokes-group');
+      if (group) {
+        if (useMaskClip) {
+          group.setAttribute('clip-path', 'url(#editor-outline-clip)');
+        } else {
+          group.removeAttribute('clip-path');
+        }
+      }
+      renderEditor();
+      showToast(show ? "외곽선 마스크 클립 활성화 (외곽선 형태 그대로 꽉 채움)" : "외곽선 마스크 클립 해제 (원형 브러시 스트로크 표시)", "info");
+    }
+
+    // 궁서체 외곽선 형태 그대로 100% 꽉 채우기
+    function fillOutlineFully() {
+      if (!currentPartData) return;
+      ensureStrokeWidths(currentPartData);
+
+      // 1) 외곽선 마스크 클립 활성화
+      useMaskClip = true;
+      const chk = document.getElementById('chk-mask-clip');
+      if (chk) chk.checked = true;
+      const group = document.getElementById('real-strokes-group');
+      if (group) group.setAttribute('clip-path', 'url(#editor-outline-clip)');
+
+      // 2) 외곽선을 100% 꽉 채우도록 각 획의 두께를 외곽선 최대 폭에 맞춤
+      const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+      const polygons = parseSVGPathToPolygon(outline);
+
+      const fullWidths = currentPartData.medians.map((median, sIdx) => {
+        let strokePoly = polygons;
+        if (currentPartData.strokes && currentPartData.strokes[sIdx]) {
+          const sp = parseSVGPathToPolygon(currentPartData.strokes[sIdx]);
+          if (sp.length > 0) strokePoly = sp;
+        }
+        const baseW = calculateFontFittedStrokeWidth(median, strokePoly, currentPartData.role, currentPartData.char);
+        if (currentPartData.medians.length > 1) {
+          // 다획 자소: 인접 획과의 거리 계산하여 획 번짐 방지 안전 상한선 적용
+          let minDist = Infinity;
+          currentPartData.medians.forEach((otherM, oIdx) => {
+            if (oIdx === sIdx) return;
+            median.forEach(pA => {
+              otherM.forEach(pB => {
+                const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
+                if (d < minDist) minDist = d;
+              });
+            });
+          });
+          const safeCap = Math.max(22, Math.min(50, Math.round(minDist * 0.85)));
+          return Math.max(20, Math.min(safeCap, Math.round(baseW * 1.1)));
+        } else {
+          // 단일 획 자소: 다른 획이 없어 번질 염려가 없으므로 외곽선 형태 그대로 100% 채움
+          return Math.max(34, Math.min(85, Math.round(baseW * 1.5)));
+        }
+      });
+
+      currentPartData.strokeWidths = fullWidths;
+      currentStrokeWidth = fullWidths[activeStrokeIdx] || fullWidths[0];
+
+      updateStrokeWidthUI();
+      renderStrokeTabs();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`[${selectedPartId}] 궁서체 외곽선 형태 그대로 100% 꽉 채우기 적용 완료!`, 'success');
+    }
+
+    function toggleOutline(show) {
+      showOutline = show;
+      const pathEl = document.getElementById('gungsuh-outline-path');
+      if (pathEl) pathEl.style.display = show ? 'block' : 'none';
+    }
+
+    function toggleSkeleton(show) {
+      showSkeleton = show;
+      renderEditor();
+    }
+
+    function toggleBadges(show) {
+      showBadges = show;
+      renderEditor();
+    }
+
+    // ─── 획순 순차 애니메이션 (1획부터 순서대로 길이만큼 그려짐) ──────────
+    function stopStrokeProgressAnim() {
+      if (progressAnimTimer) {
+        clearTimeout(progressAnimTimer);
+        progressAnimTimer = null;
+      }
+      isProgressAnimating = false;
+      const playBtn = document.getElementById('sp-btn-play');
+      if (playBtn) {
+        playBtn.innerHTML = '▶ 순차 획순 재생';
+        playBtn.style.background = '#0284c7';
+      }
+    }
+
+    function playStrokeProgressAnim() {
+      if (isProgressAnimating) {
+        stopStrokeProgressAnim();
+        return;
+      }
+      stopStrokeProgressAnim();
+      isProgressAnimating = true;
+      const playBtn = document.getElementById('sp-btn-play');
+      if (playBtn) {
+        playBtn.innerHTML = '⏸ 일시 정지';
+        playBtn.style.background = '#d97706';
+      }
+
+      const totalStrokes = currentPartData.medians.length;
+      let currentStep = 1;
+
+      // 애니메이션 전 전체 획 숨기기 (0획부터 시작)
+      currentStrokeProgress = 0;
+      updateProgressButtonsHighlight();
+      renderEditor();
+
+      function step() {
+        if (!isProgressAnimating) return;
+        if (currentStep > totalStrokes) {
+          stopStrokeProgressAnim();
+          currentStrokeProgress = totalStrokes;
+          updateProgressButtonsHighlight();
+          renderEditor();
+          showToast(`[${selectedPartId}] 총 ${totalStrokes}획 순차 쓰기 완료!`, 'success');
+          return;
+        }
+
+        currentStrokeProgress = currentStep;
+        activeStrokeIdx = currentStep - 1;
+        updateProgressButtonsHighlight();
+        renderStrokeTabs();
+        renderEditor();
+
+        // 방금 추가된 활성 획에 대해 stroke-dashoffset transition 드로잉 애니메이션 적용
+        const activePath = document.getElementById(`real-stroke-${activeStrokeIdx}`);
+        let animDuration = 450;
+        if (activePath && activePath.getTotalLength) {
+          const len = activePath.getTotalLength();
+          activePath.style.transition = 'none';
+          activePath.style.strokeDasharray = `${len + 20} ${len + 50}`;
+          activePath.style.strokeDashoffset = `${len + 20}`;
+          // 브라우저 렌더링 강제 플러시
+          void activePath.getBoundingClientRect();
+          animDuration = Math.max(320, Math.min(800, Math.round(len * 2.3)));
+          activePath.style.transition = `stroke-dashoffset ${animDuration}ms cubic-bezier(0.25, 1, 0.5, 1)`;
+          activePath.style.strokeDashoffset = '0';
+        }
+
+        progressAnimTimer = setTimeout(() => {
+          currentStep++;
+          step();
+        }, animDuration + 140);
+      }
+
+      progressAnimTimer = setTimeout(step, 100);
+    }
+
     let draggingPoint = null; // { strokeIdx, pointIdx }
 
     function renderEditor() {
+      const realGroup = document.getElementById('real-strokes-group');
       const pathsGroup = document.getElementById('medians-paths-group');
       const handlesGroup = document.getElementById('medians-handles-group');
-      pathsGroup.innerHTML = '';
-      handlesGroup.innerHTML = '';
+      const badgesGroup = document.getElementById('stroke-badges-group');
+
+      if (realGroup) realGroup.innerHTML = '';
+      if (pathsGroup) pathsGroup.innerHTML = '';
+      if (handlesGroup) handlesGroup.innerHTML = '';
+      if (badgesGroup) badgesGroup.innerHTML = '';
+
+      // 외곽선 마스크 클립패스 및 획별 Voronoi 클립패스 실시간 동기화
+      updateEditorDefs();
+
+      // 외곽선 폴리곤 파싱 (이탈 여부 판별용)
+      const outlineStr = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+      let outlinePolygons = [];
+      if (outlineStr) outlinePolygons = parseSVGPathToPolygon(outlineStr);
+
+      let outsideCount = 0;
+      const totalStrokes = currentPartData.medians.length;
+      const visibleCount = Math.min(currentStrokeProgress, totalStrokes);
 
       currentPartData.medians.forEach((stroke, sIdx) => {
         const color = STROKE_COLORS[sIdx % STROKE_COLORS.length];
         const isCurrent = (sIdx === activeStrokeIdx);
+        const isVisibleInProg = (sIdx < visibleCount);
 
-        // 1. 중심선 폴리라인
-        const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
-        poly.setAttribute('points', stroke.map(p => p.join(',')).join(' '));
-        poly.setAttribute('fill', 'none');
-        poly.setAttribute('stroke', color);
-        poly.setAttribute('stroke-width', isCurrent ? '16' : '10');
-        poly.setAttribute('stroke-linecap', 'round');
-        poly.setAttribute('stroke-linejoin', 'round');
-        poly.setAttribute('opacity', isCurrent ? '0.95' : '0.45');
-        pathsGroup.appendChild(poly);
+        // stroke별 외곽선 폴리곤 (분리된 strokes가 있으면 사용)
+        let strokePolygons = outlinePolygons;
+        if (currentPartData.strokes && currentPartData.strokes[sIdx]) {
+          const sp = parseSVGPathToPolygon(currentPartData.strokes[sIdx]);
+          if (sp.length > 0) strokePolygons = sp;
+        }
 
-        // 2. 제어점들 (현재 선택된 획에 강조 표시)
-        stroke.forEach((pt, pIdx) => {
-          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-          circle.setAttribute('cx', pt[0]);
-          circle.setAttribute('cy', pt[1]);
-          circle.setAttribute('r', isCurrent ? (pIdx === 0 ? '22' : '16') : '10');
-          circle.setAttribute('fill', pIdx === 0 ? '#ffffff' : color);
-          circle.setAttribute('stroke', color);
-          circle.setAttribute('stroke-width', '4');
-          circle.setAttribute('class', 'point-handle');
-          circle.dataset.strokeIdx = sIdx;
-          circle.dataset.pointIdx = pIdx;
+        // ── 1. 중심선 위치 & 길이 & 두께 기반 실제 획 렌더링 (획 번짐 완벽 방지) ──
+        if (showRealStrokes && isVisibleInProg && stroke.length >= 2) {
+          const pathD = 'M ' + stroke.map(p => `${p[0]} ${p[1]}`).join(' L ');
+          const realPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          const sw = (currentPartData.strokeWidths && currentPartData.strokeWidths[sIdx]) || currentStrokeWidth;
+          realPath.setAttribute('d', pathD);
+          realPath.setAttribute('fill', 'none');
+          realPath.setAttribute('stroke', color);
 
-          // 드래그 이벤트
-          circle.addEventListener('mousedown', (e) => {
-            e.stopPropagation();
-            activeStrokeIdx = sIdx;
-            draggingPoint = { strokeIdx: sIdx, pointIdx: pIdx };
-            renderStrokeTabs();
-          });
-
-          // 우클릭 삭제 이벤트
-          circle.addEventListener('contextmenu', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            if (currentPartData.medians[sIdx].length <= 2) {
-              alert("획에는 최소 2개의 점이 필요합니다.");
-              return;
-            }
-            currentPartData.medians[sIdx].splice(pIdx, 1);
-            renderEditor();
-            updateHanziPreview();
-          });
-
-          handlesGroup.appendChild(circle);
-
-          // 번호 라벨
-          if (isCurrent) {
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', pt[0]);
-            text.setAttribute('y', pt[1] - 20);
-            text.setAttribute('fill', '#ffffff');
-            text.setAttribute('font-size', '26');
-            text.setAttribute('font-weight', 'bold');
-            text.setAttribute('text-anchor', 'middle');
-            text.setAttribute('pointer-events', 'none');
-            text.textContent = (pIdx + 1);
-            handlesGroup.appendChild(text);
+          // 획 번짐 방지 굵기 계산:
+          // 다획 자소(totalStrokes > 1)에서는 사용자가 설정한 정밀 두께(sw)를 충실히 반영하여 옆 획 침범을 원천 차단
+          // 단일 획 자소(totalStrokes === 1)에서는 번질 대상이 없으므로 외곽선 꺾임/삐침까지 100% 꽉 채움
+          let renderSw;
+          if (totalStrokes > 1) {
+            renderSw = useMaskClip ? Math.max(sw, Math.min(sw * 1.3, 75)) : sw;
+          } else {
+            renderSw = useMaskClip ? Math.max(sw * 2.0, 110) : sw;
           }
-        });
+
+          realPath.setAttribute('stroke-width', renderSw);
+          realPath.setAttribute('stroke-linecap', 'round');
+          realPath.setAttribute('stroke-linejoin', 'round');
+          realPath.setAttribute('opacity', '1.0'); // 겹치는 부위 반투명 혼탁 번짐 방지 (1.0 완전 불투명)
+
+          // 다획 자소: 획별 Voronoi 클립패스 적용하여 획 간 색 번짐(Bleeding) 0.00% 완전 격리
+          if (useMaskClip && totalStrokes > 1) {
+            const vClip = document.getElementById(`stroke-voronoi-clip-${sIdx}`);
+            if (vClip) {
+              realPath.setAttribute('clip-path', `url(#stroke-voronoi-clip-${sIdx})`);
+            }
+          }
+
+          realPath.id = `real-stroke-${sIdx}`;
+          if (realGroup) realGroup.appendChild(realPath);
+        }
+
+        // ── 2. 중심선 폴리라인 골격선 ──
+        if (showSkeleton) {
+          const poly = document.createElementNS('http://www.w3.org/2000/svg', 'polyline');
+          poly.setAttribute('points', stroke.map(p => p.join(',')).join(' '));
+          poly.setAttribute('fill', 'none');
+          poly.setAttribute('stroke', isCurrent ? '#ffffff' : color);
+          poly.setAttribute('stroke-width', isCurrent ? '5' : '2.5');
+          poly.setAttribute('stroke-linecap', 'round');
+          poly.setAttribute('stroke-linejoin', 'round');
+          poly.setAttribute('stroke-dasharray', isCurrent ? 'none' : '4 4');
+          poly.setAttribute('opacity', isCurrent ? '0.95' : '0.5');
+          if (pathsGroup) pathsGroup.appendChild(poly);
+        }
+
+        // ── 3. 제어점들 (현재 선택된 획 위주 또는 전체) ──
+        if (showSkeleton) {
+          stroke.forEach((pt, pIdx) => {
+            const isOutside = strokePolygons.length > 0 && !isPointInsideStroke(pt[0], pt[1], strokePolygons);
+            if (isOutside) outsideCount++;
+
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', pt[0]);
+            circle.setAttribute('cy', pt[1]);
+            circle.setAttribute('r', isCurrent ? (pIdx === 0 ? '20' : '15') : '8');
+
+            // 이탈 점: 빨간색 경고 표시
+            if (isOutside) {
+              circle.setAttribute('fill', '#ef4444');
+              circle.setAttribute('stroke', '#fca5a5');
+              circle.setAttribute('stroke-width', isCurrent ? '5' : '2');
+            } else {
+              circle.setAttribute('fill', pIdx === 0 ? '#ffffff' : color);
+              circle.setAttribute('stroke', color);
+              circle.setAttribute('stroke-width', '3');
+            }
+
+            circle.setAttribute('class', 'point-handle');
+            circle.dataset.strokeIdx = sIdx;
+            circle.dataset.pointIdx = pIdx;
+
+            // 드래그 이벤트
+            circle.addEventListener('mousedown', (e) => {
+              e.stopPropagation();
+              activeStrokeIdx = sIdx;
+              draggingPoint = { strokeIdx: sIdx, pointIdx: pIdx };
+              renderStrokeTabs();
+            });
+
+            // 우클릭 삭제 이벤트
+            circle.addEventListener('contextmenu', (e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (currentPartData.medians[sIdx].length <= 2) {
+                showToast("획에는 최소 2개의 점이 필요합니다.", "warning");
+                return;
+              }
+              currentPartData.medians[sIdx].splice(pIdx, 1);
+              renderEditor();
+              updateHanziPreview();
+              saveCurrentPart(true); // 자동 저장
+              showToast(`${sIdx + 1}획의 제어점이 삭제되고 저장되었습니다.`, "info");
+            });
+
+            if (handlesGroup) handlesGroup.appendChild(circle);
+
+            // 점 번호 라벨 (현재 선택된 획에 표시)
+            if (isCurrent) {
+              const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+              text.setAttribute('x', pt[0]);
+              text.setAttribute('y', pt[1] - 18);
+              text.setAttribute('fill', isOutside ? '#f87171' : '#ffffff');
+              text.setAttribute('font-size', '20');
+              text.setAttribute('font-weight', 'bold');
+              text.setAttribute('text-anchor', 'middle');
+              text.setAttribute('pointer-events', 'none');
+              text.textContent = (pIdx + 1);
+              if (handlesGroup) handlesGroup.appendChild(text);
+
+              // 이탈 경고 레이블
+              if (isOutside) {
+                const warn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                warn.setAttribute('x', pt[0]);
+                warn.setAttribute('y', pt[1] + 32);
+                warn.setAttribute('fill', '#f87171');
+                warn.setAttribute('font-size', '16');
+                warn.setAttribute('text-anchor', 'middle');
+                warn.setAttribute('pointer-events', 'none');
+                warn.textContent = '⚠ 이탈!';
+                if (handlesGroup) handlesGroup.appendChild(warn);
+              }
+            }
+          });
+        }
+
+        // ── 4. 획순 번호 뱃지 (①..⑥, 스크린 좌표계로 상하반전 없이 똑바로 렌더링) ──
+        if (showBadges && isVisibleInProg && stroke.length > 0 && badgesGroup) {
+          const startPt = stroke[0];
+          const sx = startPt[0];
+          const sy = 900 - startPt[1]; // HanziWriter 좌표계 -> SVG 스크린 좌표계
+
+          const badgeG = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          badgeG.setAttribute('class', 'stroke-badge');
+          badgeG.style.cursor = 'pointer';
+          badgeG.style.pointerEvents = 'all';
+          badgeG.title = `${sIdx + 1}번째 획 (클릭하여 선택)`;
+
+          badgeG.onclick = () => {
+            activeStrokeIdx = sIdx;
+            renderStrokeTabs();
+            renderEditor();
+          };
+
+          const bgCircle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          bgCircle.setAttribute('cx', sx);
+          bgCircle.setAttribute('cy', sy);
+          bgCircle.setAttribute('r', isCurrent ? '15' : '12');
+          bgCircle.setAttribute('fill', isCurrent ? color : '#070b14');
+          bgCircle.setAttribute('stroke', color);
+          bgCircle.setAttribute('stroke-width', '2.5');
+          badgeG.appendChild(bgCircle);
+
+          const badgeText = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+          badgeText.setAttribute('x', sx);
+          badgeText.setAttribute('y', sy + 4.5);
+          badgeText.setAttribute('fill', isCurrent ? '#ffffff' : color);
+          badgeText.setAttribute('font-size', isCurrent ? '13' : '11');
+          badgeText.setAttribute('font-weight', '900');
+          badgeText.setAttribute('text-anchor', 'middle');
+          badgeText.setAttribute('pointer-events', 'none');
+          badgeText.textContent = (sIdx + 1);
+          badgeG.appendChild(badgeText);
+
+          badgesGroup.appendChild(badgeG);
+        }
       });
 
       const currentPts = currentPartData.medians[activeStrokeIdx] || [];
       document.getElementById('info-point-count').innerText = `${currentPts.length}개 점`;
+      // 점 조작 인라인 컨트롤 동기화
+      const pcDisplay = document.getElementById('pc-count-display');
+      if (pcDisplay) pcDisplay.innerText = `${currentPts.length}개`;
+
+      // 상태 바 경고 업데이트
+      if (outsideCount > 0 && !draggingPoint) {
+        document.getElementById('editor-status').firstElementChild.innerText =
+          `⚠️ ${outsideCount}개 점이 외곽선 밖에 있습니다! → 🎯 [중심 자동 정렬] 클릭하세요.`;
+        document.getElementById('editor-status').firstElementChild.style.color = '#f87171';
+      } else if (!draggingPoint) {
+        document.getElementById('editor-status').firstElementChild.style.color = '';
+      }
     }
 
     // 마우스 드래그 좌표 변환 및 이동
@@ -594,15 +1696,20 @@
         `${draggingPoint.strokeIdx + 1}획 ${draggingPoint.pointIdx + 1}번 점 이동 중: [${hanziX}, ${hanziY}]`;
     });
 
+    // 드래그 종료 시 실시간 미리보기 갱신 및 자동 저장
     window.addEventListener('mouseup', () => {
       if (draggingPoint) {
+        const s = draggingPoint.strokeIdx;
+        const p = draggingPoint.pointIdx;
         draggingPoint = null;
-        document.getElementById('editor-status').firstElementChild.innerText = '이동 완료! 실시간 미리보기에 반영되었습니다.';
+        document.getElementById('editor-status').firstElementChild.innerText = '이동 완료! 자동 저장 및 미리보기에 실시간 반영되었습니다.';
         updateHanziPreview();
+        saveCurrentPart(true); // 자동 저장 트리거
+        showToast(`[${selectedPartId}] ${s + 1}획 ${p + 1}번점 조정 저장됨`, 'info');
       }
     });
 
-    // 더블클릭 시 현재 활성 획에 새 점 추가
+    // 더블클릭 시 현재 활성 획에 새 점 추가 및 자동 저장
     svgEl.addEventListener('dblclick', (e) => {
       const rect = svgEl.getBoundingClientRect();
       const clientX = e.clientX - rect.left;
@@ -619,22 +1726,513 @@
       currentPartData.medians[activeStrokeIdx].push([hanziX, hanziY]);
       renderEditor();
       updateHanziPreview();
+      saveCurrentPart(true); // 자동 저장
+      showToast(`새 제어점이 추가되고 저장되었습니다: [${hanziX}, ${hanziY}]`, 'info');
       document.getElementById('editor-status').firstElementChild.innerText = `새 제어점 추가됨: [${hanziX}, ${hanziY}]`;
     });
 
     // HanziWriter 미리보기 갱신
     let isCharShown = false;
 
-    // HanziWriter 미리보기 갱신 (모든 획이 1:1로 렌더링되도록 수정)
+    // ============================================================
+    // ★ 획 번짐 방지 (Anti-Bleeding) 보로노이 분할 및 클립패스 엔진
+    // ============================================================
+
+    /**
+     * Sutherland-Hodgman 반평면 다각형 클리핑
+     * nx * (x - mx) + ny * (y - my) >= 0 영역(양수 영역)을 남김
+     */
+    function clipPolygonByHalfPlane(poly, mx, my, nx, ny) {
+      if (!poly || poly.length === 0) return [];
+      const len = Math.hypot(nx, ny);
+      if (len < 1e-4) return poly;
+      const unx = nx / len;
+      const uny = ny / len;
+
+      function isInside(pt) {
+        return unx * (pt[0] - mx) + uny * (pt[1] - my) >= -0.01;
+      }
+
+      function lineIntersect(p1, p2) {
+        const d1 = unx * (p1[0] - mx) + uny * (p1[1] - my);
+        const d2 = unx * (p2[0] - mx) + uny * (p2[1] - my);
+        const diff = d1 - d2;
+        if (Math.abs(diff) < 1e-6) return p1;
+        const t = d1 / diff;
+        return [
+          p1[0] + t * (p2[0] - p1[0]),
+          p1[1] + t * (p2[1] - p1[1])
+        ];
+      }
+
+      const out = [];
+      for (let i = 0; i < poly.length; i++) {
+        const cur = poly[i];
+        const prev = poly[(i + poly.length - 1) % poly.length];
+        const curIn = isInside(cur);
+        const prevIn = isInside(prev);
+
+        if (curIn) {
+          if (!prevIn) out.push(lineIntersect(prev, cur));
+          out.push(cur);
+        } else if (prevIn) {
+          out.push(lineIntersect(prev, cur));
+        }
+      }
+      return out;
+    }
+
+    /**
+     * 다획 자소에서 획 간 색 번짐(Bleeding)을 0%로 완벽 차단하기 위한 획별 보로노이 다각형 계산
+     */
+    function computeStrokeVoronoiPolygon(strokeIdx, allMedians) {
+      // 1024 캔버스를 넉넉히 감싸는 사각형에서 시작
+      let poly = [
+        [-300, -300],
+        [1324, -300],
+        [1324, 1324],
+        [-300, 1324]
+      ];
+
+      const curMedian = allMedians[strokeIdx];
+      if (!curMedian || curMedian.length === 0 || allMedians.length <= 1) {
+        return poly;
+      }
+
+      allMedians.forEach((otherMedian, otherIdx) => {
+        if (otherIdx === strokeIdx || !otherMedian || otherMedian.length === 0) return;
+
+        // curMedian의 각 점에서 otherMedian의 최근접 점 쌍 탐색
+        curMedian.forEach(pA => {
+          let minDist = Infinity;
+          let bestB = null;
+          otherMedian.forEach(pB => {
+            const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
+            if (d < minDist) {
+              minDist = d;
+              bestB = pB;
+            }
+          });
+
+          if (bestB && minDist >= 3) {
+            const mx = (pA[0] + bestB[0]) / 2;
+            const my = (pA[1] + bestB[1]) / 2;
+            const nx = pA[0] - bestB[0];
+            const ny = pA[1] - bestB[1];
+            poly = clipPolygonByHalfPlane(poly, mx, my, nx, ny);
+          }
+        });
+
+        // otherMedian의 각 점에서 curMedian의 최근접 점 탐색
+        otherMedian.forEach(pB => {
+          let minDist = Infinity;
+          let bestA = null;
+          curMedian.forEach(pA => {
+            const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
+            if (d < minDist) {
+              minDist = d;
+              bestA = pA;
+            }
+          });
+
+          if (bestA && minDist >= 3) {
+            const mx = (bestA[0] + pB[0]) / 2;
+            const my = (bestA[1] + pB[1]) / 2;
+            const nx = bestA[0] - pB[0];
+            const ny = bestA[1] - pB[1];
+            poly = clipPolygonByHalfPlane(poly, mx, my, nx, ny);
+          }
+        });
+      });
+
+      return poly;
+    }
+
+    /**
+     * <defs id="editor-defs"> 동기화:
+     * 1) 전체 외곽선 클립패스
+     * 2) 다획 자소 시 각 획별 Voronoi 클립패스 (획 간 번짐 100% 완전 격리)
+     */
+    function updateEditorDefs() {
+      const defs = document.getElementById('editor-defs');
+      if (!defs || !currentPartData) return;
+
+      const outlineD = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]) || '';
+
+      // 1. 전체 궁서체 외곽선 클립패스
+      let outlineClip = document.getElementById('editor-outline-clip');
+      if (!outlineClip) {
+        outlineClip = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+        outlineClip.id = 'editor-outline-clip';
+        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        p.id = 'editor-outline-clip-path';
+        outlineClip.appendChild(p);
+        defs.appendChild(outlineClip);
+      }
+      const clipPathEl = document.getElementById('editor-outline-clip-path');
+      if (clipPathEl) clipPathEl.setAttribute('d', outlineD);
+
+      // 2. 다획 자소일 때 각 획별 Voronoi 클립패스 생성/갱신
+      const totalStrokes = currentPartData.medians.length;
+      const oldVClips = defs.querySelectorAll('.stroke-voronoi-clip');
+      oldVClips.forEach(el => el.remove());
+
+      if (totalStrokes > 1) {
+        currentPartData.medians.forEach((_, sIdx) => {
+          const vPoly = computeStrokeVoronoiPolygon(sIdx, currentPartData.medians);
+          if (vPoly && vPoly.length >= 3) {
+            const clipEl = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+            clipEl.id = `stroke-voronoi-clip-${sIdx}`;
+            clipEl.setAttribute('class', 'stroke-voronoi-clip');
+
+            const polyEl = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            polyEl.setAttribute('points', vPoly.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '));
+            clipEl.appendChild(polyEl);
+            defs.appendChild(clipEl);
+          }
+        });
+      }
+    }
+
+    // ============================================================
+    // ★ 핵심 보정 엔진: 중심선 → 외곽선 내부 골격 중앙 자동 스냅
+    // ============================================================
+
+    /**
+     * SVG path 문자열을 샘플링하여 폴리곤 점 배열로 변환 (HanziWriter 좌표계)
+     */
+    function parseSVGPathToPolygon(pathStr) {
+      if (!pathStr) return [];
+      const segs = [];
+      // 각 서브패스(M...Z 또는 M...M)를 분리
+      const subRe = /M\s*[\d.\-]+[\s,]+[\d.\-]+[^M]*/g;
+      const rawSegs = pathStr.match(subRe) || [pathStr];
+
+      rawSegs.forEach(seg => {
+        const poly = [];
+        // 명령어 파싱
+        const cmdRe = /([MLQCZmlqcz])([^MLQCZmlqcz]*)/g;
+        let m;
+        let cx = 0, cy = 0, startX = 0, startY = 0;
+        while ((m = cmdRe.exec(seg)) !== null) {
+          const cmd = m[1];
+          const args = m[2].trim().split(/[\s,]+/).filter(Boolean).map(Number);
+          if (cmd === 'M' || cmd === 'm') {
+            cx = cmd === 'M' ? args[0] : cx + args[0];
+            cy = cmd === 'M' ? args[1] : cy + args[1];
+            startX = cx; startY = cy;
+            poly.push([cx, cy]);
+          } else if (cmd === 'L' || cmd === 'l') {
+            for (let i = 0; i + 1 < args.length; i += 2) {
+              cx = cmd === 'L' ? args[i] : cx + args[i];
+              cy = cmd === 'L' ? args[i+1] : cy + args[i+1];
+              poly.push([cx, cy]);
+            }
+          } else if (cmd === 'Q' || cmd === 'q') {
+            for (let i = 0; i + 3 < args.length; i += 4) {
+              const x1 = cmd === 'Q' ? args[i]   : cx + args[i];
+              const y1 = cmd === 'Q' ? args[i+1] : cy + args[i+1];
+              const x2 = cmd === 'Q' ? args[i+2] : cx + args[i+2];
+              const y2 = cmd === 'Q' ? args[i+3] : cy + args[i+3];
+              for (let t = 0.1; t <= 1.0; t += 0.1) {
+                const bx = (1-t)*(1-t)*cx + 2*(1-t)*t*x1 + t*t*x2;
+                const by = (1-t)*(1-t)*cy + 2*(1-t)*t*y1 + t*t*y2;
+                poly.push([bx, by]);
+              }
+              cx = x2; cy = y2;
+            }
+          } else if (cmd === 'C' || cmd === 'c') {
+            for (let i = 0; i + 5 < args.length; i += 6) {
+              const x1 = cmd === 'C' ? args[i]   : cx + args[i];
+              const y1 = cmd === 'C' ? args[i+1] : cy + args[i+1];
+              const x2 = cmd === 'C' ? args[i+2] : cx + args[i+2];
+              const y2 = cmd === 'C' ? args[i+3] : cy + args[i+3];
+              const x3 = cmd === 'C' ? args[i+4] : cx + args[i+4];
+              const y3 = cmd === 'C' ? args[i+5] : cy + args[i+5];
+              for (let t = 0.1; t <= 1.0; t += 0.1) {
+                const bx = Math.pow(1-t,3)*cx + 3*Math.pow(1-t,2)*t*x1 + 3*(1-t)*t*t*x2 + Math.pow(t,3)*x3;
+                const by = Math.pow(1-t,3)*cy + 3*Math.pow(1-t,2)*t*y1 + 3*(1-t)*t*t*y2 + Math.pow(t,3)*y3;
+                poly.push([bx, by]);
+              }
+              cx = x3; cy = y3;
+            }
+          } else if (cmd === 'Z' || cmd === 'z') {
+            if (poly.length > 0) poly.push([startX, startY]);
+          }
+        }
+        if (poly.length >= 3) segs.push(poly);
+      });
+      return segs; // 여러 서브패스(폴리곤) 배열
+    }
+
+    /**
+     * 점이 폴리곤 내부에 있는지 레이캐스팅으로 판별
+     */
+    function pointInPolygon(px, py, poly) {
+      let inside = false;
+      for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+        const xi = poly[i][0], yi = poly[i][1];
+        const xj = poly[j][0], yj = poly[j][1];
+        if (((yi > py) !== (yj > py)) && (px < (xj - xi) * (py - yi) / (yj - yi) + xi)) {
+          inside = !inside;
+        }
+      }
+      return inside;
+    }
+
+    /**
+     * 점이 stroke 외곽선(여러 서브패스) 중 어느 하나 내부에 있는지 판별
+     */
+    function isPointInsideStroke(px, py, polygons) {
+      return polygons.some(poly => pointInPolygon(px, py, poly));
+    }
+
+    /**
+     * stroke 외곽선 폴리곤들에서 주어진 점의 "폴리곤 내부 중앙" 을 계산.
+     * 전략: 점 주변을 격자 샘플링 → 내부 점들의 무게중심 반환
+     */
+    function findNearestInteriorCenter(px, py, polygons, searchRadius = 80) {
+      // 1) 이미 내부이고 충분히 중앙에 있으면 그대로
+      if (isPointInsideStroke(px, py, polygons)) {
+        return [px, py]; // 이미 내부: 현재 위치 유지
+      }
+
+      // 2) 이탈된 경우: 각 폴리곤의 바운딩 박스 중심으로 끌어당기기
+      let bestPoint = null;
+      let bestDist = Infinity;
+
+      for (const poly of polygons) {
+        // 바운딩 박스 + 내부 격자 샘플로 가장 가까운 내부 점 탐색
+        const xs = poly.map(p => p[0]);
+        const ys = poly.map(p => p[1]);
+        const minX = Math.min(...xs), maxX = Math.max(...xs);
+        const minY = Math.min(...ys), maxY = Math.max(...ys);
+        const cx = (minX + maxX) / 2;
+        const cy = (minY + maxY) / 2;
+
+        // 중심이 내부인지 확인
+        if (pointInPolygon(cx, cy, poly)) {
+          const d = Math.hypot(cx - px, cy - py);
+          if (d < bestDist) {
+            bestDist = d;
+            bestPoint = [cx, cy];
+          }
+        }
+
+        // 격자 샘플링 (16x16)
+        const stepX = (maxX - minX) / 16;
+        const stepY = (maxY - minY) / 16;
+        for (let gx = minX + stepX/2; gx <= maxX; gx += stepX) {
+          for (let gy = minY + stepY/2; gy <= maxY; gy += stepY) {
+            if (pointInPolygon(gx, gy, poly)) {
+              const d = Math.hypot(gx - px, gy - py);
+              if (d < bestDist) {
+                bestDist = d;
+                bestPoint = [gx, gy];
+              }
+            }
+          }
+        }
+      }
+      return bestPoint || [px, py];
+    }
+
+    /**
+     * ★ 핵심: 주어진 stroke path에서 median을 따라
+     *   각 median 점에 해당하는 "stroke 단면의 중심" 을 계산하여
+     *   보정된 median 배열을 반환.
+     *
+     * 알고리즘:
+     *   - median 각 점(t위치)에서 경로에 수직인 방향으로 stroke 외곽선과
+     *     교차하는 두 점을 찾아 그 중간값을 새 median 점으로 사용.
+     */
+    function computeCenterlineFromStroke(median, strokePathStr) {
+      if (!strokePathStr || median.length < 2) return median;
+
+      const polygons = parseSVGPathToPolygon(strokePathStr);
+      if (polygons.length === 0) return median;
+
+      // 전체 외곽선 점들 (교차 탐색용)
+      const allOutlinePts = polygons.flat();
+
+      const corrected = median.map((pt, idx) => {
+        const [px, py] = pt;
+
+        // 이미 내부에 있으면 단면 중심 계산
+        if (isPointInsideStroke(px, py, polygons)) {
+          // 현재 점에서 경로 방향 계산
+          let dirX, dirY;
+          if (idx < median.length - 1) {
+            dirX = median[idx+1][0] - px;
+            dirY = median[idx+1][1] - py;
+          } else {
+            dirX = px - median[idx-1][0];
+            dirY = py - median[idx-1][1];
+          }
+          const len = Math.hypot(dirX, dirY) || 1;
+          dirX /= len; dirY /= len;
+
+          // 수직 방향 (perpendicular)
+          const perpX = -dirY, perpY = dirX;
+
+          // 수직 방향으로 외곽선 교차점 탐색 (양방향)
+          let posHit = null, negHit = null;
+          let posMinDist = Infinity, negMinDist = Infinity;
+
+          allOutlinePts.forEach(op => {
+            // 외곽선 점을 중심에서 수직 방향으로 투영
+            const dx = op[0] - px, dy = op[1] - py;
+            const proj = dx * perpX + dy * perpY; // 수직 방향 성분
+            const along = dx * dirX + dy * dirY;   // 경로 방향 성분
+
+            // 경로 방향으로 너무 멀리 있는 점은 제외
+            if (Math.abs(along) > 200) return;
+
+            if (proj > 0 && proj < posMinDist) {
+              posMinDist = proj; posHit = op;
+            } else if (proj < 0 && -proj < negMinDist) {
+              negMinDist = -proj; negHit = op;
+            }
+          });
+
+          if (posHit && negHit) {
+            // 두 교차점의 중간 = 획 단면 중심
+            return [
+              Math.round((posHit[0] + negHit[0]) / 2),
+              Math.round((posHit[1] + negHit[1]) / 2)
+            ];
+          }
+          return pt; // 교차점 못 찾으면 원래 점 유지
+        } else {
+          // 외부에 있으면 가장 가까운 내부 점으로 이동
+          const snapped = findNearestInteriorCenter(px, py, polygons);
+          return [Math.round(snapped[0]), Math.round(snapped[1])];
+        }
+      });
+
+      return corrected;
+    }
+
+    /**
+     * 현재 자소의 모든 획 median을 stroke 외곽선 중심으로 자동 정렬
+     */
+    function autoAlignMedianToCenter() {
+      if (!currentPartData) return;
+      const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+      const subpaths = outline ? outline.match(/M[\s\S]*?(?=M|$)/g) : null;
+
+      let changed = 0;
+      currentPartData.medians.forEach((median, sIdx) => {
+        // 이 획에 해당하는 stroke path 선택
+        let strokePath = null;
+        if (currentPartData.strokes && currentPartData.strokes[sIdx]) {
+          strokePath = currentPartData.strokes[sIdx];
+        } else if (subpaths && subpaths.length === currentPartData.medians.length) {
+          strokePath = subpaths[sIdx] ? subpaths[sIdx].trim() : outline;
+        } else {
+          strokePath = outline;
+        }
+
+        const corrected = computeCenterlineFromStroke(median, strokePath);
+        // 변경이 있으면 적용
+        const isDiff = corrected.some((p, i) => p[0] !== median[i][0] || p[1] !== median[i][1]);
+        if (isDiff) {
+          currentPartData.medians[sIdx] = corrected;
+          changed++;
+        }
+      });
+
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`${changed}개 획의 중심선이 외곽선 중앙으로 자동 보정되었습니다.`, changed > 0 ? 'success' : 'info');
+      document.getElementById('editor-status').firstElementChild.innerText =
+        changed > 0 ? `${changed}개 획 보정 완료!` : '모든 획이 이미 올바른 위치에 있습니다.';
+    }
+
+    /**
+     * 현재 선택 획만 자동 정렬
+     */
+    function autoAlignCurrentStroke() {
+      if (!currentPartData) return;
+      const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+      const subpaths = outline ? outline.match(/M[\s\S]*?(?=M|$)/g) : null;
+
+      let strokePath = null;
+      if (currentPartData.strokes && currentPartData.strokes[activeStrokeIdx]) {
+        strokePath = currentPartData.strokes[activeStrokeIdx];
+      } else if (subpaths && subpaths.length === currentPartData.medians.length) {
+        strokePath = subpaths[activeStrokeIdx] ? subpaths[activeStrokeIdx].trim() : outline;
+      } else {
+        strokePath = outline;
+      }
+
+      const median = currentPartData.medians[activeStrokeIdx];
+      const corrected = computeCenterlineFromStroke(median, strokePath);
+      currentPartData.medians[activeStrokeIdx] = corrected;
+
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`${activeStrokeIdx + 1}번째 획 중심선 보정 완료!`, 'success');
+    }
+
+    // HanziWriter 미리보기 갱신 (서브패스 정밀 분리 및 획 두께 실시간 동기화)
     function updateHanziPreview() {
       const box = document.getElementById('hanzi-preview-box');
       box.innerHTML = '';
 
-      const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
-      // 각 메디안 획마다 1:1로 외곽선 패스 매핑 (보이지 않는 획 발생 100% 방지)
-      const strokesPayload = currentPartData.medians.map((_, i) => {
-        return (currentPartData.strokes && currentPartData.strokes[i]) || outline;
-      });
+      ensureStrokeWidths(currentPartData);
+
+      let strokesPayload = [];
+      const hasDistinctStrokes = currentPartData.strokes && 
+        currentPartData.strokes.length === currentPartData.medians.length &&
+        currentPartData.strokes.some((s, idx) => s !== currentPartData.strokes[0]);
+
+      if (hasDistinctStrokes) {
+        strokesPayload = currentPartData.strokes;
+      } else {
+        const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+        // 정규식 개선: M 뒤에 공백이 없어도 모든 서브패스를 안전하게 분리
+        const subpaths = outline ? outline.match(/M[\s\S]*?(?=M|$)/g) : null;
+
+        if (subpaths && subpaths.length > 1) {
+          // 각 메디안의 중심점에 가장 가까운 서브패스를 외곽선 마스크로 자동 분리 매핑
+          strokesPayload = currentPartData.medians.map(median => {
+            const mXs = median.map(p => p[0]);
+            const mYs = median.map(p => p[1]);
+            const mCenterX = mXs.reduce((a, b) => a + b, 0) / mXs.length;
+            const mCenterY = mYs.reduce((a, b) => a + b, 0) / mYs.length;
+
+            let bestSubpath = subpaths[0];
+            let bestDist = Infinity;
+            subpaths.forEach(sp => {
+              const pts = [...sp.matchAll(/(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)/g)].map(m => [parseFloat(m[1]), parseFloat(m[2])]);
+              if (pts.length > 0) {
+                const xs = pts.map(p => p[0]);
+                const ys = pts.map(p => p[1]);
+                const minX = Math.min(...xs), maxX = Math.max(...xs);
+                const minY = Math.min(...ys), maxY = Math.max(...ys);
+
+                // 바운딩 박스 중심과의 거리
+                const spCenterX = (minX + maxX) / 2;
+                const spCenterY = (minY + maxY) / 2;
+                const dist = Math.hypot(mCenterX - spCenterX, mCenterY - spCenterY);
+
+                if (dist < bestDist) {
+                  bestDist = dist;
+                  bestSubpath = sp.trim();
+                }
+              }
+            });
+            return bestSubpath;
+          });
+        } else {
+          strokesPayload = currentPartData.medians.map((_, i) => {
+            return (currentPartData.strokes && currentPartData.strokes[i]) || outline;
+          });
+        }
+      }
 
       const payload = {
         strokes: strokesPayload,
@@ -653,14 +2251,38 @@
         delayBetweenStrokes: 180,
         charDataLoader: function(char, onComplete) {
           onComplete(payload);
+          // 렌더링 후 stroke-width 동기화
+          setTimeout(syncHanziWriterStrokeWidth, 50);
         }
       });
+
+      setTimeout(syncHanziWriterStrokeWidth, 100);
     }
 
     function playPreviewAnim() {
-      if (previewWriter) {
-        previewWriter.animateCharacter();
+      if (!previewWriter || !currentPartData) return;
+      ensureStrokeWidths(currentPartData);
+
+      // 애니메이션 브러시 두께를 첫 번째 획 굵기로 설정
+      const firstW = currentPartData.strokeWidths[0] || currentStrokeWidth || 22;
+      document.documentElement.style.setProperty('--hanzi-anim-stroke-width', `${firstW}px`);
+
+      // 애니메이션 재생 중 브라우저가 생성하는 마스크 패스의 두께가 200px로 튀지 않도록 실시간 감시
+      const box = document.getElementById('hanzi-preview-box');
+      let observer = null;
+      if (box && window.MutationObserver) {
+        observer = new MutationObserver(() => {
+          syncHanziWriterStrokeWidth();
+        });
+        observer.observe(box, { childList: true, subtree: true, attributes: true, attributeFilter: ['stroke-width'] });
       }
+
+      previewWriter.animateCharacter({
+        onComplete: function() {
+          if (observer) observer.disconnect();
+          syncHanziWriterStrokeWidth();
+        }
+      });
     }
 
     function toggleShowAllStrokes() {
@@ -677,18 +2299,117 @@
       if (previewWriter) previewWriter.quiz();
     }
 
+    // 토스트 알림 표시 함수
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      let icon = '✨';
+      if (type === 'success') icon = '💾';
+      if (type === 'warning') icon = '⚠️';
+      if (type === 'info') icon = '✏️';
+
+      toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => toast.classList.add('show'), 10);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+      }, 2400);
+    }
+
+    // 서버 연결 상태 확인
+    let isServerConnected = false;
+    function checkServerStatus() {
+      fetch('/api/status')
+        .then(r => r.json())
+        .then(d => {
+          if (d.status === 'ok') {
+            isServerConnected = true;
+            const badge = document.getElementById('server-status-badge');
+            badge.className = 'badge-status connected';
+            badge.innerHTML = '🟢 파일 실시간 동기화 켜짐';
+            badge.title = '조정된 중심선이 hangul_150_parts_warehouse.json 및 .js 파일에 즉시 영구 저장됩니다.';
+          }
+        })
+        .catch(() => {
+          isServerConnected = false;
+          const badge = document.getElementById('server-status-badge');
+          badge.className = 'badge-status disconnected';
+          badge.innerHTML = '🟠 브라우저 로컬 저장';
+          badge.title = '현재 일반 정적 서버 상태입니다. 브라우저(localStorage)에 안전하게 저장됩니다.';
+        });
+    }
+
     // 데이터 저장 / 복사 / 다운로드 기능
-    function saveCurrentPart() {
+    function saveCurrentPart(isSilent = false) {
       customDb[selectedPartId] = JSON.parse(JSON.stringify(currentPartData));
       localStorage.setItem('hangul_150_custom_medians', JSON.stringify(customDb));
       renderSidebar();
-      alert(`[${selectedPartId}] 중심선 데이터가 브라우저에 저장되었습니다!`);
+
+      // 서버 파일 동기화 API 호출
+      fetch('/api/save_part', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: selectedPartId,
+          data: currentPartData
+        })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          if (!isSilent) showToast(`[${selectedPartId}] 파일 저장 완료! (JSON & JS)`, 'success');
+          checkServerStatus();
+        }
+      })
+      .catch(err => {
+        if (!isSilent) showToast(`[${selectedPartId}] 브라우저에 저장됨 (서버 오프라인)`, 'info');
+      });
+    }
+
+    function saveAllToDisk() {
+      const fullWarehouse = JSON.parse(JSON.stringify(originalWarehouse));
+      Object.keys(customDb).forEach(k => {
+        fullWarehouse[k] = customDb[k];
+      });
+
+      const exportData = {
+        meta: {
+          title: "Hangul 153-Parts Gungsuh Warehouse",
+          font: "Gungsuh.ttf",
+          canvasSize: 1024,
+          updatedAt: new Date().toISOString(),
+          modifiedCount: Object.keys(customDb).length,
+          totalCount: Object.keys(fullWarehouse).length
+        },
+        parts: fullWarehouse
+      };
+
+      fetch('/api/save_all', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ warehouse: exportData })
+      })
+      .then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          showToast(`전체 ${res.count}개 자소 데이터가 파일에 영구 동기화되었습니다!`, 'success');
+        } else {
+          showToast(`저장 실패: ${res.error}`, 'warning');
+        }
+      })
+      .catch(err => {
+        alert("서버와 통신할 수 없습니다. '전체 JSON 다운로드' 버튼으로 파일을 내려받으실 수 있습니다.");
+      });
     }
 
     function copyCurrentJson() {
       const json = JSON.stringify(currentPartData, null, 2);
       navigator.clipboard.writeText(json).then(() => {
-        alert(`${selectedPartId}의 데이터가 클립보드에 복사되었습니다!`);
+        showToast(`${selectedPartId} JSON 클립보드 복사됨`, 'info');
       });
     }
 
@@ -698,6 +2419,7 @@
         localStorage.setItem('hangul_150_custom_medians', JSON.stringify(customDb));
         selectPart(selectedPartId);
         renderSidebar();
+        showToast(`[${selectedPartId}] 초기화되었습니다.`, 'info');
       }
     }
 
@@ -707,7 +2429,7 @@
         customDb = {};
         renderSidebar();
         selectPart(selectedPartId);
-        alert("1차 정밀 일치 데이터로 전체 새로고침되었습니다!");
+        showToast("1차 정밀 일치 데이터로 전체 새로고침되었습니다!", 'success');
       }
     }
 
@@ -736,6 +2458,7 @@
       a.download = `hangul_150_warehouse_collected_${new Date().toISOString().slice(0,10)}.json`;
       a.click();
       URL.revokeObjectURL(url);
+      showToast("전체 데이터셋 JSON 파일이 다운로드되었습니다.", 'success');
     }
 
     let isFilled = true;
@@ -750,13 +2473,93 @@
         [currentPartData.box.x + 200, currentPartData.box.y + 100]
       ];
       currentPartData.medians.push(newStroke);
+      ensureStrokeWidths(currentPartData);
+      currentPartData.strokeWidths.push(currentStrokeWidth || 22);
+
       activeStrokeIdx = currentPartData.medians.length - 1;
       renderStrokeTabs();
+      updateStrokeWidthUI();
       renderEditor();
       updateHanziPreview();
+      saveCurrentPart(true);
+      showToast("새 획이 추가되고 저장되었습니다.", 'info');
     }
 
-    window.addEventListener('DOMContentLoaded', init);
+    // ─── 현재 활성 획에 점 추가 (총획수와 무관) ───────────────────────
+    function addPointToCurrentStroke() {
+      const stroke = currentPartData.medians[activeStrokeIdx];
+      if (!stroke) return;
+      // 마지막 두 점의 중간 좌표를 새 점으로 추가
+      let newPt;
+      if (stroke.length >= 2) {
+        const last = stroke[stroke.length - 1];
+        const prev = stroke[stroke.length - 2];
+        newPt = [
+          Math.round((last[0] + prev[0]) / 2 + (last[0] - prev[0])),
+          Math.round((last[1] + prev[1]) / 2 + (last[1] - prev[1]))
+        ];
+        // 클램핑: 1024 좌표계 내 유지
+        newPt[0] = Math.max(0, Math.min(1024, newPt[0]));
+        newPt[1] = Math.max(0, Math.min(900, newPt[1]));
+      } else {
+        const last = stroke[stroke.length - 1];
+        newPt = [last[0] + 50, last[1]];
+      }
+      stroke.push(newPt);
+      renderStrokeTabs();
+      updateStrokeWidthUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`${activeStrokeIdx + 1}획에 점 추가됨 → 총 ${stroke.length}개 점`, 'info');
+    }
+
+    // ─── 현재 활성 획의 마지막 점 제거 (최소 2개 유지, 총획수와 무관) ──
+    function removeLastPointFromCurrentStroke() {
+      const stroke = currentPartData.medians[activeStrokeIdx];
+      if (!stroke) return;
+      if (stroke.length <= 2) {
+        showToast("획에는 최소 2개의 점이 필요합니다.", 'warning');
+        return;
+      }
+      const removed = stroke.pop();
+      renderStrokeTabs();
+      updateStrokeWidthUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`${activeStrokeIdx + 1}획 마지막 점 제거됨 → 총 ${stroke.length}개 점`, 'info');
+    }
+
+    // ─── 현재 활성 획 전체 삭제 (최소 1획 유지) ─────────────────────────
+    function deleteCurrentStroke() {
+      if (currentPartData.medians.length <= 1) {
+        showToast("자소에는 최소 1개의 획이 필요합니다.", 'warning');
+        return;
+      }
+      if (!confirm(`${activeStrokeIdx + 1}번째 획을 삭제하시겠습니까?`)) return;
+      currentPartData.medians.splice(activeStrokeIdx, 1);
+      if (currentPartData.strokeWidths && currentPartData.strokeWidths.length > activeStrokeIdx) {
+        currentPartData.strokeWidths.splice(activeStrokeIdx, 1);
+      }
+      // strokes 배열도 같은 인덱스로 동기 삭제 (있을 경우)
+      if (currentPartData.strokes && currentPartData.strokes.length > activeStrokeIdx) {
+        currentPartData.strokes.splice(activeStrokeIdx, 1);
+      }
+      activeStrokeIdx = Math.min(activeStrokeIdx, currentPartData.medians.length - 1);
+      document.getElementById('info-stroke-count').innerText = `${currentPartData.medians.length}획`;
+      renderStrokeTabs();
+      updateStrokeWidthUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`획이 삭제되었습니다. 현재 총 ${currentPartData.medians.length}획`, 'info');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      init();
+      checkServerStatus();
+    });
   </script>
 </body>
 </html>
