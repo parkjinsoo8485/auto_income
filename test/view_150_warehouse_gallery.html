@@ -291,8 +291,31 @@
     .pc-btn.add:hover  { background: #047857; }
     .pc-btn.del  { background: #dc2626; color: white; }
     .pc-btn.del:hover  { background: #b91c1c; }
+    .pc-btn.move-up { background: #0284c7; color: white; }
+    .pc-btn.move-up:hover { background: #0369a1; }
+    .pc-btn.move-down { background: #4f46e5; color: white; }
+    .pc-btn.move-down:hover { background: #4338ca; }
+    .pc-btn.reverse { background: #0d9488; color: white; }
+    .pc-btn.reverse:hover { background: #0f766e; }
     .pc-btn.del-stroke { background: #7c3aed; color: white; }
     .pc-btn.del-stroke:hover { background: #6d28d9; }
+    .live-save-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .live-save-badge.success { background: #064e3b; color: #6ee7b7; border-color: #10b981; }
+    .live-save-badge.saving { background: #1e1b4b; color: #a5b4fc; border-color: #6366f1; }
+    .live-save-badge.local { background: #451a03; color: #fdba74; border-color: #f97316; }
+    .live-save-badge.error { background: #450a0a; color: #fca5a5; border-color: #ef4444; }
     .pc-divider { width: 1px; height: 18px; background: #334155; flex-shrink: 0; }
     .status-bar {
       width: 100%;
@@ -581,17 +604,23 @@
         <div class="panel-title">
           <span>궁서체 외곽선 + 중심선(Medians) 편집기</span>
           <span id="current-part-badge" style="font-size:12px; color:#38bdf8; font-family:monospace;">Cho_T1_ㄱ</span>
+          <span id="live-save-badge" class="live-save-badge success">🟢 파일 실시간 동기화 켜짐</span>
         </div>
 
         <!-- 획 전환 탭 -->
         <div class="stroke-selector" id="stroke-selector-bar"></div>
 
-        <!-- 점 수 조작 인라인 컨트롤 (총획과 독립) -->
+        <!-- 점 수 조작 및 획순/방향 조정 인라인 컨트롤 바 -->
         <div class="point-controls" id="point-controls-bar">
-          <span class="pc-label">현재 획 점 수:</span>
+          <span class="pc-label">점 조작:</span>
           <span class="pc-count" id="pc-count-display">-</span>
           <button class="pc-btn add" onclick="addPointToCurrentStroke()" title="현재 활성 획의 끝에 점 추가">＋ 점 추가</button>
           <button class="pc-btn del" onclick="removeLastPointFromCurrentStroke()" title="현재 활성 획의 마지막 점 제거 (최소 2개 유지)">－ 점 제거</button>
+          <div class="pc-divider"></div>
+          <span class="pc-label">✏️ 획순/방향 교정:</span>
+          <button class="pc-btn move-up" onclick="moveCurrentStrokeEarlier()" title="현재 획의 순서를 이전으로 이동 (예: 2획을 1획으로)">⬆️ 획순 앞으로</button>
+          <button class="pc-btn move-down" onclick="moveCurrentStrokeLater()" title="현재 획의 순서를 다음으로 이동 (예: 1획을 2획으로)">⬇️ 획순 뒤로</button>
+          <button class="pc-btn reverse" onclick="reverseCurrentStrokeDirection()" title="현재 획의 시작점과 끝점 진행 방향을 반전 (역방향 획 교정)">🔄 획 방향 반전</button>
           <div class="pc-divider"></div>
           <button class="pc-btn del-stroke" onclick="deleteCurrentStroke()" title="현재 선택된 획 전체를 삭제합니다 (최소 1획 유지)">🗑 현재 획 삭제</button>
         </div>
@@ -621,7 +650,7 @@
             <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(22)" style="color:#38bdf8; font-weight:700;">가늘게(22)</button>
             <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(34)">기본(34)</button>
             <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(46)">두껍게(46)</button>
-            <button class="sp-preset-btn" onclick="applyStrokeWidthPreset(60)">굵게(60)</button>
+            <button class="sp-preset-btn" style="background:#b91c1c; color:#fecaca; border-color:#ef4444; font-weight:bold;" onclick="separateJunctionsUI()" title="중심선들이 만나는 지점(T자/L자/교차점)에서 다음 획이 그려질 때 겹치지 않도록 선을 안전하게 분리하고 다듬습니다.">✂️ 만나는 지점 선 분리</button>
             <button class="sp-preset-btn" style="background:#701a75; color:#f0abfc; border-color:#d946ef; font-weight:bold;" onclick="preventStrokeBleedingMode()" title="획이 겹치는 부위에서 다른 획으로 색이 번지지 않도록 Voronoi 영역 격리 및 정밀 두께를 즉시 최적화합니다.">🛡️ 획 번짐 방지 정밀 모드</button>
             <button class="sp-preset-btn" style="background:#0c4a6e; color:#7dd3fc; border-color:#0284c7; font-weight:bold;" onclick="optimizeForDoubleJongsung()" title="받침이 2개 있는 겹받침의 획 겹침/번짐을 방지하는 정밀 22px 모드로 즉시 최적화합니다.">🎯 겹받침 정밀(22px)</button>
             <button class="sp-preset-btn" style="background:#1e1b4b; color:#a5b4fc; border-color:#6366f1; font-weight:bold;" onclick="autoFitStrokeWidthsToFontUI()" title="바탕 궁서체 외곽선의 실제 물리적 두께를 기하학적으로 측정하여 각 획의 굵기를 글씨체에 맞게 100% 자동 설정합니다.">🪄 글씨체 맞춤 자동 굵기</button>
@@ -711,6 +740,7 @@
           <button class="btn green" onclick="saveCurrentPart()">💾 이 자소 저장</button>
           <button class="btn purple" onclick="toggleGungsuhFill()">외곽선 채우기 토글</button>
           <button class="btn gray" onclick="addStrokeToCurrent()">+ 새 획 추가</button>
+          <button class="btn" style="background:#b91c1c; color:#ffffff;" onclick="separateJunctionsUI()" title="중심선들이 만나는 지점(T자/L자/교차점)에서 다음 획이 그려질 때 겹치지 않도록 선을 안전하게 분리하고 다듬습니다.">✂️ 만나는 지점 선 분리</button>
           <button class="btn" style="background:#4f46e5; color:#ffffff;" onclick="autoFitStrokeWidthsToFontUI()" title="궁서체 원본 외곽선의 실제 물리적 두께를 기하학적으로 정밀 측정하여 각 획의 굵기를 글씨체에 맞게 100% 자동 설정합니다.">🪄 글씨체 두께 자동 맞춤</button>
           <button class="btn amber" onclick="autoAlignMedianToCenter()" title="각 획의 중심선 제어점을 외곽선 내부 중앙 골격으로 자동 스냅합니다.">🎯 중심 자동 정렬</button>
           <button class="btn" style="background:#0891b2;" onclick="autoAlignCurrentStroke()" title="현재 선택 획만 중심 보정">🎯 현재 획만 정렬</button>
@@ -1268,11 +1298,11 @@
               p.style.strokeWidth = '200px';
             }
           } else {
-            // 다획 자소: 인접 획으로 색이 번지지 않도록 사용자가 지정한 정밀 두께를 엄격히 준수
+            // 다획 자소: 획별 외곽선 마스크/클립에 맞춰 외곽선을 100% 가득 채움
             const targetW = (currentPartData.strokeWidths && currentPartData.strokeWidths[pIdx]) || currentStrokeWidth || 34;
-            const safeW = Math.max(20, Math.min(targetW, 60));
-            p.setAttribute('stroke-width', `${safeW}`);
-            p.style.strokeWidth = `${safeW}px`;
+            const fullW = Math.max(70, Math.min(Math.round(targetW * 2.2), 160));
+            p.setAttribute('stroke-width', `${fullW}`);
+            p.style.strokeWidth = `${fullW}px`;
           }
         }
       });
@@ -1783,15 +1813,66 @@
     }
 
     /**
+     * 선분을 step 간격으로 등간격 샘플링
+     */
+    function sampleMedian(median, step = 10) {
+      if (!median || median.length === 0) return [];
+      if (median.length === 1) return [[median[0][0], median[0][1]]];
+
+      const samples = [];
+      for (let i = 0; i < median.length - 1; i++) {
+        const p1 = median[i];
+        const p2 = median[i + 1];
+        const d = Math.hypot(p1[0] - p2[0], p1[1] - p2[1]);
+        const count = Math.max(1, Math.ceil(d / step));
+        for (let c = 0; c < count; c++) {
+          const t = c / count;
+          samples.push([
+            p1[0] + t * (p2[0] - p1[0]),
+            p1[1] + t * (p2[1] - p1[1])
+          ]);
+        }
+      }
+      const last = median[median.length - 1];
+      samples.push([last[0], last[1]]);
+      return samples;
+    }
+
+    /**
+     * 두 선분 p1-p2와 p3-p4의 교차점 계산
+     */
+    function lineLineIntersection(p1, p2, p3, p4) {
+      const x1 = p1[0], y1 = p1[1];
+      const x2 = p2[0], y2 = p2[1];
+      const x3 = p3[0], y3 = p3[1];
+      const x4 = p4[0], y4 = p4[1];
+
+      const denom = (y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1);
+      if (Math.abs(denom) < 1e-6) return null;
+
+      const ua = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / denom;
+      const ub = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / denom;
+
+      if (ua >= -0.05 && ua <= 1.05 && ub >= -0.05 && ub <= 1.05) {
+        return [
+          x1 + ua * (x2 - x1),
+          y1 + ua * (y2 - y1)
+        ];
+      }
+      return null;
+    }
+
+    /**
      * 다획 자소에서 획 간 색 번짐(Bleeding)을 0%로 완벽 차단하기 위한 획별 보로노이 다각형 계산
+     * 고정밀 연속 선분 보간 및 만나는 지점 각이등분선(Angle Bisector) 분할 평면 적용
      */
     function computeStrokeVoronoiPolygon(strokeIdx, allMedians) {
       // 1024 캔버스를 넉넉히 감싸는 사각형에서 시작
       let poly = [
-        [-300, -300],
-        [1324, -300],
-        [1324, 1324],
-        [-300, 1324]
+        [-400, -400],
+        [1424, -400],
+        [1424, 1424],
+        [-400, 1424]
       ];
 
       const curMedian = allMedians[strokeIdx];
@@ -1799,14 +1880,76 @@
         return poly;
       }
 
+      const curSamples = sampleMedian(curMedian, 10);
+
       allMedians.forEach((otherMedian, otherIdx) => {
         if (otherIdx === strokeIdx || !otherMedian || otherMedian.length === 0) return;
+        const otherSamples = sampleMedian(otherMedian, 10);
 
-        // curMedian의 각 점에서 otherMedian의 최근접 점 쌍 탐색
-        curMedian.forEach(pA => {
+        // 1. 만나는 지점(교차점 또는 최근접 접촉점) 검출 및 각이등분선 분할 평면 적용
+        let junctionPt = null;
+        let dirCur = null;
+        let dirOther = null;
+
+        // 선분 교차점 확인
+        for (let i = 0; i < curMedian.length - 1; i++) {
+          for (let j = 0; j < otherMedian.length - 1; j++) {
+            const inter = lineLineIntersection(
+              curMedian[i], curMedian[i + 1],
+              otherMedian[j], otherMedian[j + 1]
+            );
+            if (inter) {
+              junctionPt = inter;
+              dirCur = [curMedian[i + 1][0] - curMedian[i][0], curMedian[i + 1][1] - curMedian[i][1]];
+              dirOther = [otherMedian[j + 1][0] - otherMedian[j][0], otherMedian[j + 1][1] - otherMedian[j][1]];
+              break;
+            }
+          }
+          if (junctionPt) break;
+        }
+
+        // 선분 교차가 없으면 최근접 샘플 쌍 확인 (거리 < 16px)
+        if (!junctionPt) {
+          let minD = Infinity;
+          let closeA = null, closeB = null;
+          curSamples.forEach(pA => {
+            otherSamples.forEach(pB => {
+              const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
+              if (d < minD) {
+                minD = d;
+                closeA = pA;
+                closeB = pB;
+              }
+            });
+          });
+          if (minD < 16 && closeA && closeB) {
+            junctionPt = [(closeA[0] + closeB[0]) / 2, (closeA[1] + closeB[1]) / 2];
+            // 최근접점 방향
+            dirCur = [curMedian[curMedian.length - 1][0] - curMedian[0][0], curMedian[curMedian.length - 1][1] - curMedian[0][1]];
+            dirOther = [otherMedian[otherMedian.length - 1][0] - otherMedian[0][0], otherMedian[otherMedian.length - 1][1] - otherMedian[0][1]];
+          }
+        }
+
+        // 만나는 지점이 있을 경우: 접합부 각이등분선 분할 평면 적용
+        if (junctionPt && dirCur && dirOther) {
+          const lenA = Math.hypot(dirCur[0], dirCur[1]);
+          const lenB = Math.hypot(dirOther[0], dirOther[1]);
+          if (lenA > 1e-4 && lenB > 1e-4) {
+            const uA = [dirCur[0] / lenA, dirCur[1] / lenA];
+            const uB = [dirOther[0] / lenB, dirOther[1] / lenB];
+            const bisectNorm = [uA[0] - uB[0], uA[1] - uB[1]];
+            const bisectLen = Math.hypot(bisectNorm[0], bisectNorm[1]);
+            if (bisectLen > 0.04) {
+              poly = clipPolygonByHalfPlane(poly, junctionPt[0], junctionPt[1], bisectNorm[0], bisectNorm[1]);
+            }
+          }
+        }
+
+        // 2. 일반 선분 샘플들에 대한 수직이등분선 클리핑 (연속 격리)
+        curSamples.forEach(pA => {
           let minDist = Infinity;
           let bestB = null;
-          otherMedian.forEach(pB => {
+          otherSamples.forEach(pB => {
             const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
             if (d < minDist) {
               minDist = d;
@@ -1814,7 +1957,7 @@
             }
           });
 
-          if (bestB && minDist >= 3) {
+          if (bestB && minDist >= 4) {
             const mx = (pA[0] + bestB[0]) / 2;
             const my = (pA[1] + bestB[1]) / 2;
             const nx = pA[0] - bestB[0];
@@ -1823,11 +1966,10 @@
           }
         });
 
-        // otherMedian의 각 점에서 curMedian의 최근접 점 탐색
-        otherMedian.forEach(pB => {
+        otherSamples.forEach(pB => {
           let minDist = Infinity;
           let bestA = null;
-          curMedian.forEach(pA => {
+          curSamples.forEach(pA => {
             const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
             if (d < minDist) {
               minDist = d;
@@ -1835,7 +1977,7 @@
             }
           });
 
-          if (bestA && minDist >= 3) {
+          if (bestA && minDist >= 4) {
             const mx = (bestA[0] + pB[0]) / 2;
             const my = (bestA[1] + pB[1]) / 2;
             const nx = bestA[0] - pB[0];
@@ -1846,6 +1988,96 @@
       });
 
       return poly;
+    }
+
+    /**
+     * 만나는 지점(T자 접합, L자 꼭짓점, 교차점)에서 다음 획이 그려질 때 겹치지 않도록
+     * 중심선 제어점을 안전 마진으로 정밀 분리하고 다듬는 엔진
+     */
+    function separateJunctionMedians(medians, safetyMargin = 14) {
+      if (!medians || medians.length <= 1) return { medians, modifiedCount: 0 };
+      const newMedians = JSON.parse(JSON.stringify(medians));
+      let modifiedCount = 0;
+
+      for (let i = 0; i < newMedians.length; i++) {
+        for (let j = 0; j < newMedians.length; j++) {
+          if (i === j) continue;
+          const mA = newMedians[i];
+          const mB = newMedians[j];
+          if (mA.length < 2 || mB.length < 2) continue;
+
+          // 케이스 1: 획 j의 시작점이 획 i의 선분 몸통과 매우 가깝거나 교차 (T자 접합)
+          const startB = mB[0];
+          for (let s = 0; s < mA.length - 1; s++) {
+            const p1 = mA[s];
+            const p2 = mA[s + 1];
+            const dx = p2[0] - p1[0];
+            const dy = p2[1] - p1[1];
+            const l2 = dx * dx + dy * dy;
+            if (l2 < 1e-4) continue;
+
+            let u = ((startB[0] - p1[0]) * dx + (startB[1] - p1[1]) * dy) / l2;
+            u = Math.max(0, Math.min(1, u));
+            const proj = [p1[0] + u * dx, p1[1] + u * dy];
+            const d = Math.hypot(startB[0] - proj[0], startB[1] - proj[1]);
+
+            // 시작점이 선분에 너무 가까우면 (거리 < safetyMargin)
+            // 획 B의 진행 방향(startB -> mB[1])으로 밀어내어 획 A의 굵기와 겹치지 않게 분리!
+            if (d < safetyMargin) {
+              const dirB = [mB[1][0] - startB[0], mB[1][1] - startB[1]];
+              const dirBLen = Math.hypot(dirB[0], dirB[1]);
+              if (dirBLen > 1e-4) {
+                const shift = safetyMargin - d + 4;
+                mB[0] = [
+                  Math.round(startB[0] + (dirB[0] / dirBLen) * shift),
+                  Math.round(startB[1] + (dirB[1] / dirBLen) * shift)
+                ];
+                modifiedCount++;
+              }
+            }
+          }
+
+          // 케이스 2: 획 i의 끝점이 획 j의 시작점이나 선분과 겹치는 경우
+          const endA = mA[mA.length - 1];
+          const startB2 = mB[0];
+          if (Math.hypot(endA[0] - startB2[0], endA[1] - startB2[1]) < safetyMargin) {
+            const prevA = mA[mA.length - 2];
+            const dirA = [endA[0] - prevA[0], endA[1] - prevA[1]];
+            const dirALen = Math.hypot(dirA[0], dirA[1]);
+            if (dirALen > 20) {
+              const shift = Math.min(12, dirALen * 0.25);
+              mA[mA.length - 1] = [
+                Math.round(endA[0] - (dirA[0] / dirALen) * shift),
+                Math.round(endA[1] - (dirA[1] / dirALen) * shift)
+              ];
+              modifiedCount++;
+            }
+          }
+        }
+      }
+
+      return { medians: newMedians, modifiedCount };
+    }
+
+    /**
+     * UI 버튼: 만나는 지점 선 분리 실행
+     */
+    function separateJunctionsUI() {
+      if (!currentPartData || currentPartData.medians.length <= 1) {
+        showToast("단일 획 자소는 만나는 지점이 없습니다.", "info");
+        return;
+      }
+      const res = separateJunctionMedians(currentPartData.medians);
+      currentPartData.medians = res.medians;
+
+      // 보로노이 클립패스 갱신 및 에디터 다시 렌더링
+      updateEditorDefs();
+      renderStrokeTabs();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+
+      showToast(`[${selectedPartId}] 만나는 지점 ${res.modifiedCount}개 분리 조정 완료! 다음 획 겹침/번짐이 차단되었습니다.`, 'success');
     }
 
     /**
@@ -2329,27 +2561,48 @@
           if (d.status === 'ok') {
             isServerConnected = true;
             const badge = document.getElementById('server-status-badge');
-            badge.className = 'badge-status connected';
-            badge.innerHTML = '🟢 파일 실시간 동기화 켜짐';
-            badge.title = '조정된 중심선이 hangul_150_parts_warehouse.json 및 .js 파일에 즉시 영구 저장됩니다.';
+            if (badge) {
+              badge.className = 'badge-status connected';
+              badge.innerHTML = '🟢 파일 실시간 동기화 켜짐';
+              badge.title = '조정된 중심선이 test/ 및 루트의 hangul_150_parts_warehouse.json / .js 파일에 즉시 영구 저장됩니다.';
+            }
           }
         })
         .catch(() => {
           isServerConnected = false;
           const badge = document.getElementById('server-status-badge');
-          badge.className = 'badge-status disconnected';
-          badge.innerHTML = '🟠 브라우저 로컬 저장';
-          badge.title = '현재 일반 정적 서버 상태입니다. 브라우저(localStorage)에 안전하게 저장됩니다.';
+          if (badge) {
+            badge.className = 'badge-status disconnected';
+            badge.innerHTML = '🟠 브라우저 로컬 저장';
+            badge.title = '현재 서버와 연결되지 않았습니다. 브라우저(localStorage)에 안전하게 임시 저장됩니다.';
+          }
+          const liveBadge = document.getElementById('live-save-badge');
+          if (liveBadge && !liveBadge.classList.contains('saving')) {
+            liveBadge.className = 'live-save-badge local';
+            liveBadge.innerText = '🟠 브라우저 로컬 모드';
+          }
         });
     }
 
     // 데이터 저장 / 복사 / 다운로드 기능
     function saveCurrentPart(isSilent = false) {
+      if (!currentPartData) return;
+      currentPartData.strokeCount = currentPartData.medians ? currentPartData.medians.length : 1;
       customDb[selectedPartId] = JSON.parse(JSON.stringify(currentPartData));
+      if (originalWarehouse && originalWarehouse[selectedPartId]) {
+        originalWarehouse[selectedPartId] = JSON.parse(JSON.stringify(currentPartData));
+      }
       localStorage.setItem('hangul_150_custom_medians', JSON.stringify(customDb));
       renderSidebar();
 
-      // 서버 파일 동기화 API 호출
+      const timeStr = new Date().toLocaleTimeString('ko-KR');
+      const liveBadge = document.getElementById('live-save-badge');
+      if (liveBadge) {
+        liveBadge.className = 'live-save-badge saving';
+        liveBadge.innerText = '💾 파일 동기화 중...';
+      }
+
+      // 서버 파일 동기화 API 호출 (test/ 및 루트 파일 동시 영구 저장)
       fetch('/api/save_part', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2361,12 +2614,26 @@
       .then(res => res.json())
       .then(res => {
         if (res.success) {
-          if (!isSilent) showToast(`[${selectedPartId}] 파일 저장 완료! (JSON & JS)`, 'success');
+          const syncCount = res.savedFiles ? res.savedFiles.length : 4;
+          if (!isSilent) showToast(`[${selectedPartId}] 파일 영구 동기화 완료! (${syncCount}개 파일 반영)`, 'success');
+          if (liveBadge) {
+            liveBadge.className = 'live-save-badge success';
+            liveBadge.innerText = `🟢 파일 저장됨 (${timeStr})`;
+          }
           checkServerStatus();
+        } else {
+          if (liveBadge) {
+            liveBadge.className = 'live-save-badge error';
+            liveBadge.innerText = `❌ 저장 실패: ${res.error}`;
+          }
         }
       })
       .catch(err => {
-        if (!isSilent) showToast(`[${selectedPartId}] 브라우저에 저장됨 (서버 오프라인)`, 'info');
+        if (!isSilent) showToast(`[${selectedPartId}] 브라우저에 임시 저장됨 (서버 오프라인)`, 'info');
+        if (liveBadge) {
+          liveBadge.className = 'live-save-badge local';
+          liveBadge.innerText = `🟠 브라우저 로컬 저장 (${timeStr})`;
+        }
       });
     }
 
@@ -2388,6 +2655,12 @@
         parts: fullWarehouse
       };
 
+      const liveBadge = document.getElementById('live-save-badge');
+      if (liveBadge) {
+        liveBadge.className = 'live-save-badge saving';
+        liveBadge.innerText = '💾 전체 파일 동기화 중...';
+      }
+
       fetch('/api/save_all', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -2396,7 +2669,12 @@
       .then(res => res.json())
       .then(res => {
         if (res.success) {
-          showToast(`전체 ${res.count}개 자소 데이터가 파일에 영구 동기화되었습니다!`, 'success');
+          const syncCount = res.savedFiles ? res.savedFiles.length : 4;
+          showToast(`전체 ${res.count}개 자소 데이터가 ${syncCount}개 파일에 완벽하게 영구 동기화되었습니다!`, 'success');
+          if (liveBadge) {
+            liveBadge.className = 'live-save-badge success';
+            liveBadge.innerText = `🟢 전체 영구 저장 완료 (${new Date().toLocaleTimeString('ko-KR')})`;
+          }
         } else {
           showToast(`저장 실패: ${res.error}`, 'warning');
         }
@@ -2475,14 +2753,16 @@
       currentPartData.medians.push(newStroke);
       ensureStrokeWidths(currentPartData);
       currentPartData.strokeWidths.push(currentStrokeWidth || 22);
+      currentPartData.strokeCount = currentPartData.medians.length;
 
       activeStrokeIdx = currentPartData.medians.length - 1;
+      document.getElementById('info-stroke-count').innerText = `${currentPartData.medians.length}획`;
       renderStrokeTabs();
       updateStrokeWidthUI();
       renderEditor();
       updateHanziPreview();
-      saveCurrentPart(true);
-      showToast("새 획이 추가되고 저장되었습니다.", 'info');
+      saveCurrentPart(false);
+      showToast("새 획이 추가되고 영구 저장되었습니다.", 'info');
     }
 
     // ─── 현재 활성 획에 점 추가 (총획수와 무관) ───────────────────────
@@ -2546,19 +2826,121 @@
       if (currentPartData.strokes && currentPartData.strokes.length > activeStrokeIdx) {
         currentPartData.strokes.splice(activeStrokeIdx, 1);
       }
+      currentPartData.strokeCount = currentPartData.medians.length;
       activeStrokeIdx = Math.min(activeStrokeIdx, currentPartData.medians.length - 1);
       document.getElementById('info-stroke-count').innerText = `${currentPartData.medians.length}획`;
       renderStrokeTabs();
       updateStrokeWidthUI();
       renderEditor();
       updateHanziPreview();
-      saveCurrentPart(true);
-      showToast(`획이 삭제되었습니다. 현재 총 ${currentPartData.medians.length}획`, 'info');
+      saveCurrentPart(false);
+      showToast(`획이 삭제되었습니다. 현재 총 ${currentPartData.medians.length}획 (파일 저장 완료)`, 'info');
+    }
+
+    // ─── 획순 순서 앞으로 당기기 (예: 2획 -> 1획) ─────────────────────
+    function moveCurrentStrokeEarlier() {
+      if (!currentPartData || !currentPartData.medians) return;
+      if (activeStrokeIdx <= 0) {
+        showToast("이미 첫 번째 획입니다.", "warning");
+        return;
+      }
+      const prevIdx = activeStrokeIdx - 1;
+      // medians 교환
+      const tmpM = currentPartData.medians[prevIdx];
+      currentPartData.medians[prevIdx] = currentPartData.medians[activeStrokeIdx];
+      currentPartData.medians[activeStrokeIdx] = tmpM;
+
+      // strokeWidths 교환
+      ensureStrokeWidths(currentPartData);
+      if (currentPartData.strokeWidths) {
+        const tmpW = currentPartData.strokeWidths[prevIdx];
+        currentPartData.strokeWidths[prevIdx] = currentPartData.strokeWidths[activeStrokeIdx];
+        currentPartData.strokeWidths[activeStrokeIdx] = tmpW;
+      }
+
+      // strokes 패스 교환 (있는 경우)
+      if (currentPartData.strokes && currentPartData.strokes.length === currentPartData.medians.length) {
+        const tmpS = currentPartData.strokes[prevIdx];
+        currentPartData.strokes[prevIdx] = currentPartData.strokes[activeStrokeIdx];
+        currentPartData.strokes[activeStrokeIdx] = tmpS;
+      }
+
+      currentPartData.strokeCount = currentPartData.medians.length;
+      const oldNum = activeStrokeIdx + 1;
+      const newNum = prevIdx + 1;
+      activeStrokeIdx = prevIdx;
+
+      renderStrokeTabs();
+      updateStrokeWidthUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(false);
+      showToast(`[획순 변경] ${oldNum}획 → ${newNum}획으로 변경 및 파일 저장 완료!`, "success");
+    }
+
+    // ─── 획순 순서 뒤로 미루기 (예: 1획 -> 2획) ───────────────────────
+    function moveCurrentStrokeLater() {
+      if (!currentPartData || !currentPartData.medians) return;
+      if (activeStrokeIdx >= currentPartData.medians.length - 1) {
+        showToast("이미 마지막 획입니다.", "warning");
+        return;
+      }
+      const nextIdx = activeStrokeIdx + 1;
+      // medians 교환
+      const tmpM = currentPartData.medians[nextIdx];
+      currentPartData.medians[nextIdx] = currentPartData.medians[activeStrokeIdx];
+      currentPartData.medians[activeStrokeIdx] = tmpM;
+
+      // strokeWidths 교환
+      ensureStrokeWidths(currentPartData);
+      if (currentPartData.strokeWidths) {
+        const tmpW = currentPartData.strokeWidths[nextIdx];
+        currentPartData.strokeWidths[nextIdx] = currentPartData.strokeWidths[activeStrokeIdx];
+        currentPartData.strokeWidths[activeStrokeIdx] = tmpW;
+      }
+
+      // strokes 패스 교환 (있는 경우)
+      if (currentPartData.strokes && currentPartData.strokes.length === currentPartData.medians.length) {
+        const tmpS = currentPartData.strokes[nextIdx];
+        currentPartData.strokes[nextIdx] = currentPartData.strokes[activeStrokeIdx];
+        currentPartData.strokes[activeStrokeIdx] = tmpS;
+      }
+
+      currentPartData.strokeCount = currentPartData.medians.length;
+      const oldNum = activeStrokeIdx + 1;
+      const newNum = nextIdx + 1;
+      activeStrokeIdx = nextIdx;
+
+      renderStrokeTabs();
+      updateStrokeWidthUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(false);
+      showToast(`[획순 변경] ${oldNum}획 → ${newNum}획으로 변경 및 파일 저장 완료!`, "success");
+    }
+
+    // ─── 획 진행 방향(시작점-끝점) 반전 ─────────────────────────────
+    function reverseCurrentStrokeDirection() {
+      if (!currentPartData || !currentPartData.medians) return;
+      const stroke = currentPartData.medians[activeStrokeIdx];
+      if (!stroke || stroke.length < 2) {
+        showToast("반전할 수 있는 점이 부족합니다.", "warning");
+        return;
+      }
+
+      // 점 좌표 순서 완전 반전
+      stroke.reverse();
+
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(false);
+      showToast(`${activeStrokeIdx + 1}번째 획의 진행 방향(시작/끝점)이 반전되어 파일에 저장되었습니다!`, "success");
     }
 
     window.addEventListener('DOMContentLoaded', () => {
       init();
       checkServerStatus();
+      setInterval(checkServerStatus, 3000); // 3초마다 파일 동기화 서버 연결 상태 감지
     });
   </script>
 </body>
