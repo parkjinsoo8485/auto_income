@@ -1959,7 +1959,7 @@
           }
         }
 
-        // 2. 일반 선분 샘플들에 대한 수직이등분선 클리핑 (연속 격리)
+        // 2. 일반 선분 샘플들에 대한 수직이등분선 클리핑 (연속 격리, 최소 거리 12px 이상)
         for (let a = 0; a < curSamples.length; a++) {
           if (poly.length > 40) break; // 정점 폭발 방지 안전장치
           const pA = curSamples[a];
@@ -1974,14 +1974,22 @@
             }
           }
 
-          if (bestB && minDist >= 6) {
+          if (bestB && minDist >= 12) {
             const mx = (pA[0] + bestB[0]) / 2;
             const my = (pA[1] + bestB[1]) / 2;
             const nx = pA[0] - bestB[0];
             const ny = pA[1] - bestB[1];
-            poly = clipPolygonByHalfPlane(poly, mx, my, nx, ny);
+            const clipped = clipPolygonByHalfPlane(poly, mx, my, nx, ny);
+            if (clipped && clipped.length >= 3) {
+              poly = clipped;
+            }
           }
         }
+      }
+
+      // 안전 장치: 클리핑 결과가 너무 작거나 깨진 경우 전체 캔버스 영역으로 보호
+      if (!poly || poly.length < 3) {
+        return [[-400, -400], [1424, -400], [1424, 1424], [-400, 1424]];
       }
 
       return poly;
@@ -2427,41 +2435,14 @@
         strokesPayload = currentPartData.strokes;
       } else {
         const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
-        // 정규식 개선: M 뒤에 공백이 없어도 모든 서브패스를 안전하게 분리
+        // subpaths가 획수와 정확히 1:1로 일치할 때만 서브패스 매핑을 시도하고,
+        // 그렇지 않은 경우(구멍이 포함된 ㄼ, ㅂ, ㅇ, ㅎ, ㅁ 등)에는 전체 외곽선을 공유하여 획이 증발하는 현상을 100% 방지!
         const subpaths = outline ? outline.match(/M[\s\S]*?(?=M|$)/g) : null;
 
-        if (subpaths && subpaths.length > 1) {
-          // 각 메디안의 중심점에 가장 가까운 서브패스를 외곽선 마스크로 자동 분리 매핑
-          strokesPayload = currentPartData.medians.map(median => {
-            const mXs = median.map(p => p[0]);
-            const mYs = median.map(p => p[1]);
-            const mCenterX = mXs.reduce((a, b) => a + b, 0) / mXs.length;
-            const mCenterY = mYs.reduce((a, b) => a + b, 0) / mYs.length;
-
-            let bestSubpath = subpaths[0];
-            let bestDist = Infinity;
-            subpaths.forEach(sp => {
-              const pts = [...sp.matchAll(/(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)/g)].map(m => [parseFloat(m[1]), parseFloat(m[2])]);
-              if (pts.length > 0) {
-                const xs = pts.map(p => p[0]);
-                const ys = pts.map(p => p[1]);
-                const minX = Math.min(...xs), maxX = Math.max(...xs);
-                const minY = Math.min(...ys), maxY = Math.max(...ys);
-
-                // 바운딩 박스 중심과의 거리
-                const spCenterX = (minX + maxX) / 2;
-                const spCenterY = (minY + maxY) / 2;
-                const dist = Math.hypot(mCenterX - spCenterX, mCenterY - spCenterY);
-
-                if (dist < bestDist) {
-                  bestDist = dist;
-                  bestSubpath = sp.trim();
-                }
-              }
-            });
-            return bestSubpath;
-          });
+        if (subpaths && subpaths.length === currentPartData.medians.length) {
+          strokesPayload = subpaths.map(s => s.trim());
         } else {
+          // 모든 획에 대해 온전한 궁서체 외곽선을 마스크로 제공 (8번째 획 및 하단 획 완벽 렌더링)
           strokesPayload = currentPartData.medians.map((_, i) => {
             return (currentPartData.strokes && currentPartData.strokes[i]) || outline;
           });
