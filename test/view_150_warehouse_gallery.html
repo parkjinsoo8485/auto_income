@@ -2552,10 +2552,15 @@
       }, 2400);
     }
 
+    // 서버 연결 기준 URL 자동 감지 (file:/// 로 열거나 다른 포트로 열어도 http://localhost:8000 서버와 통신)
+    const API_BASE = (window.location.protocol === 'http:' || window.location.protocol === 'https:') && window.location.port === '8000'
+      ? ''
+      : 'http://localhost:8000';
+
     // 서버 연결 상태 확인
     let isServerConnected = false;
     function checkServerStatus() {
-      fetch('/api/status')
+      fetch(`${API_BASE}/api/status`)
         .then(r => r.json())
         .then(d => {
           if (d.status === 'ok') {
@@ -2563,7 +2568,7 @@
             const badge = document.getElementById('server-status-badge');
             if (badge) {
               badge.className = 'badge-status connected';
-              badge.innerHTML = '🟢 파일 실시간 동기화 켜짐';
+              badge.innerHTML = '🟢 파일 실시간 동기화 켜짐 (포트 8000 연결됨)';
               badge.title = '조정된 중심선이 test/ 및 루트의 hangul_150_parts_warehouse.json / .js 파일에 즉시 영구 저장됩니다.';
             }
           }
@@ -2573,8 +2578,8 @@
           const badge = document.getElementById('server-status-badge');
           if (badge) {
             badge.className = 'badge-status disconnected';
-            badge.innerHTML = '🟠 브라우저 로컬 저장';
-            badge.title = '현재 서버와 연결되지 않았습니다. 브라우저(localStorage)에 안전하게 임시 저장됩니다.';
+            badge.innerHTML = '🟠 브라우저 로컬 저장 (서버 오프라인)';
+            badge.title = '포트 8000 서버와 연결되지 않았습니다. warehouse_server.py 실행 여부를 확인해주세요.';
           }
           const liveBadge = document.getElementById('live-save-badge');
           if (liveBadge && !liveBadge.classList.contains('saving')) {
@@ -2603,7 +2608,7 @@
       }
 
       // 서버 파일 동기화 API 호출 (test/ 및 루트 파일 동시 영구 저장)
-      fetch('/api/save_part', {
+      fetch(`${API_BASE}/api/save_part`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -2661,7 +2666,7 @@
         liveBadge.innerText = '💾 전체 파일 동기화 중...';
       }
 
-      fetch('/api/save_all', {
+      fetch(`${API_BASE}/api/save_all`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ warehouse: exportData })
@@ -2680,7 +2685,9 @@
         }
       })
       .catch(err => {
-        alert("서버와 통신할 수 없습니다. '전체 JSON 다운로드' 버튼으로 파일을 내려받으실 수 있습니다.");
+        console.error("Save all error:", err);
+        showToast("서버와 통신할 수 없어 전체 JSON 다운로드로 안내합니다.", "warning");
+        alert("서버(http://localhost:8000)와 통신할 수 없습니다.\n\n터미널에서 'warehouse_server.py'가 켜져 있는지 확인해주세요.\n(브라우저 캐시에는 안전하게 저장되어 있으며, '전체 JSON 다운로드' 버튼으로도 파일 저장이 가능합니다.)");
       });
     }
 
