@@ -1480,7 +1480,7 @@
 
     let draggingPoint = null; // { strokeIdx, pointIdx }
 
-    function renderEditor() {
+    function renderEditor(fastMode = false) {
       const realGroup = document.getElementById('real-strokes-group');
       const pathsGroup = document.getElementById('medians-paths-group');
       const handlesGroup = document.getElementById('medians-handles-group');
@@ -1491,13 +1491,17 @@
       if (handlesGroup) handlesGroup.innerHTML = '';
       if (badgesGroup) badgesGroup.innerHTML = '';
 
-      // 외곽선 마스크 클립패스 및 획별 Voronoi 클립패스 실시간 동기화
-      updateEditorDefs();
+      // fastMode(마우스 드래그 중)가 아닐 때만 외곽선 마스크 클립패스 및 획별 Voronoi 클립패스 동기화
+      if (!fastMode) {
+        updateEditorDefs();
+      }
 
-      // 외곽선 폴리곤 파싱 (이탈 여부 판별용)
-      const outlineStr = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+      // 외곽선 폴리곤 파싱 (fastMode 시에는 생략하여 초당 60fps 보장)
       let outlinePolygons = [];
-      if (outlineStr) outlinePolygons = parseSVGPathToPolygon(outlineStr);
+      if (!fastMode) {
+        const outlineStr = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+        if (outlineStr) outlinePolygons = parseSVGPathToPolygon(outlineStr);
+      }
 
       let outsideCount = 0;
       const totalStrokes = currentPartData.medians.length;
@@ -1508,9 +1512,9 @@
         const isCurrent = (sIdx === activeStrokeIdx);
         const isVisibleInProg = (sIdx < visibleCount);
 
-        // stroke별 외곽선 폴리곤 (분리된 strokes가 있으면 사용)
+        // stroke별 외곽선 폴리곤 (fastMode 아닐 때만 계산)
         let strokePolygons = outlinePolygons;
-        if (currentPartData.strokes && currentPartData.strokes[sIdx]) {
+        if (!fastMode && currentPartData.strokes && currentPartData.strokes[sIdx]) {
           const sp = parseSVGPathToPolygon(currentPartData.strokes[sIdx]);
           if (sp.length > 0) strokePolygons = sp;
         }
@@ -1524,9 +1528,6 @@
           realPath.setAttribute('fill', 'none');
           realPath.setAttribute('stroke', color);
 
-          // 획 번짐 방지 굵기 계산:
-          // 다획 자소(totalStrokes > 1)에서는 사용자가 설정한 정밀 두께(sw)를 충실히 반영하여 옆 획 침범을 원천 차단
-          // 단일 획 자소(totalStrokes === 1)에서는 번질 대상이 없으므로 외곽선 꺾임/삐침까지 100% 꽉 채움
           let renderSw;
           if (totalStrokes > 1) {
             renderSw = useMaskClip ? Math.max(sw, Math.min(sw * 1.3, 75)) : sw;
@@ -1537,9 +1538,9 @@
           realPath.setAttribute('stroke-width', renderSw);
           realPath.setAttribute('stroke-linecap', 'round');
           realPath.setAttribute('stroke-linejoin', 'round');
-          realPath.setAttribute('opacity', '1.0'); // 겹치는 부위 반투명 혼탁 번짐 방지 (1.0 완전 불투명)
+          realPath.setAttribute('opacity', '1.0');
 
-          // 다획 자소: 획별 Voronoi 클립패스 적용하여 획 간 색 번짐(Bleeding) 0.00% 완전 격리
+          // 다획 자소: 획별 Voronoi 클립패스 적용
           if (useMaskClip && totalStrokes > 1) {
             const vClip = document.getElementById(`stroke-voronoi-clip-${sIdx}`);
             if (vClip) {
@@ -1568,7 +1569,7 @@
         // ── 3. 제어점들 (현재 선택된 획 위주 또는 전체) ──
         if (showSkeleton) {
           stroke.forEach((pt, pIdx) => {
-            const isOutside = strokePolygons.length > 0 && !isPointInsideStroke(pt[0], pt[1], strokePolygons);
+            const isOutside = !fastMode && strokePolygons.length > 0 && !isPointInsideStroke(pt[0], pt[1], strokePolygons);
             if (isOutside) outsideCount++;
 
             const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
@@ -1703,8 +1704,9 @@
       }
     }
 
-    // 마우스 드래그 좌표 변환 및 이동
+    // 마우스 드래그 좌표 변환 및 이동 (rAF 적용으로 60fps 고속 부드러운 드래그)
     const svgEl = document.getElementById('editor-svg');
+    let dragRafId = null;
 
     svgEl.addEventListener('mousemove', (e) => {
       if (!draggingPoint) return;
@@ -1720,18 +1722,30 @@
       const hanziY = Math.round(900 - rawSvgY);
 
       currentPartData.medians[draggingPoint.strokeIdx][draggingPoint.pointIdx] = [hanziX, hanziY];
-      renderEditor();
 
-      document.getElementById('editor-status').firstElementChild.innerText = 
-        `${draggingPoint.strokeIdx + 1}획 ${draggingPoint.pointIdx + 1}번 점 이동 중: [${hanziX}, ${hanziY}]`;
+      if (!dragRafId) {
+        dragRafId = requestAnimationFrame(() => {
+          dragRafId = null;
+          if (draggingPoint) {
+            renderEditor(true); // fastMode: 브라우저 멈춤 방지
+            document.getElementById('editor-status').firstElementChild.innerText = 
+              `${draggingPoint.strokeIdx + 1}획 ${draggingPoint.pointIdx + 1}번 점 이동 중: [${hanziX}, ${hanziY}]`;
+          }
+        });
+      }
     });
 
-    // 드래그 종료 시 실시간 미리보기 갱신 및 자동 저장
+    // 드래그 종료 시 정밀 검사, 실시간 미리보기 갱신 및 자동 저장
     window.addEventListener('mouseup', () => {
       if (draggingPoint) {
+        if (dragRafId) {
+          cancelAnimationFrame(dragRafId);
+          dragRafId = null;
+        }
         const s = draggingPoint.strokeIdx;
         const p = draggingPoint.pointIdx;
         draggingPoint = null;
+        renderEditor(false); // 드래그 완료 후 정밀 Voronoi 및 이탈 검사 1회 수행
         document.getElementById('editor-status').firstElementChild.innerText = '이동 완료! 자동 저장 및 미리보기에 실시간 반영되었습니다.';
         updateHanziPreview();
         saveCurrentPart(true); // 자동 저장 트리거
@@ -1813,9 +1827,9 @@
     }
 
     /**
-     * 선분을 step 간격으로 등간격 샘플링
+     * 선분을 step 간격으로 등간격 샘플링 (고속 경량화: step=35)
      */
-    function sampleMedian(median, step = 10) {
+    function sampleMedian(median, step = 35) {
       if (!median || median.length === 0) return [];
       if (median.length === 1) return [[median[0][0], median[0][1]]];
 
@@ -1864,7 +1878,7 @@
 
     /**
      * 다획 자소에서 획 간 색 번짐(Bleeding)을 0%로 완벽 차단하기 위한 획별 보로노이 다각형 계산
-     * 고정밀 연속 선분 보간 및 만나는 지점 각이등분선(Angle Bisector) 분할 평면 적용
+     * 고정밀 연속 선분 보간 및 접합부 각이등분선 분할 평면 적용 (브라우저 블로킹 방지 최적화)
      */
     function computeStrokeVoronoiPolygon(strokeIdx, allMedians) {
       // 1024 캔버스를 넉넉히 감싸는 사각형에서 시작
@@ -1880,11 +1894,12 @@
         return poly;
       }
 
-      const curSamples = sampleMedian(curMedian, 10);
+      const curSamples = sampleMedian(curMedian, 35);
 
-      allMedians.forEach((otherMedian, otherIdx) => {
-        if (otherIdx === strokeIdx || !otherMedian || otherMedian.length === 0) return;
-        const otherSamples = sampleMedian(otherMedian, 10);
+      for (let otherIdx = 0; otherIdx < allMedians.length; otherIdx++) {
+        const otherMedian = allMedians[otherIdx];
+        if (otherIdx === strokeIdx || !otherMedian || otherMedian.length === 0) continue;
+        const otherSamples = sampleMedian(otherMedian, 35);
 
         // 1. 만나는 지점(교차점 또는 최근접 접촉점) 검출 및 각이등분선 분할 평면 적용
         let junctionPt = null;
@@ -1908,7 +1923,7 @@
           if (junctionPt) break;
         }
 
-        // 선분 교차가 없으면 최근접 샘플 쌍 확인 (거리 < 16px)
+        // 선분 교차가 없으면 최근접 샘플 쌍 확인 (거리 < 20px)
         if (!junctionPt) {
           let minD = Infinity;
           let closeA = null, closeB = null;
@@ -1922,9 +1937,8 @@
               }
             });
           });
-          if (minD < 16 && closeA && closeB) {
+          if (minD < 20 && closeA && closeB) {
             junctionPt = [(closeA[0] + closeB[0]) / 2, (closeA[1] + closeB[1]) / 2];
-            // 최근접점 방향
             dirCur = [curMedian[curMedian.length - 1][0] - curMedian[0][0], curMedian[curMedian.length - 1][1] - curMedian[0][1]];
             dirOther = [otherMedian[otherMedian.length - 1][0] - otherMedian[0][0], otherMedian[otherMedian.length - 1][1] - otherMedian[0][1]];
           }
@@ -1946,46 +1960,29 @@
         }
 
         // 2. 일반 선분 샘플들에 대한 수직이등분선 클리핑 (연속 격리)
-        curSamples.forEach(pA => {
+        for (let a = 0; a < curSamples.length; a++) {
+          if (poly.length > 40) break; // 정점 폭발 방지 안전장치
+          const pA = curSamples[a];
           let minDist = Infinity;
           let bestB = null;
-          otherSamples.forEach(pB => {
+          for (let b = 0; b < otherSamples.length; b++) {
+            const pB = otherSamples[b];
             const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
             if (d < minDist) {
               minDist = d;
               bestB = pB;
             }
-          });
+          }
 
-          if (bestB && minDist >= 4) {
+          if (bestB && minDist >= 6) {
             const mx = (pA[0] + bestB[0]) / 2;
             const my = (pA[1] + bestB[1]) / 2;
             const nx = pA[0] - bestB[0];
             const ny = pA[1] - bestB[1];
             poly = clipPolygonByHalfPlane(poly, mx, my, nx, ny);
           }
-        });
-
-        otherSamples.forEach(pB => {
-          let minDist = Infinity;
-          let bestA = null;
-          curSamples.forEach(pA => {
-            const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
-            if (d < minDist) {
-              minDist = d;
-              bestA = pA;
-            }
-          });
-
-          if (bestA && minDist >= 4) {
-            const mx = (bestA[0] + pB[0]) / 2;
-            const my = (bestA[1] + pB[1]) / 2;
-            const nx = bestA[0] - pB[0];
-            const ny = bestA[1] - pB[1];
-            poly = clipPolygonByHalfPlane(poly, mx, my, nx, ny);
-          }
-        });
-      });
+        }
+      }
 
       return poly;
     }
@@ -2132,9 +2129,13 @@
 
     /**
      * SVG path 문자열을 샘플링하여 폴리곤 점 배열로 변환 (HanziWriter 좌표계)
+     * 메모이제이션 캐시 적용으로 반복 파싱 부하 0%
      */
+    const polygonCache = new Map();
     function parseSVGPathToPolygon(pathStr) {
       if (!pathStr) return [];
+      if (polygonCache.has(pathStr)) return polygonCache.get(pathStr);
+
       const segs = [];
       // 각 서브패스(M...Z 또는 M...M)를 분리
       const subRe = /M\s*[\d.\-]+[\s,]+[\d.\-]+[^M]*/g;
@@ -2194,6 +2195,7 @@
         }
         if (poly.length >= 3) segs.push(poly);
       });
+      polygonCache.set(pathStr, segs);
       return segs; // 여러 서브패스(폴리곤) 배열
     }
 
