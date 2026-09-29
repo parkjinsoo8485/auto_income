@@ -3,10 +3,15 @@ import json
 import http.server
 import socketserver
 import sys
+import threading
+import time
 
 PORT = 8000
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.dirname(BASE_DIR)
+
+# 파일 쓰기 충돌 방지를 위한 전역 Lock
+FILE_LOCK = threading.Lock()
 
 TARGET_PAIRS = [
     # 1. test 디렉토리
@@ -16,9 +21,10 @@ TARGET_PAIRS = [
 ]
 
 def save_warehouse_to_all_targets(wh_data):
-    """test 및 루트 경로의 JSON 및 JS 파일에 동시 영구 저장"""
-    json_str = json.dumps(wh_data, ensure_ascii=False, indent=2)
-    js_content = f"""/**
+    """test 및 루트 경로의 JSON 및 JS 파일에 안전하게 동시 영구 저장 (Thread-safe)"""
+    with FILE_LOCK:
+        json_str = json.dumps(wh_data, ensure_ascii=False, indent=2)
+        js_content = f"""/**
  * hangul_150_parts_warehouse.js
  * 
  * 한글 153개 자소 '궁서체 부품 창고' (1차 정밀 중심선 일치 데이터베이스)
@@ -28,22 +34,51 @@ def save_warehouse_to_all_targets(wh_data):
   global.HANGUL_150_WAREHOUSE = {json_str};
 }})(typeof window !== 'undefined' ? window : global);
 """
-    saved_list = []
-    for json_p, js_p in TARGET_PAIRS:
-        try:
-            with open(json_p, 'w', encoding='utf-8') as f:
-                f.write(json_str)
-            with open(js_p, 'w', encoding='utf-8') as f:
-                f.write(js_content)
-            saved_list.append(json_p)
-            saved_list.append(js_p)
-        except Exception as e:
-            print(f"[경고] 파일 저장 실패 ({json_p}): {e}")
-    return saved_list
+        saved_list = []
+        for json_p, js_p in TARGET_PAIRS:
+            try:
+                # 임시 파일 작성 후 원자적 교체 시도 (Windows 안전 쓰기)
+                temp_json = json_p + f".tmp.{os.getpid()}"
+                with open(temp_json, 'w', encoding='utf-8') as f:
+                    f.write(json_str)
+                if os.path.exists(json_p):
+                    os.replace(temp_json, json_p)
+                else:
+                    os.rename(temp_json, json_p)
+
+                temp_js = js_p + f".tmp.{os.getpid()}"
+                with open(temp_js, 'w', encoding='utf-8') as f:
+                    f.write(js_content)
+                if os.path.exists(js_p):
+                    os.replace(temp_js, js_p)
+                else:
+                    os.rename(temp_js, js_p)
+
+                saved_list.append(json_p)
+                saved_list.append(js_p)
+            except Exception as e:
+                # 일반 쓰기로 폴백
+                try:
+                    with open(json_p, 'w', encoding='utf-8') as f:
+                        f.write(json_str)
+                    with open(js_p, 'w', encoding='utf-8') as f:
+                        f.write(js_content)
+                    saved_list.append(json_p)
+                    saved_list.append(js_p)
+                except Exception as inner_e:
+                    print(f"[경고] 파일 저장 실패 ({json_p}): {inner_e}")
+        return saved_list
 
 class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
+    timeout = 15  # 클라이언트 소켓 무한 대기 방지
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
+
+    def log_message(self, format, *args):
+        # 콘솔 버퍼 지연 방지 및 간결한 로깅
+        sys.stdout.write(f"[{self.log_date_time_string()}] {self.address_string()} - {format%args}\n")
+        sys.stdout.flush()
 
     def end_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
@@ -59,6 +94,9 @@ class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
     def do_POST(self):
         if self.path == '/api/save_part':
             content_len = int(self.headers.get('Content-Length', 0))
+            if content_len == 0:
+                self._send_json({'success': False, 'error': 'Empty body'}, status=400)
+                return
             post_body = self.rfile.read(content_len)
             try:
                 payload = json.loads(post_body.decode('utf-8'))
@@ -69,17 +107,18 @@ class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
                     self._send_json({'success': False, 'error': 'id or data missing'}, status=400)
                     return
 
-                # Load current warehouse json (우선 test, 없으면 root)
+                # Load current warehouse json
                 wh = None
-                for json_p, _ in TARGET_PAIRS:
-                    if os.path.exists(json_p):
-                        try:
-                            with open(json_p, 'r', encoding='utf-8') as f:
-                                wh = json.load(f)
-                            if wh and 'parts' in wh:
-                                break
-                        except Exception:
-                            pass
+                with FILE_LOCK:
+                    for json_p, _ in TARGET_PAIRS:
+                        if os.path.exists(json_p):
+                            try:
+                                with open(json_p, 'r', encoding='utf-8') as f:
+                                    wh = json.load(f)
+                                if wh and 'parts' in wh:
+                                    break
+                            except Exception:
+                                pass
 
                 if not wh or 'parts' not in wh:
                     wh = {'meta': {}, 'parts': {}}
@@ -102,6 +141,9 @@ class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
 
         elif self.path == '/api/save_all':
             content_len = int(self.headers.get('Content-Length', 0))
+            if content_len == 0:
+                self._send_json({'success': False, 'error': 'Empty body'}, status=400)
+                return
             post_body = self.rfile.read(content_len)
             try:
                 payload = json.loads(post_body.decode('utf-8'))
@@ -125,7 +167,7 @@ class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
         if self.path == '/api/status':
             self._send_json({
                 'status': 'ok',
-                'server': 'WarehouseServer',
+                'server': 'ThreadedWarehouseServer',
                 'syncTargets': [p[0] for p in TARGET_PAIRS]
             })
             return
@@ -139,15 +181,26 @@ class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
+# 멀티스레드 소켓 서버 클래스 (요청별 독립 스레드 처리로 블로킹 방지)
+class ThreadedWarehouseServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
 if __name__ == '__main__':
     port = int(sys.argv[1]) if len(sys.argv) > 1 else PORT
-    socketserver.TCPServer.allow_reuse_address = True
-    with socketserver.TCPServer(("", port), WarehouseRequestHandler) as httpd:
+    with ThreadedWarehouseServer(("", port), WarehouseRequestHandler) as httpd:
         print(f"=======================================================")
-        print(f" 한글 자소 웨어하우스 에디터 서버 시작: http://localhost:{port}")
-        print(f" 동기화 저장 대상 (총 {len(TARGET_PAIRS)*2}개 파일):")
+        print(f" 한글 자소 웨어하우스 멀티스레드 고성능 서버 시작")
+        print(f" - 로컬 접속 URL   : http://localhost:{port}")
+        print(f" - 동시성 처리 모드: Multi-threaded (블로킹/멈춤 방지 적용)")
+        print(f" - 동기화 대상     : 총 {len(TARGET_PAIRS)*2}개 파일")
         for json_p, js_p in TARGET_PAIRS:
-            print(f"   - {json_p}")
-            print(f"   - {js_p}")
+            print(f"   * {json_p}")
+            print(f"   * {js_p}")
         print(f"=======================================================")
-        httpd.serve_forever()
+        sys.stdout.flush()
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("\n[서버 종료]")
+
