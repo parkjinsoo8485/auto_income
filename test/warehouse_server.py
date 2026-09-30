@@ -163,7 +163,24 @@ class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self._send_json({'error': 'Not found'}, status=404)
 
+    def translate_path(self, path):
+        path_in_base = super().translate_path(path)
+        if os.path.exists(path_in_base):
+            return path_in_base
+        # 루트 디렉토리 파일 폴백 검색
+        rel = os.path.relpath(path_in_base, BASE_DIR)
+        path_in_root = os.path.join(ROOT_DIR, rel)
+        if os.path.exists(path_in_root):
+            return path_in_root
+        return path_in_base
+
     def do_GET(self):
+        # 루트 경로(/) 요청 시 웨어하우스 에디터로 바로 연결
+        if self.path in ('/', ''):
+            self.send_response(302)
+            self.send_header('Location', '/view_150_warehouse_gallery.html')
+            self.end_headers()
+            return
         if self.path == '/api/status':
             self._send_json({
                 'status': 'ok',
