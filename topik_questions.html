@@ -6,6 +6,9 @@
   <title>한국어능력시험(EPS-TOPIK) 공개문제 & CBT 모의평가 | 공공데이터 오픈API</title>
   <meta name="description" content="한국산업인력공단 공공데이터포털 오픈API(QstbookInfo)를 활용한 고용허가제 한국어능력시험(EPS-TOPIK) 공개문제 풀이 및 CBT 실전 모의평가 시스템">
   <script src="epstopik_1917_bank.js"></script>
+  <script src="epstopik_textbook_60.js"></script>
+  <script src="epstopik_multilang_dict.js"></script>
+  <script src="topik_engine.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -1864,12 +1867,681 @@
       filter: blur(4px);
       user-select: none;
       pointer-events: none;
-      opacity: 0.6;
+    }
+    /* ══════════════════════════════════════════════════
+       NEW: HRD-KOREA EPS-TOPIK STANDARD TEXTBOOK (60 LESSONS)
+    ══════════════════════════════════════════════════ */
+    .textbook-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .tb-hero-card {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #172554 100%);
+      border: 1px solid rgba(59, 130, 246, 0.35);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45), 0 0 30px rgba(59, 130, 246, 0.15);
+    }
+
+    .tb-hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .tb-hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      background: rgba(59, 130, 246, 0.2);
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .tb-hero-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.4px;
+    }
+
+    .tb-hero-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      line-height: 1.5;
+      max-width: 680px;
+    }
+
+    .tb-progress-panel {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+      padding: 14px 18px;
+      min-width: 260px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tb-progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .tb-progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .tb-progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4, #10b981);
+      border-radius: 6px;
+      transition: width 0.4s ease;
+    }
+
+    .tb-filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+    }
+
+    .tb-book-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tb-book-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .tb-book-btn.active {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: #3b82f6;
+      color: #60a5fa;
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+    }
+
+    .tb-lessons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+
+    .tb-lesson-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 14px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tb-lesson-card:hover {
+      border-color: rgba(59, 130, 246, 0.6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+      background: var(--card-hover);
+    }
+
+    .tb-lesson-card.completed {
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+
+    .tb-lesson-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .tb-lesson-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: #93c5fd;
+      background: rgba(59, 130, 246, 0.15);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    .tb-cat-pill {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .tb-lesson-title-ko {
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.4;
+      margin-top: 4px;
+    }
+
+    .tb-lesson-title-en {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      margin-top: 3px;
+    }
+
+    .tb-lesson-grammar-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tb-grammar-tag {
+      font-size: 11px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: #cbd5e1;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+
+    .tb-lesson-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+
+    .tb-btn-study {
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border: none;
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tb-btn-study:hover {
+      transform: scale(1.03);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+    }
+
+    /* Lesson Detail Study Studio View */
+    .tb-studio-container {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .tb-studio-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 18px;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .tb-nav-subtabs {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      overflow-x: auto;
+    }
+
+    .tb-subtab-btn {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .tb-subtab-btn.active {
+      background: rgba(6, 182, 212, 0.15);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    /* Vocabulary Cards in Studio */
+    .tb-vocab-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .tb-vocab-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .tb-vocab-word-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .tb-vocab-word {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+    }
+
+    .tb-vocab-pron {
+      font-size: 12px;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .tb-vocab-meaning {
+      font-size: 13.5px;
+      color: #cbd5e1;
+      font-weight: 500;
+    }
+
+    .tb-vocab-example {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.03);
+      padding: 8px 10px;
+      border-radius: 6px;
+      border-left: 3px solid var(--cyan);
+    }
+
+    /* Dialogue Bubbles in Studio */
+    .tb-dialogue-block {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .tb-dialogue-line {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .tb-avatar-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .tb-speech-bubble {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 12px 16px;
+      flex: 1;
+    }
+
+    .tb-bubble-speaker {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cyan);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tb-bubble-text {
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.5;
+    }
+
+    .tb-bubble-trans {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    /* Grammar Explanation in Studio */
+    .tb-grammar-box {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .tb-grammar-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Quiz Container in Studio */
+    .tb-quiz-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .tb-quiz-option-btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-size: 13.5px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tb-quiz-option-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--cyan);
+    }
+    .tb-quiz-option-btn.correct {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: var(--green);
+      color: #34d399;
+      font-weight: 700;
+    }
+    /* ══════════════════════════════════════════════════
+       NEW: 16-COUNTRY MULTILINGUAL & BOOKMARK & MOBILE UBT
+    ══════════════════════════════════════════════════ */
+    .lang-selector-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 20px;
+      transition: all 0.2s;
+    }
+    .lang-selector-wrap:hover {
+      border-color: var(--cyan);
+      background: rgba(6, 182, 212, 0.08);
+    }
+    .select-lang-custom {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      outline: none;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .select-lang-custom option {
+      background: #0f172a;
+      color: #fff;
+    }
+
+    .btn-q-bookmark {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-q-bookmark:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    .btn-q-bookmark.active {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .btn-q-translate {
+      background: rgba(6, 182, 212, 0.12);
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      color: var(--cyan);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+    }
+    .btn-q-translate:hover {
+      background: rgba(6, 182, 212, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .q-translation-card {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 27, 75, 0.9));
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      animation: fadeInTrans 0.25s ease-out;
+    }
+    @keyframes fadeInTrans {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .q-trans-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 8px;
+      margin-bottom: 8px;
+    }
+    .q-trans-text {
+      font-size: 13.5px;
+      line-height: 1.6;
+      color: #93c5fd;
+    }
+    .q-trans-options-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .q-trans-opt-item {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      background: rgba(255, 255, 255, 0.03);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border-left: 2px solid var(--cyan);
+    }
+
+    /* Mobile Bottom Navigation Bar (UBT Tablet/Phone Mode) */
+    .mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(9, 13, 22, 0.95);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--border);
+      padding: 6px 12px;
+      z-index: 9999;
+      justify-content: space-around;
+      align-items: center;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+    }
+    .mob-nav-item {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: all 0.15s;
+    }
+    .mob-nav-item:hover, .mob-nav-item.active {
+      color: var(--cyan);
+    }
+    .mob-icon { font-size: 18px; }
+    .mob-label { font-size: 10px; font-weight: 700; }
+
+    @media (max-width: 768px) {
+      .mobile-bottom-nav {
+        display: flex;
+      }
+      .page-container {
+        padding-bottom: 70px;
+      }
+      .tab-navigation {
+        display: none; /* Replaced by bottom nav on mobile */
+      }
+    }
+
+    /* Hangul Stroke Studio Modal */
+    .hangul-modal-card {
+      position: relative;
+      background: linear-gradient(145deg, #131b2e 0%, #0d121f 100%);
+      border: 1px solid rgba(147, 51, 234, 0.4);
+      border-radius: 20px;
+      padding: 24px;
+      max-width: 760px;
+      width: 100%;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 30px rgba(147, 51, 234, 0.2);
+    }
+    .hangul-char-palette {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 14px 0;
+      max-height: 120px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .hangul-char-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .hangul-char-btn:hover, .hangul-char-btn.active {
+      background: rgba(147, 51, 234, 0.25);
+      border-color: #a855f7;
+      color: #d8b4fe;
+      transform: scale(1.08);
+    }
+    .canvas-wrap-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      margin: 0 auto;
+      background: #060911;
+      border: 2px dashed rgba(147, 51, 234, 0.4);
+      border-radius: 16px;
+      overflow: hidden;
     }
   </style>
 </head>
 <body>
-  <div id="cbt-toast-box" class="cbt-toast">🎲 새로운 40문항 모의고사가 생성되었습니다!</div>>
+  <div id="cbt-toast-box" class="cbt-toast">🎲 새로운 40문항 모의고사가 생성되었습니다!</div>
 
   <!-- ══════════════════════════════════════════════════
        TOP HEADER
@@ -1905,6 +2577,34 @@
         👑 <span id="header-tier-text">7일 무료체험 (PRO)</span>
       </button>
 
+      <!-- 16-Country Language Selector -->
+      <div class="lang-selector-wrap" title="16개 송출국 모국어 즉시 번역 선택">
+        <span style="font-size:13px">🌐</span>
+        <select id="select-global-lang" class="select-lang-custom" onchange="changeGlobalLanguage(this.value)">
+          <option value="vi">🇻🇳 Tiếng Việt (베트남)</option>
+          <option value="ne">🇳🇵 नेपाली (네팔)</option>
+          <option value="my">🇲🇲 မြန်မာစာ (미얀마)</option>
+          <option value="km">🇰🇭 ភាសាខ្មែរ (캄보디아)</option>
+          <option value="uz">🇺🇿 Oʻzbekcha (우즈벡)</option>
+          <option value="id">🇮🇩 Indonesia (인도네시아)</option>
+          <option value="th">🇹🇭 ไทย (태국)</option>
+          <option value="mn">🇲🇳 Монгол (몽골)</option>
+          <option value="si">🇱🇰 සිංහල (스리랑카)</option>
+          <option value="tl">🇵🇭 Tagalog (필리핀)</option>
+          <option value="bn">🇧🇩 বাংলা (방글라데시)</option>
+          <option value="ur">🇵🇰 اردو (파키스탄)</option>
+          <option value="ky">🇰🇬 Кыргызча (키르기스)</option>
+          <option value="zh">🇨🇳 中文 (중국)</option>
+          <option value="tet">🇹🇱 Tetun (동티모르)</option>
+          <option value="lo">🇱🇦 ພາສາລາວ (라오스)</option>
+        </select>
+      </div>
+
+      <!-- Hangul Stroke Studio Trigger -->
+      <button class="btn-header" onclick="openHangulStrokeModal()" style="border-color:rgba(147,51,234,0.4);color:#c084fc">
+        🖌️ 한글 쓰기
+      </button>
+
       <div class="status-pill" id="header-status-pill">
         <span class="status-dot"></span>
         <span id="api-status-text">API 준비 완료</span>
@@ -1925,6 +2625,10 @@
     <button class="tab-btn active" id="tab-btn-cbt" onclick="switchMainTab('cbt')">
       🖥️ 실전 CBT 모의평가
       <span class="tab-counter" id="tab-cbt-counter">40문항</span>
+    </button>
+    <button class="tab-btn" id="tab-btn-textbook" onclick="switchMainTab('textbook')">
+      📖 표준교재 60과 마스터
+      <span class="tab-counter" style="background:rgba(59,130,246,0.25);color:#60a5fa">총 60과</span>
     </button>
     <button class="tab-btn" id="tab-btn-writing" onclick="switchMainTab('writing')">
       ✍️ 54번 주관식 AI 쓰기 루브릭
@@ -1996,9 +2700,15 @@
               <!-- Dynamically populated 1 ~ 48 rounds -->
             </select>
           </div>
-          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <button class="btn-header" onclick="startWrongQuestionsExam()" style="padding:6px 12px;font-size:12px;background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);color:#fca5a5" title="지금까지 틀린 오답만 모아서 맞춤 시험 생성">
+              🧠 오답 집중 재시험
+            </button>
+            <button class="btn-header" onclick="startBookmarkedExam()" style="padding:6px 12px;font-size:12px;background:rgba(245,158,11,0.15);border-color:rgba(245,158,11,0.4);color:#fcd34d" title="별표 북마크한 문항만 모아서 시험 생성">
+              ⭐ 북마크 시험
+            </button>
             <button class="btn-header" onclick="generateRandomExam()" style="padding:6px 14px;font-size:12px;background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4);color:#c7d2fe">
-              🎲 1,917문항 무작위 랜덤 시험 생성
+              🎲 1,917문항 랜덤 시험
             </button>
             <span id="current-pool-info" style="font-size:12px;color:var(--cyan);background:rgba(6,182,212,0.1);padding:5px 12px;border-radius:6px;border:1px solid rgba(6,182,212,0.25)">
               총 1,917개 공개문항 라이브러리 가동 중
@@ -2009,14 +2719,26 @@
 
         <!-- Question Meta -->
         <div class="q-meta-row">
-          <div class="q-num-tag">
-            <span>문항</span>
-            <strong id="q-current-number" style="font-size:16px;color:#fff">1</strong>
-            <span style="font-size:12px;color:var(--text-secondary)">/ 40</span>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="q-num-tag">
+              <span>문항</span>
+              <strong id="q-current-number" style="font-size:16px;color:#fff">1</strong>
+              <span style="font-size:12px;color:var(--text-secondary)">/ 40</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="q-subject-pill L" id="q-subject-badge">🎧 듣기 (Listening)</span>
+              <span class="q-category-tag" id="q-category-text">대화 및 이어지는 말</span>
+            </div>
           </div>
+
           <div style="display:flex;align-items:center;gap:8px">
-            <span class="q-subject-pill L" id="q-subject-badge">🎧 듣기 (Listening)</span>
-            <span class="q-category-tag" id="q-category-text">대화 및 이어지는 말</span>
+            <button id="btn-q-bookmark" class="btn-q-bookmark" onclick="toggleCurrentQuestionBookmark()" title="이 문항 북마크">
+              <span id="q-bookmark-icon">☆</span>
+              <span>북마크</span>
+            </button>
+            <button id="btn-q-translate" class="btn-q-translate" onclick="toggleCurrentQuestionTranslation()" title="16개 송출국 모국어 번역">
+              🌐 <span id="q-trans-btn-label">모국어 번역</span>
+            </button>
           </div>
         </div>
 
@@ -2024,6 +2746,21 @@
         <h2 class="q-instruction" id="q-instruction-text">
           [1~2] 다음을 듣고 이어지는 말로 가장 알맞은 것을 고르십시오.
         </h2>
+
+        <!-- Multilingual Translation Accordion Box -->
+        <div id="q-translation-box" class="q-translation-card" style="display:none">
+          <div class="q-trans-header">
+            <div style="display:flex;align-items:center;gap:6px">
+              <span id="q-trans-flag" style="font-size:16px">🇻🇳</span>
+              <strong id="q-trans-title" style="font-size:13px;color:#38bdf8">모국어 번역 (Tiếng Việt)</strong>
+            </div>
+            <button onclick="toggleCurrentQuestionTranslation()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:14px">✕</button>
+          </div>
+          <div id="q-trans-instruction-text" class="q-trans-text"></div>
+          <div id="q-trans-body-text" class="q-trans-text" style="margin-top:6px;font-weight:600"></div>
+          <div id="q-trans-options-container" class="q-trans-options-list"></div>
+          <div id="q-trans-exp-text" style="display:none;margin-top:8px;font-size:12px;color:#34d399;background:rgba(16,185,129,0.1);padding:6px 10px;border-radius:6px"></div>
+        </div>
 
                 <!-- Audio Player Box (Listening Only - HRD-Korea Official MP3 Engine) -->
         <audio id="hrd-audio-element" preload="auto"></audio>
@@ -2036,10 +2773,14 @@
               </span>
               <span style="font-size:11px;color:var(--text-muted)">• 2회 반복 규정</span>
             </div>
-            <div class="audio-right-controls">
+            <div class="audio-right-controls" style="display:flex;align-items:center;gap:8px">
+              <select id="audio-source-mode-select" class="select-custom" onchange="switchAudioSourceMode(this.value)" style="padding:4px 10px;font-size:12px;font-weight:700;background:rgba(16,185,129,0.18);border:1px solid rgba(16,185,129,0.5);color:#34d399;border-radius:6px;cursor:pointer">
+                <option value="official" selected>🏛️ 공단 공식 성우 원본 음원 (추천 • 100% 사람 성우)</option>
+                <option value="item">🎙️ Edge / Google AI 고품질 자연어 음원 (SunHi/Google)</option>
+              </select>
               <span class="audio-badge" id="audio-play-count">청취 0 / 2회</span>
               <button class="btn-toggle-script" onclick="toggleScriptBox()">대본 보기 👁️</button>
-              <button class="btn-toggle-script" onclick="openOfficialAudioModal()" style="border-color:rgba(16,185,129,0.4);color:#34d399">공단 원본 음원 🏛️</button>
+              <button class="btn-toggle-script" onclick="openOfficialAudioModal()" style="border-color:rgba(16,185,129,0.4);color:#34d399">공단 음원함 🏛️</button>
             </div>
           </div>
 
@@ -2441,6 +3182,214 @@
       </div>
     </section>
 
+    <!-- ══════════════════════════════════════════════════
+         SECTION 6: EPS-TOPIK STANDARD TEXTBOOK (60 LESSONS)
+    ══════════════════════════════════════════════════ -->
+    <section id="view-textbook" class="textbook-container" style="display:none">
+      
+      <!-- Textbook Hero Header -->
+      <div class="tb-hero-card">
+        <div class="tb-hero-top">
+          <div>
+            <div class="tb-hero-badge">
+              <span>🏛️ 한국산업인력공단(HRD Korea) 공식 표준교재</span>
+              <span>•</span>
+              <span>제1권 & 제2권 전과정 수록</span>
+            </div>
+            <h2 class="tb-hero-title">
+              EPS-TOPIK 한국어 표준교재 60과 단계별 마스터 코스
+            </h2>
+            <p class="tb-hero-sub">
+              기초 한글 자모(1과)부터 일상 회화, 사업장 공구 및 안전수칙, 표준근로계약서 및 외국인 전용 보험(60과)까지 
+              <strong>어휘 ➔ 대화 ➔ 문법 ➔ 문화 ➔ 형성평가</strong> 5단계로 체계적으로 마스터하는 공단 공식 커리큘럼입니다.
+            </p>
+          </div>
+
+          <!-- Progress Panel -->
+          <div class="tb-progress-panel">
+            <div class="tb-progress-header">
+              <span>전체 과정 진도율</span>
+              <span id="tb-progress-text" style="color:#60a5fa">0 / 60과 (0%)</span>
+            </div>
+            <div class="tb-progress-bar-bg">
+              <div class="tb-progress-bar-fill" id="tb-progress-fill" style="width: 0%;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:4px">
+              <span style="font-size:11.5px;color:var(--text-muted)">⭐ 북마크: <strong id="tb-bookmark-count" style="color:var(--gold)">0</strong>개</span>
+              <button class="btn-audio-skip" onclick="continueLastStudiedLesson()" style="padding:4px 8px;font-size:11px">
+                ▶ 이어서 학습
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Book Selector & Search Filter Bar -->
+      <div class="tb-filter-bar">
+        <div class="tb-book-tabs">
+          <button class="tb-book-btn active" id="btn-tb-book-1" onclick="switchTextbookBook(1)">
+            📘 제1권: 기초 및 일상생활 (1과 ~ 30과)
+          </button>
+          <button class="tb-book-btn" id="btn-tb-book-2" onclick="switchTextbookBook(2)">
+            📙 제2권: 직장생활 및 산업안전 (31과 ~ 60과)
+          </button>
+          <button class="tb-book-btn" id="btn-tb-book-all" onclick="switchTextbookBook('all')">
+            📑 전체 (1~60과)
+          </button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <select id="tb-category-filter" class="select-custom" onchange="filterTextbookLessons()" style="padding:6px 12px;font-size:12px">
+            <option value="all">전체 주제 분류</option>
+            <option value="한글 기초">한글 기초</option>
+            <option value="기초 회화">기초 회화</option>
+            <option value="자기소개">자기소개</option>
+            <option value="직장 환경">직장 환경</option>
+            <option value="일상 생활">일상 생활</option>
+            <option value="제조업 기본 공구">제조업 공구</option>
+            <option value="기계 안전사고 예방">안전사고 예방</option>
+            <option value="보호구 착용">보호구 착용</option>
+            <option value="고용허가제 이해">고용허가제·법률</option>
+          </select>
+
+          <div class="search-input-wrap" style="min-width:220px">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="tb-search-input" placeholder="단원 번호 또는 제목 검색..." oninput="filterTextbookLessons()" style="padding-left:32px">
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Lesson List Grid -->
+      <div id="tb-overview-view">
+        <div class="tb-lessons-grid" id="tb-lessons-container">
+          <!-- Rendered dynamically by JS -->
+        </div>
+      </div>
+
+      <!-- Lesson Deep Study Studio View (Active when studying a lesson) -->
+      <div id="tb-studio-view" class="tb-studio-container" style="display:none">
+        
+        <!-- Studio Header -->
+        <div class="tb-studio-header">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+            <button class="btn-header" onclick="closeLessonStudio()" style="font-size:12.5px;padding:6px 14px">
+              ⬅️ 단원 목록으로
+            </button>
+            <div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="tb-lesson-num" id="studio-lesson-num">Lesson 06</span>
+                <span class="tb-cat-pill" id="studio-category-pill" style="background:rgba(59,130,246,0.15);color:#60a5fa">자기소개</span>
+                <span id="studio-complete-badge" style="display:none;font-size:11.5px;color:var(--green);font-weight:700">✓ 학습 완료</span>
+              </div>
+              <h2 id="studio-title-ko" style="font-size:20px;font-weight:900;color:#fff;margin-top:4px">저는 투안입니다</h2>
+              <div id="studio-title-en" style="font-size:13px;color:var(--text-secondary)">I am Tuan (Self-Introduction & Nationality)</div>
+            </div>
+          </div>
+
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+            <button class="btn-header" id="btn-studio-bookmark" onclick="toggleStudioCurrentBookmark()">
+              ⭐ 북마크
+            </button>
+            <button class="btn-header" id="btn-studio-complete" onclick="toggleStudioCurrentComplete()" style="border-color:rgba(16,185,129,0.4);color:#34d399">
+              ✓ 학습 완료 체크
+            </button>
+            <button class="btn-header" onclick="goToPrevLesson()" id="btn-prev-lesson">◀ 이전 과</button>
+            <button class="btn-header" onclick="goToNextLesson()" id="btn-next-lesson">다음 과 ▶</button>
+          </div>
+        </div>
+
+        <!-- Studio Goal Callout -->
+        <div style="background:rgba(255,255,255,0.03);border-left:4px solid var(--cyan);border-radius:6px;padding:10px 14px;font-size:13px;color:var(--text-secondary)">
+          <strong style="color:var(--cyan)">🎯 이번 과의 학습 목표:</strong>
+          <span id="studio-goal-text">자신의 이름과 국적, 직업을 한국어로 당당하게 소개할 수 있다.</span>
+        </div>
+
+        <!-- 5 Step Tabs Navigation -->
+        <div class="tb-nav-subtabs">
+          <button class="tb-subtab-btn active" id="tb-subtab-vocab" onclick="switchLessonSubtab('vocab')">
+            🔤 1. 필수 어휘 (Vocabulary)
+          </button>
+          <button class="tb-subtab-btn" id="tb-subtab-dialogue" onclick="switchLessonSubtab('dialogue')">
+            💬 2. 실전 대화 (Dialogue 1 & 2)
+          </button>
+          <button class="tb-subtab-btn" id="tb-subtab-grammar" onclick="switchLessonSubtab('grammar')">
+            📝 3. 핵심 문법 (Grammar Points)
+          </button>
+          <button class="tb-subtab-btn" id="tb-subtab-culture" onclick="switchLessonSubtab('culture')">
+            🏛️ 4. 문화 & 현장 정보 (Culture)
+          </button>
+          <button class="tb-subtab-btn" id="tb-subtab-quiz" onclick="switchLessonSubtab('quiz')">
+            🎯 5. 형성평가 4문항 (Mini Test)
+          </button>
+        </div>
+
+        <!-- Tab 1: Vocabulary Content -->
+        <div id="studio-content-vocab">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <span style="font-size:13px;color:var(--text-secondary)">
+              총 <strong id="studio-vocab-count" style="color:var(--cyan)">8</strong>개 핵심 단어 • 스피커 버튼을 눌러 정확한 한국어 발음을 들으세요.
+            </span>
+          </div>
+          <div class="tb-vocab-grid" id="studio-vocab-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Tab 2: Dialogue Content -->
+        <div id="studio-content-dialogue" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+            <span style="font-size:13px;color:var(--text-secondary)">
+              표준교재 실전 대화 스크립트 • 원어민 발음으로 듣고 따라 해보세요.
+            </span>
+            <div style="display:flex;align-items:center;gap:8px">
+              <button class="btn-header" onclick="toggleDialogueTranslations()" id="btn-toggle-dialogue-trans" style="font-size:12px;padding:6px 12px">
+                🌐 영문 번역 숨기기
+              </button>
+            </div>
+          </div>
+          <div id="studio-dialogue-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Tab 3: Grammar Content -->
+        <div id="studio-content-grammar" style="display:none">
+          <div style="display:flex;flex-direction:column;gap:16px" id="studio-grammar-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+        <!-- Tab 4: Culture Content -->
+        <div id="studio-content-culture" style="display:none">
+          <div class="tb-grammar-box">
+            <div class="tb-grammar-title">
+              <span>🏛️ 고용허가제 현장 생활 & 한국 문화 정보</span>
+            </div>
+            <p id="studio-culture-text" style="font-size:14px;line-height:1.8;color:var(--text);margin-top:8px">
+              <!-- Rendered by JS -->
+            </p>
+          </div>
+        </div>
+
+        <!-- Tab 5: Mini Quiz Content -->
+        <div id="studio-content-quiz" style="display:none">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <span style="font-size:13px;color:var(--text-secondary)">
+              단원 형성평가 4문항 • 보기를 클릭하여 정답을 확인하세요.
+            </span>
+            <span id="studio-quiz-score-badge" class="badge-api" style="font-size:12px">
+              점수: 0 / 4
+            </span>
+          </div>
+          <div id="studio-quiz-container">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
   </main>
 
   <!-- ══════════════════════════════════════════════════
@@ -2709,6 +3658,97 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════
+       MODAL 6: INTERACTIVE HANGUL STROKE ORDER STUDIO
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-hangul-stroke">
+    <div class="hangul-modal-card">
+      <button class="modal-close-btn" onclick="closeHangulStrokeModal()">✕</button>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:12px;flex-wrap:wrap;gap:10px">
+        <div>
+          <div style="display:flex;align-items:center;gap:6px">
+            <span class="badge-api" style="background:rgba(147,51,234,0.2);color:#c084fc;border-color:rgba(147,51,234,0.4)">
+              실시간 벡터 획순 훈련소
+            </span>
+            <h2 style="font-size:18px;font-weight:900;color:#fff">인터랙티브 한글 자모 필순 트레이너</h2>
+          </div>
+          <p style="font-size:12px;color:var(--text-secondary);margin-top:4px">
+            원하는 자음/모음을 선택하고 터치 또는 마우스로 가이드 라인을 따라 바른 획순으로 직접 써보세요.
+          </p>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="btn-header" onclick="speakCurrentHangulChar()" style="font-size:12px;padding:6px 12px">
+            🔊 음성 듣기
+          </button>
+          <button class="btn-header" onclick="animateHangulStrokeGuide()" style="font-size:12px;padding:6px 12px;color:var(--cyan);border-color:rgba(6,182,212,0.4)">
+            ▶ 획순 애니메이션
+          </button>
+          <button class="btn-header" onclick="clearHangulCanvas()" style="font-size:12px;padding:6px 12px">
+            🗑️ 지우기
+          </button>
+        </div>
+      </div>
+
+      <!-- Character Palette -->
+      <div style="margin-top:14px">
+        <div style="font-size:12px;font-weight:700;color:var(--text-secondary);margin-bottom:6px">
+          기본 자음 (14자) & 모음 (10자) 선택:
+        </div>
+        <div class="hangul-char-palette" id="hangul-char-palette">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Canvas Tracing Studio -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:24px;margin-top:14px;flex-wrap:wrap">
+        <div class="canvas-wrap-container" id="hangul-canvas-wrap">
+          <canvas id="hangul-drawing-canvas" width="280" height="280" style="cursor:crosshair;touch-action:none"></canvas>
+        </div>
+
+        <div style="max-width:320px;font-size:13px;line-height:1.7;color:var(--text-secondary)">
+          <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:12px;padding:14px">
+            <strong style="color:#c084fc;display:block;font-size:15px;margin-bottom:4px" id="hangul-char-name">기역 (ㄱ)</strong>
+            <div><strong>발음:</strong> <span id="hangul-char-pron" style="color:var(--cyan)">[g / k]</span></div>
+            <div><strong>총 획수:</strong> <span id="hangul-char-strokes" style="color:#fff">1획</span></div>
+            <div style="margin-top:6px;font-size:12px;color:var(--text-muted)" id="hangul-char-tip">
+              가로로 긋다가 부드럽게 꺾어 아래로 내립니다.
+            </div>
+          </div>
+          <div style="margin-top:12px;font-size:11.5px;color:var(--text-muted)">
+            💡 <strong>팁:</strong> 모바일 스마트폰이나 태블릿에서는 손가락이나 스타일러스 펜으로 화면을 직접 터치하여 필기 연습을 할 수 있습니다.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       MOBILE BOTTOM NAVIGATION BAR (UBT MODE)
+  ══════════════════════════════════════════════════ -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-bar">
+    <button class="mob-nav-item active" id="mob-nav-cbt" onclick="switchMainTab('cbt')">
+      <span class="mob-icon">🖥️</span>
+      <span class="mob-label">CBT 실전</span>
+    </button>
+    <button class="mob-nav-item" id="mob-nav-textbook" onclick="switchMainTab('textbook')">
+      <span class="mob-icon">📖</span>
+      <span class="mob-label">표준교재</span>
+    </button>
+    <button class="mob-nav-item" id="mob-nav-wrong" onclick="switchMainTab('fsrs')">
+      <span class="mob-icon">🧠</span>
+      <span class="mob-label">오답노트</span>
+    </button>
+    <button class="mob-nav-item" id="mob-nav-writing" onclick="switchMainTab('writing')">
+      <span class="mob-icon">✍️</span>
+      <span class="mob-label">주관식 AI</span>
+    </button>
+    <button class="mob-nav-item" id="mob-nav-hangul" onclick="openHangulStrokeModal()">
+      <span class="mob-icon">🖌️</span>
+      <span class="mob-label">한글 쓰기</span>
+    </button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════
        JAVASCRIPT APPLICATION CORE LOGIC
   ══════════════════════════════════════════════════ -->
   <script>
@@ -2759,18 +3799,38 @@
       filteredBankQuestions: [],
 
       // ── NEW: SLA & MONETIZATION STATE ──
-      userTier: localStorage.getItem('user_pro_tier') || 'FREE', // 'FREE' or 'PRO'
-      subscriptionExpiry: localStorage.getItem('user_pro_expiry') || null,
+      userTier: 'FREE', // bootstrapSubscription()(topik_roadmap_ui.js)이 저장된 구독/만료일로 확정
+      subscriptionExpiry: localStorage.getItem('user_pro_expiry') || '',
+      energyAnswered: {},
       dailyEnergy: parseInt(localStorage.getItem('user_daily_energy') || '30'),
       maxEnergy: 30,
       streakCorrect: 0,
       selectedPaywallPlan: 'yearly',
       fsrsReviewBank: JSON.parse(localStorage.getItem('fsrs_review_bank') || '[]'),
-      sampleEssayText: `현대 사회에서 환경오염 문제는 인류의 생존을 위협하는 가장 중대한 문제 중 하나로 대두되고 있다. 무분별한 산업 개발과 화석 연료의 과도한 사용은 지구 온난화를 가속화하고 있으며, 플라스틱 폐기물의 급증은 해양 생태계를 파괴하고 있다.
+      // ── MULTILINGUAL & BOOKMARK & HANGUL STATE ──
+      selectedLanguage: localStorage.getItem('epstopik_user_lang') || 'vi',
+      questionBookmarks: JSON.parse(localStorage.getItem('epstopik_question_bookmarks') || '[]'),
+      wrongQuestions: JSON.parse(localStorage.getItem('epstopik_wrong_questions') || '[]'),
+      isTransOpen: false,
+      activeHangulChar: 'ㄱ',
+      // ── NEW: STANDARD TEXTBOOK (60 LESSONS) STATE ──
+      textbookLessons: (typeof EPSTOPIK_TEXTBOOK_60 !== 'undefined' ? EPSTOPIK_TEXTBOOK_60 : []),
+      activeLessonId: 1,
+      currentTextbookBook: 1, // 1, 2, or 'all'
+      textbookCategoryFilter: 'all',
+      textbookSearchQuery: '',
+      activeLessonSubtab: 'vocab',
+      completedLessons: JSON.parse(localStorage.getItem('epstopik_completed_lessons') || '[]'),
+      bookmarkedLessons: JSON.parse(localStorage.getItem('epstopik_bookmarked_lessons') || '[]'),
+      dialogueTranslationsVisible: true,
+      quizAnswersState: {},
+      sampleEssayText: `현대 사회에서 환경오염 문제는 인류의 생존을 위협하는 가장 중대한 문제 중 하나로 대두되고 있다. 무분별한 산업 개발과 화석 연료의 과도한 사용은 지구 온난화를 가속화하고 있으며, 플라스틱 폐기물의 급증은 해양 생태계를 파괴하고 있다. 이러한 오염의 원인은 결국 경제 성장만을 우선시해 온 우리의 생활 방식에서 비롯된다.
 
-이러한 환경 위기를 극복하기 위해서는 개인과 정부의 긴밀한 협력이 필수적이다. 먼저 개인적 차원에서는 일상생활 속에서 일회용품 사용을 자제하고 철저한 분리배출을 생활화해야 한다. 또한 가까운 거리는 도보나 대중교통을 이용함으로써 탄소 배출을 줄이는 실천이 요구된다.
+이러한 환경 위기를 극복하기 위해서는 개인과 정부의 긴밀한 협력이 필수적이다. 첫째, 개인적 차원에서는 일상생활 속에서 일회용품 사용을 자제하고 철저한 분리배출을 생활화해야 한다. 또한 가까운 거리는 도보나 대중교통을 이용함으로써 탄소 배출을 줄이는 실천이 요구된다. 이러한 작은 습관이 모이면 사회 전체의 환경 부담을 크게 줄일 수 있다.
 
-나아가 정부는 친환경 재생 에너지 개발에 적극 투자하고, 탄소 배출 기업에 대한 법적 규제를 강화해야 한다. 환경 보호는 미래 세대를 위한 선택이 아닌 생존을 위한 필수 과제이므로 모두의 적극적인 실천이 시급하다.`
+둘째, 정부는 친환경 재생 에너지 개발에 적극 투자하고, 탄소 배출 기업에 대한 법적 규제를 강화해야 한다. 아울러 시민이 환경 보호에 쉽게 참여할 수 있도록 제도적 기반을 마련하는 것도 중요하다. 반면에 규제 없이 개인의 노력에만 의존한다면 변화의 속도는 느릴 수밖에 없다.
+
+결론적으로 환경 보호는 미래 세대를 위한 선택이 아닌 생존을 위한 필수 과제이다. 따라서 개인과 정부, 기업이 각자의 책임을 다하며 지속 가능한 지구를 만들기 위해 모두가 적극적으로 실천해야 한다.`
     };
 
     /* ─────────────────────────────────────────────────────────────
@@ -2804,7 +3864,19 @@
       // 6. Render Question Bank (1,917 items with pagination)
       renderBankPage();
 
-      // 7. Keyboard shortcut listeners
+      // 7. Initialize Textbook Data & Progress
+      initTextbookState();
+
+      // 8. Initialize Multilingual Selector
+      initLanguageSelector();
+
+      // 9. Initialize Mobile Touch Gestures
+      initMobileTouchSwipe();
+
+      // 10. Initialize Hangul Stroke Palette
+      initHangulPalette();
+
+      // 11. Keyboard shortcut listeners
       window.addEventListener('keydown', handleKeyboardShortcuts);
     });
 
@@ -2817,6 +3889,11 @@
       const activeBtn = document.getElementById(`tab-btn-${tabName}`);
       if (activeBtn) activeBtn.classList.add('active');
 
+      // Sync mobile bottom navigation bar
+      document.querySelectorAll('.mob-nav-item').forEach(btn => btn.classList.remove('active'));
+      const activeMobBtn = document.getElementById(`mob-nav-${tabName}`);
+      if (activeMobBtn) activeMobBtn.classList.add('active');
+
       document.getElementById('view-cbt').style.display = tabName === 'cbt' ? 'grid' : 'none';
       document.getElementById('view-bank').style.display = tabName === 'bank' ? 'flex' : 'none';
       document.getElementById('view-console').style.display = tabName === 'console' ? 'grid' : 'none';
@@ -2827,12 +3904,17 @@
       const viewFsrs = document.getElementById('view-fsrs');
       if (viewFsrs) viewFsrs.style.display = tabName === 'fsrs' ? 'flex' : 'none';
 
+      const viewTextbook = document.getElementById('view-textbook');
+      if (viewTextbook) viewTextbook.style.display = tabName === 'textbook' ? 'flex' : 'none';
+
       if (tabName === 'bank') {
         renderBankPage();
       } else if (tabName === 'fsrs') {
         renderFsrsCards();
       } else if (tabName === 'writing') {
         updateEssayCharCount();
+      } else if (tabName === 'textbook') {
+        renderTextbookMain();
       }
     }
 
@@ -2873,23 +3955,11 @@
 
     function changeExamRound(val) {
       if (val === 'random') {
-        if (APP_STATE.userTier === 'FREE') {
-          openPaywallModal('random_exam');
-          const selectBox = document.getElementById('select-exam-round');
-          if (selectBox) selectBox.value = String(APP_STATE.currentRound);
-          return;
-        }
         generateRandomExam(false);
         return;
       }
       const roundNum = parseInt(val);
-      // Gating: Free users can access rounds 1 to 3 (120 questions). 4 to 48 require PRO.
-      if (roundNum > 3 && APP_STATE.userTier === 'FREE') {
-        openPaywallModal(`round_${roundNum}`);
-        const selectBox = document.getElementById('select-exam-round');
-        if (selectBox) selectBox.value = String(APP_STATE.currentRound);
-        return;
-      }
+      if (isNaN(roundNum) || roundNum < 1) return;
       loadExamRound(roundNum);
     }
 
@@ -3135,42 +4205,20 @@
       document.getElementById('btn-next-q').disabled = APP_STATE.currentQuestionIdx === questions.length - 1;
 
       updateOmrHighlight();
-    }
 
-    function selectOption(qId, optNum) {
-      // Energy check for Free tier users
-      if (APP_STATE.userTier === 'FREE') {
-        if (!APP_STATE.userAnswers[qId]) { // only consume energy on new answers
-          if (APP_STATE.dailyEnergy <= 0) {
-            openPaywallModal('energy_exhausted');
-            return;
-          }
-          APP_STATE.dailyEnergy--;
-          localStorage.setItem('user_daily_energy', String(APP_STATE.dailyEnergy));
-          updateEnergyUI();
-        }
-      }
+      // Update Question Bookmark UI
+      updateQuestionBookmarkUI(q.id);
 
-      APP_STATE.userAnswers[qId] = optNum;
-      initHrdAudioEngine();
-      renderCurrentQuestion();
-      updateOmrGrid();
-
-      // Check if correct for streak bonus
-      const q = APP_STATE.currentExamQuestions.find(item => item.id === qId);
-      if (q && q.answer === optNum && APP_STATE.userTier === 'FREE') {
-        APP_STATE.streakCorrect++;
-        if (APP_STATE.streakCorrect % 3 === 0 && APP_STATE.dailyEnergy < APP_STATE.maxEnergy) {
-          APP_STATE.dailyEnergy = Math.min(APP_STATE.maxEnergy, APP_STATE.dailyEnergy + 2);
-          localStorage.setItem('user_daily_energy', String(APP_STATE.dailyEnergy));
-          updateEnergyUI();
-          showCbtToast(`🔥 3연속 정답! 보너스 에너지 +2 충전 완료`, '⚡');
-        }
-      } else if (q && q.answer !== optNum) {
-        APP_STATE.streakCorrect = 0;
+      // Update Question Translation UI if open
+      if (APP_STATE.isTransOpen) {
+        updateQuestionTranslationUI(q);
+      } else {
+        const transBox = document.getElementById('q-translation-box');
+        if (transBox) transBox.style.display = 'none';
       }
     }
 
+    /* selectOption() → topik_roadmap_ui.js */
     function clearCurrentAnswer() {
       const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
       if (q) {
@@ -3221,12 +4269,29 @@
     const HRD_AUDIO_STATE = {
       player: null,
       currentUrl: '',
-      isOfficialMp3: false,
+      isOfficialMp3: true,
+      audioSourceMode: 'official', // Default to 100% human official actor audio
       speed: 1.0,
       userSeeking: false,
       isInitialized: false,
       availableMp3Cache: {}
     };
+
+    function switchAudioSourceMode(mode) {
+      HRD_AUDIO_STATE.audioSourceMode = mode;
+      const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+      if (q && q.type === 'L') {
+        const audio = HRD_AUDIO_STATE.player;
+        if (audio) {
+          audio.pause();
+          audio.currentTime = 0;
+          delete audio.dataset.currentQId;
+        }
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+        setupQuestionAudio(q);
+        showCbtToast(mode === 'official' ? '🏛️ 공단 공식 성우 원본 음원 모드로 전환되었습니다.' : '🎙️ 문항별 1:1 고품질 맞춤 음원 모드로 전환되었습니다.', '🎧');
+      }
+    }
 
     function initHrdAudioEngine() {
       const audio = document.getElementById('hrd-audio-element');
@@ -3289,8 +4354,17 @@
       });
 
       audio.addEventListener('error', (e) => {
-        console.warn('Official MP3 load issue, falling back to Web Speech Natural Voice');
-        playWithWebSpeechFallback();
+        console.warn('Audio MP3 load issue, falling back to Web Speech Natural Voice');
+        HRD_AUDIO_STATE.isOfficialMp3 = false;
+        const badge = document.getElementById('audio-src-badge');
+        const guide = document.getElementById('audio-status-guide');
+        if (badge) {
+          badge.className = 'audio-src-badge fallback';
+          badge.innerHTML = '🤖 자연어 신경망 AI 음성 (폴백)';
+        }
+        if (guide) {
+          guide.textContent = '📢 표준 한국어 자연어 음성으로 낭독합니다.';
+        }
       });
     }
 
@@ -3315,17 +4389,17 @@
       if (!audio) return;
 
       const qOrder = q.order || q.id;
-      const candidateMp3 = `assets/audio/epstopik/q_${String(qOrder).padStart(4, '0')}.mp3`;
-
-      // If already set up for this exact question, avoid stopping audio unnecessarily
-      if (audio.dataset.currentQId === String(q.id) && audio.src.includes(candidateMp3)) {
-        return;
-      }
+      const badge = document.getElementById('audio-src-badge');
+      const guide = document.getElementById('audio-status-guide');
 
       // Pause existing & cancel Web Speech
       audio.pause();
       audio.currentTime = 0;
       if (window.speechSynthesis) window.speechSynthesis.cancel();
+      if (HRD_AUDIO_STATE.speechProgressTimer) {
+        clearInterval(HRD_AUDIO_STATE.speechProgressTimer);
+        HRD_AUDIO_STATE.speechProgressTimer = null;
+      }
 
       const playBox = document.getElementById('audio-player-section');
       const playBtn = document.getElementById('btn-audio-play');
@@ -3342,18 +4416,43 @@
       const durLabel = document.getElementById('audio-duration');
       if (durLabel) durLabel.textContent = '--:--';
 
+      // 1. 공단 공식 성우 원본 통음원 모드
+      if (HRD_AUDIO_STATE.audioSourceMode === 'official') {
+        let officialFile = '01-40.mp3';
+        if (qOrder > 200) officialFile = '201-240.mp3';
+        else if (qOrder > 160) officialFile = '161-200.mp3';
+        else if (qOrder > 120) officialFile = '121-160.mp3';
+        else if (qOrder > 80) officialFile = '81-120.mp3';
+        else if (qOrder > 40) officialFile = '41-80.mp3';
+
+        const officialPath = `assets/audio/epstopik/official_full_sets/${officialFile}`;
+        audio.dataset.currentQId = `official_${officialFile}`;
+        audio.src = officialPath;
+        audio.playbackRate = HRD_AUDIO_STATE.speed;
+        audio.load();
+        HRD_AUDIO_STATE.isOfficialMp3 = true;
+
+        if (badge) {
+          badge.className = 'audio-src-badge hrd';
+          badge.innerHTML = `🏛️ 공단 공식 성우 원본 음원 (${officialFile} 전곡 트랙)`;
+        }
+        if (guide) {
+          guide.textContent = "🏛️ 한국산업인력공단 실제 시험장 공식 출제 성우 육성 원본입니다.";
+        }
+        return;
+      }
+
+      // 2. 문항별 1:1 고품질 맞춤 음원 모드
+      const candidateMp3 = `assets/audio/epstopik/q_${String(qOrder).padStart(4, '0')}.mp3`;
       audio.dataset.currentQId = String(q.id);
       audio.src = candidateMp3;
       audio.playbackRate = HRD_AUDIO_STATE.speed;
       audio.load();
-
-      const badge = document.getElementById('audio-src-badge');
-      const guide = document.getElementById('audio-status-guide');
-
       HRD_AUDIO_STATE.isOfficialMp3 = true;
+
       if (badge) {
         badge.className = 'audio-src-badge hrd';
-        badge.innerHTML = `🎧 실전 CBT 표준 음원 (${q.examNum}번 문항 / 원본 #${String(qOrder).padStart(4, '0')} 1:1 정밀 일치)`;
+        badge.innerHTML = `🎧 실전 CBT 고품질 음원 (${q.examNum}번 문항 / 원본 #${String(qOrder).padStart(4, '0')} 1:1 정밀 일치)`;
       }
       if (guide) {
         guide.textContent = "🎧 실전 시험 방송 규격 (지문 낭독 ➔ '다시 들으십시오' ➔ 2회 반복)";
@@ -3363,10 +4462,10 @@
         HRD_AUDIO_STATE.isOfficialMp3 = false;
         if (badge) {
           badge.className = 'audio-src-badge fallback';
-          badge.innerHTML = '🤖 고품질 신경망 AI 음성 (폴백 모드)';
+          badge.innerHTML = `🎙️ AI 자연어 신경망 표준 음성 (${q.examNum}번 문항)`;
         }
         if (guide) {
-          guide.textContent = '📢 표준 한국어 신경망 음성으로 낭독합니다.';
+          guide.textContent = '📢 표준 한국어 자연어 음성으로 낭독합니다.';
         }
       };
     }
@@ -3378,15 +4477,35 @@
       const audio = HRD_AUDIO_STATE.player;
       if (!audio) return;
 
-      if (!audio.paused) {
-        audio.pause();
+      if (HRD_AUDIO_STATE.isOfficialMp3) {
+        if (!audio.paused) {
+          audio.pause();
+          return;
+        }
+        audio.play().catch(err => {
+          console.warn('MP3 play failed, falling back to speech synthesis:', err);
+          HRD_AUDIO_STATE.isOfficialMp3 = false;
+          playWithWebSpeechFallback();
+        });
         return;
       }
 
-      audio.play().catch(err => {
-        console.warn('MP3 play failed, falling back to speech synthesis:', err);
-        playWithWebSpeechFallback();
-      });
+      if (window.speechSynthesis && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        const playBox = document.getElementById('audio-player-section');
+        const playBtn = document.getElementById('btn-audio-play');
+        if (playBox) playBox.classList.remove('playing');
+        if (playBtn) {
+          playBtn.classList.remove('playing');
+          playBtn.textContent = '▶';
+        }
+        if (HRD_AUDIO_STATE.speechProgressTimer) {
+          clearInterval(HRD_AUDIO_STATE.speechProgressTimer);
+          HRD_AUDIO_STATE.speechProgressTimer = null;
+        }
+        return;
+      }
+      playWithWebSpeechFallback();
     }
 
     function skipAudioTime(seconds) {
@@ -3422,8 +4541,17 @@
       if (!q || !('speechSynthesis' in window)) return;
 
       window.speechSynthesis.cancel();
+      if (HRD_AUDIO_STATE.speechProgressTimer) {
+        clearInterval(HRD_AUDIO_STATE.speechProgressTimer);
+        HRD_AUDIO_STATE.speechProgressTimer = null;
+      }
+
       const playBox = document.getElementById('audio-player-section');
       const playBtn = document.getElementById('btn-audio-play');
+      const slider = document.getElementById('audio-seek-slider');
+      const curLabel = document.getElementById('audio-current-time');
+      const durLabel = document.getElementById('audio-duration');
+
       if (playBox) playBox.classList.add('playing');
       if (playBtn) {
         playBtn.classList.add('playing');
@@ -3431,16 +4559,35 @@
       }
 
       const rawScript = (q.dialogue || q.instruction || '').replace(/\(\s*\)/g, '').trim();
-      const cleanScript = rawScript.replace(/남:\s*/g, '남성: ').replace(/여:\s*/g, '여성: ');
+      const cleanScript = rawScript.replace(/남:\s*/g, '남: ').replace(/여:\s*/g, '여: ');
       const scriptToSpeak = `${cleanScript}. 다시 들으십시오. ${cleanScript}`;
+
+      const estimatedSec = Math.max(12, Math.round(scriptToSpeak.length * 0.28));
+      if (durLabel) durLabel.textContent = formatAudioTime(estimatedSec);
+      let elapsedSec = 0;
+
+      HRD_AUDIO_STATE.speechProgressTimer = setInterval(() => {
+        elapsedSec++;
+        if (curLabel) curLabel.textContent = formatAudioTime(elapsedSec);
+        if (slider) slider.value = Math.min(100, (elapsedSec / estimatedSec) * 100);
+        if (elapsedSec >= estimatedSec) {
+          clearInterval(HRD_AUDIO_STATE.speechProgressTimer);
+          HRD_AUDIO_STATE.speechProgressTimer = null;
+        }
+      }, 1000);
 
       setTimeout(() => {
         const utterance = new SpeechSynthesisUtterance(scriptToSpeak);
         utterance.lang = 'ko-KR';
-        utterance.rate = HRD_AUDIO_STATE.speed * 0.92;
+        utterance.rate = HRD_AUDIO_STATE.speed * 0.95;
 
         const voices = window.speechSynthesis.getVoices();
-        const naturalVoice = voices.find(v => v.lang.includes('ko') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Online')))
+        // 1순위: Edge 브라우저의 Microsoft SunHi / InJoon Online Natural 성우 음성
+        // 2순위: Google 고품질 신경망 한국어 음성
+        // 3순위: 기타 자연어 한국어 음성 (기계음 Heami는 엄격히 배제)
+        const naturalVoice = voices.find(v => v.lang.includes('ko') && (v.name.includes('SunHi') || v.name.includes('InJoon') || v.name.includes('Natural') || v.name.includes('Online')) && !v.name.includes('Heami'))
+                          || voices.find(v => v.lang.includes('ko') && v.name.includes('Google') && !v.name.includes('Heami'))
+                          || voices.find(v => v.lang.includes('ko') && !v.name.includes('Heami'))
                           || voices.find(v => v.lang.includes('ko'));
         if (naturalVoice) utterance.voice = naturalVoice;
 
@@ -3450,6 +4597,11 @@
             playBtn.classList.remove('playing');
             playBtn.textContent = '▶';
           }
+          if (HRD_AUDIO_STATE.speechProgressTimer) {
+            clearInterval(HRD_AUDIO_STATE.speechProgressTimer);
+            HRD_AUDIO_STATE.speechProgressTimer = null;
+          }
+          if (slider) slider.value = 100;
           APP_STATE.audioPlayCounts[q.id] = (APP_STATE.audioPlayCounts[q.id] || 0) + 1;
           const countEl = document.getElementById('audio-play-count');
           if (countEl) countEl.textContent = `청취 ${APP_STATE.audioPlayCounts[q.id]} / 2회`;
@@ -3460,6 +4612,10 @@
           if (playBtn) {
             playBtn.classList.remove('playing');
             playBtn.textContent = '▶';
+          }
+          if (HRD_AUDIO_STATE.speechProgressTimer) {
+            clearInterval(HRD_AUDIO_STATE.speechProgressTimer);
+            HRD_AUDIO_STATE.speechProgressTimer = null;
           }
         };
 
@@ -3777,9 +4933,12 @@
         const userAns = APP_STATE.userAnswers[q.id];
         const isCorrect = userAns === q.answer;
 
-        // Auto-collect wrong questions into FSRS smart review bank
+        // Auto-collect wrong questions into FSRS smart review bank and wrongQuestions
         if (!isCorrect) {
           wrongCount++;
+          if (!APP_STATE.wrongQuestions.some(item => item.id === q.id)) {
+            APP_STATE.wrongQuestions.push(q);
+          }
           if (!APP_STATE.fsrsReviewBank.some(item => item.id === q.id)) {
             APP_STATE.fsrsReviewBank.push({
               id: q.id,
@@ -3790,6 +4949,7 @@
               answer: q.answer,
               explanation: q.explanation,
               category: q.category,
+              dialogue: q.dialogue,
               difficulty: 5.0, // FSRS D (1~10)
               stability: 1.0,   // FSRS S (days)
               reps: 0,
@@ -3824,8 +4984,9 @@
         expContainer.appendChild(item);
       });
 
-      // Save FSRS Bank
+      // Save FSRS Bank & Wrong Questions
       localStorage.setItem('fsrs_review_bank', JSON.stringify(APP_STATE.fsrsReviewBank));
+      localStorage.setItem('epstopik_wrong_questions', JSON.stringify(APP_STATE.wrongQuestions));
       updateFsrsBadge();
 
       if (wrongCount > 0) {
@@ -4195,22 +5356,7 @@
     /* ─────────────────────────────────────────────────────────────
        9. MONETIZATION, PORTONE V2 BILLING, AND ENERGY ENGINE
     ───────────────────────────────────────────────────────────── */
-    function updateUserTierUI() {
-      const tier = APP_STATE.userTier;
-      const tierBadge = document.getElementById('header-tier-text');
-      const btnBadge = document.getElementById('btn-pro-badge');
-
-      if (tier === 'PRO') {
-        tierBadge.textContent = 'PRO PASS 활성화됨';
-        btnBadge.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-        btnBadge.style.color = '#fff';
-      } else {
-        tierBadge.textContent = '7일 무료체험 (PRO)';
-        btnBadge.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
-        btnBadge.style.color = '#000';
-      }
-    }
-
+    /* updateUserTierUI() → topik_roadmap_ui.js */
     function updateEnergyUI() {
       const fill = document.getElementById('energy-bar-fill');
       const text = document.getElementById('energy-text');
@@ -4272,60 +5418,11 @@
     }
 
     /* PortOne V2 Billing Simulator */
-    function executePortOneCheckout() {
-      const btn = document.getElementById('btn-pay-checkout');
-      btn.innerHTML = '⏳ PortOne V2 보안 인증창 호출 중...';
-      btn.disabled = true;
-
-      // Realistic SDK Billing Cycle Simulation
-      setTimeout(() => {
-        btn.innerHTML = '🔐 안전 결제 승인 완료 (Idempotency Key 검증됨)';
-        setTimeout(() => {
-          APP_STATE.userTier = 'PRO';
-          const oneYearLater = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
-          APP_STATE.subscriptionExpiry = oneYearLater;
-
-          localStorage.setItem('user_pro_tier', 'PRO');
-          localStorage.setItem('user_pro_expiry', oneYearLater);
-
-          updateUserTierUI();
-          updateEnergyUI();
-          closePaywallModal();
-
-          btn.disabled = false;
-          selectPaywallPlan('yearly');
-
-          showCbtToast('🎉 축하합니다! PRO 합격 무제한 패스가 활성화되었습니다 (7일 무료체험)', '👑');
-          alert('결제가 성공적으로 처리되었습니다!\n\n• 등급: TOPIK PRO ALL-PASS\n• 혜택: 1,917문항 48회차 전체 해제, 에너지 무제한, FSRS 오답노트, 54번 AI 첨삭\n• 다음 결제일: ' + oneYearLater.split('T')[0]);
-        }, 1200);
-      }, 1000);
-    }
-
+    /* executePortOneCheckout() → topik_roadmap_ui.js */
     /* ─────────────────────────────────────────────────────────────
        10. TOPIK WRITING 54 AI RUBRIC EVALUATOR
     ───────────────────────────────────────────────────────────── */
-    function updateEssayCharCount() {
-      const box = document.getElementById('essay-input-box');
-      const countEl = document.getElementById('writing-char-count');
-      const statusEl = document.getElementById('writing-char-status');
-      if (!box || !countEl || !statusEl) return;
-
-      const text = box.value;
-      const count = text.length;
-      countEl.textContent = count;
-
-      if (count < 600) {
-        statusEl.className = 'char-badge-warn';
-        statusEl.textContent = `⚠️ ${600 - count}자 부족 (600자 미만 분량 감점 주의)`;
-      } else if (count <= 700) {
-        statusEl.className = 'char-badge-ok';
-        statusEl.textContent = `✅ 최적 분량 구간 (${count}자 작성 완료, 감점 없음)`;
-      } else {
-        statusEl.className = 'char-badge-danger';
-        statusEl.textContent = `🚨 ${count - 700}자 초과 (700자 초과 시 국립국제교육원 규정 감점)`;
-      }
-    }
-
+    /* updateEssayCharCount() → topik_roadmap_ui.js */
     function loadSampleEssay() {
       const box = document.getElementById('essay-input-box');
       box.value = APP_STATE.sampleEssayText;
@@ -4355,172 +5452,985 @@
       showCbtToast('개요가 본문 에디터 상단에 삽입되었습니다.', '📋');
     }
 
-    function evaluateEssayWithAi() {
-      const box = document.getElementById('essay-input-box');
-      const text = box.value.trim();
-      if (!text || text.length < 50) {
-        alert('에세이 내용이 너무 짧습니다. 최소 100자 이상 작성 후 채점을 요청해 주세요.');
-        return;
-      }
-
-      const feedbackBox = document.getElementById('ai-essay-feedback-box');
-      feedbackBox.innerHTML = `
-        <div style="text-align:center;padding:24px 0">
-          <div style="font-size:24px;animation:spin 1s infinite">⚙️</div>
-          <strong style="color:var(--cyan);display:block;margin-top:8px">AI 국립국제교육원 공식 루브릭 정밀 채점 중...</strong>
-          <span style="font-size:11px;color:var(--text-muted)">문어체 종결어미 검사 • 어휘 다양성 분석 • 3단 전개 구조 평가</span>
-        </div>
-      `;
-
-      setTimeout(() => {
-        const count = text.length;
-        let scoreContent = 12;
-        let scoreStructure = 12;
-        let scoreGrammar = 24;
-
-        if (count < 600) {
-          scoreContent = Math.max(6, Math.round(12 * (count / 600)));
-        }
-        if (count > 700) {
-          scoreStructure = Math.max(8, 12 - Math.floor((count - 700) / 30));
-        }
-
-        const totalScore = scoreContent + scoreStructure + scoreGrammar;
-
-        document.getElementById('rubric-score-content').textContent = `${scoreContent}점 / 12점`;
-        document.getElementById('rubric-score-structure').textContent = `${scoreStructure}점 / 12점`;
-        document.getElementById('rubric-score-grammar').textContent = `${scoreGrammar}점 / 26점`;
-
-        feedbackBox.innerHTML = `
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-            <strong style="color:#10b981;font-size:14px">🏆 종합 채점 결과: ${totalScore}점 / 50점 만점</strong>
-            <span style="font-size:11px;color:var(--cyan)">TOPIK II 6급 수준</span>
-          </div>
-          <div style="color:#cbd5e1;line-height:1.6">
-            <strong>✅ 강점:</strong> 서론-본론-결론의 3단 논리 전개가 명확하며, '-다/-는다' 문어체 종결 어미가 일관되게 적용되었습니다.<br>
-            <strong>🔍 보완 제안:</strong> '일회용품을 자제하고' 표현 대신 '일회용품 사용을 억제하고'와 같은 중·고급 한자어 어휘를 사용하면 어휘 점수 2점을 추가 확보할 수 있습니다.<br>
-            <strong>📏 글자수 판정:</strong> ${count}자로 공식 규격(600~700자) 조건에 적합합니다.
-          </div>
-        `;
-        showCbtToast(`AI 채점 완료! 종합 점수: ${totalScore}점`, '🤖');
-      }, 1500);
-    }
-
+    /* evaluateEssayWithAi() → topik_roadmap_ui.js */
     /* ─────────────────────────────────────────────────────────────
        11. FSRS SPACING RETRIEVAL CLINIC ENGINE
     ───────────────────────────────────────────────────────────── */
-    function updateFsrsBadge() {
-      const badge = document.getElementById('tab-fsrs-counter');
-      const badgeMain = document.getElementById('fsrs-count-badge');
-      const count = APP_STATE.fsrsReviewBank.length;
-      if (badge) badge.textContent = `${count}문항`;
-      if (badgeMain) badgeMain.textContent = `복습 대기 ${count}문항`;
+    /* updateFsrsBadge() → topik_roadmap_ui.js */
+    /* addSampleWrongQuestions() → topik_roadmap_ui.js */
+    /* renderFsrsCards() → topik_roadmap_ui.js */
+    /* rateFsrsQuestion() → topik_roadmap_ui.js */
+    /* ─────────────────────────────────────────────────────────────
+       14. EPS-TOPIK STANDARD TEXTBOOK 60 LESSONS MODULE
+    ───────────────────────────────────────────────────────────── */
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
 
-    function addSampleWrongQuestions() {
-      const bank = APP_STATE.allBank;
-      if (!bank || bank.length === 0) return;
-
-      const candidates = bank.slice(0, 20);
-      for (let i = 0; i < 5; i++) {
-        const randQ = candidates[Math.floor(Math.random() * candidates.length)];
-        if (!APP_STATE.fsrsReviewBank.some(item => item.id === randQ.id)) {
-          APP_STATE.fsrsReviewBank.push({
-            id: randQ.id,
-            order: randQ.order,
-            type: randQ.type,
-            instruction: randQ.instruction,
-            options: randQ.options,
-            answer: randQ.answer,
-            explanation: randQ.explanation,
-            category: randQ.category,
-            difficulty: 5.0,
-            stability: 1.0,
-            reps: 0,
-            nextReview: new Date().toISOString()
-          });
-        }
+    function getGlobalTextbookData() {
+      if (typeof EPSTOPIK_TEXTBOOK_60 !== 'undefined' && Array.isArray(EPSTOPIK_TEXTBOOK_60)) {
+        return EPSTOPIK_TEXTBOOK_60;
       }
-
-      localStorage.setItem('fsrs_review_bank', JSON.stringify(APP_STATE.fsrsReviewBank));
-      updateFsrsBadge();
-      renderFsrsCards();
-      showCbtToast('취약 오답 5문항이 FSRS 클리닉에 수집되었습니다.', '📥');
+      if (typeof window !== 'undefined' && window.EPSTOPIK_TEXTBOOK_60 && Array.isArray(window.EPSTOPIK_TEXTBOOK_60)) {
+        return window.EPSTOPIK_TEXTBOOK_60;
+      }
+      return [];
     }
 
-    function renderFsrsCards() {
-      const container = document.getElementById('fsrs-cards-container');
-      if (!container) return;
-      container.innerHTML = '';
+    function initTextbookState() {
+      if (!APP_STATE.textbookLessons || APP_STATE.textbookLessons.length === 0) {
+        APP_STATE.textbookLessons = getGlobalTextbookData();
+      }
+      updateTextbookProgress();
+    }
 
-      if (APP_STATE.fsrsReviewBank.length === 0) {
+    function updateTextbookProgress() {
+      const completed = APP_STATE.completedLessons || [];
+      const total = APP_STATE.textbookLessons.length || 60;
+      const pct = Math.round((completed.length / total) * 100);
+
+      const textEl = document.getElementById('tb-progress-text');
+      if (textEl) textEl.textContent = `${completed.length} / ${total}과 (${pct}%)`;
+
+      const fillEl = document.getElementById('tb-progress-fill');
+      if (fillEl) fillEl.style.width = `${pct}%`;
+
+      const bmEl = document.getElementById('tb-bookmark-count');
+      if (bmEl) bmEl.textContent = (APP_STATE.bookmarkedLessons || []).length;
+    }
+
+    function renderTextbookMain() {
+      initTextbookState();
+      renderTextbookLessonCards();
+    }
+
+    function switchTextbookBook(bookVal) {
+      APP_STATE.currentTextbookBook = bookVal;
+      document.querySelectorAll('.tb-book-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btn-tb-book-${bookVal}`);
+      if (activeBtn) activeBtn.classList.add('active');
+      renderTextbookLessonCards();
+    }
+
+    function filterTextbookLessons() {
+      const catSelect = document.getElementById('tb-category-filter');
+      const searchInput = document.getElementById('tb-search-input');
+      if (catSelect) APP_STATE.textbookCategoryFilter = catSelect.value;
+      if (searchInput) APP_STATE.textbookSearchQuery = searchInput.value.trim().toLowerCase();
+      renderTextbookLessonCards();
+    }
+
+    function renderTextbookLessonCards() {
+      const container = document.getElementById('tb-lessons-container');
+      if (!container) return;
+
+      const lessons = APP_STATE.textbookLessons || [];
+      const currentBook = APP_STATE.currentTextbookBook;
+      const catFilter = APP_STATE.textbookCategoryFilter;
+      const query = APP_STATE.textbookSearchQuery;
+
+      const filtered = lessons.filter(l => {
+        // Book filter
+        if (currentBook !== 'all' && l.book !== currentBook) return false;
+        // Category filter
+        if (catFilter !== 'all' && l.category !== catFilter) return false;
+        // Search query
+        if (query) {
+          const matchNum = String(l.lessonNum).includes(query);
+          const matchKo = l.title.toLowerCase().includes(query);
+          const matchEn = (l.titleEng || '').toLowerCase().includes(query);
+          const matchCat = (l.category || '').toLowerCase().includes(query);
+          if (!matchNum && !matchKo && !matchEn && !matchCat) return false;
+        }
+        return true;
+      });
+
+      if (filtered.length === 0) {
         container.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--card); border: 1px dashed var(--border); border-radius: 16px">
-            <span style="font-size: 48px; display: block; margin-bottom: 12px">✨</span>
-            <h4 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px">복습 대기 중인 오답이 없습니다!</h4>
-            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px">
-              모의고사를 풀고 틀린 문제가 발생하면 자동으로 이곳에 수집되어 최적 주기에 맞춰 출제됩니다.
-            </p>
-            <button class="btn-header btn-primary-header" onclick="addSampleWrongQuestions()">
-              🧪 테스트 오답 5문항 불러오기
-            </button>
+          <div style="grid-column: 1 / -1; text-align: center; padding: 48px; color: var(--text-muted); background: var(--card); border-radius: 12px; border: 1px dashed var(--border);">
+            <div style="font-size: 32px; margin-bottom: 8px;">🔍</div>
+            <div style="font-size: 15px; font-weight: 700; color: #fff;">검색 조건에 맞는 단원이 없습니다.</div>
+            <div style="font-size: 12px; margin-top: 4px;">다른 검색어나 '전체 단원' 필터를 선택해 보세요.</div>
           </div>
         `;
         return;
       }
 
-      APP_STATE.fsrsReviewBank.forEach((q, idx) => {
-        const card = document.createElement('div');
-        card.className = 'fsrs-item-card';
+      container.innerHTML = filtered.map(l => {
+        const isCompleted = (APP_STATE.completedLessons || []).includes(l.id);
+        const isBookmarked = (APP_STATE.bookmarkedLessons || []).includes(l.id);
+        const grammarTags = (l.grammar || []).map(g => `<span class="tb-grammar-tag">${escapeHtml(g.name)}</span>`).join('');
 
-        // Calculate retrievability R = (1 + 9 * t / S)^-1
-        const R = Math.round((1 / (1 + 9 * (0.5 / (q.stability || 1.0)))) * 100);
+        return `
+          <div class="tb-lesson-card ${isCompleted ? 'completed' : ''}" onclick="openLessonStudio(${l.id})">
+            <div>
+              <div class="tb-lesson-top">
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="tb-lesson-num">Lesson ${String(l.lessonNum).padStart(2, '0')}</span>
+                  <span style="font-size:11px;color:var(--text-muted);background:rgba(255,255,255,0.06);padding:2px 6px;border-radius:4px">제${l.book}권</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:6px">
+                  <span class="tb-cat-pill" style="background:${l.categoryColor || '#3b82f6'}22;color:${l.categoryColor || '#60a5fa'};border:1px solid ${l.categoryColor || '#3b82f6'}44">
+                    ${escapeHtml(l.category || '기초')}
+                  </span>
+                  <button onclick="toggleLessonBookmark(${l.id}, event)" title="북마크" style="background:none;border:none;cursor:pointer;font-size:15px;color:${isBookmarked ? 'var(--gold)' : 'var(--text-muted)'}">
+                    ${isBookmarked ? '⭐' : '☆'}
+                  </button>
+                </div>
+              </div>
 
-        card.innerHTML = `
-          <div>
-            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
-              <span class="badge-api" style="font-size:11px">문항 #${q.order || q.id} (${q.type === 'L' ? '듣기' : '읽기'})</span>
-              <span style="font-size:12px;color:var(--cyan);font-weight:700">기억 회상률: ${R}%</span>
+              <div class="tb-lesson-title-ko">${escapeHtml(l.title)}</div>
+              <div class="tb-lesson-title-en">${escapeHtml(l.titleEng || '')}</div>
+
+              <div class="tb-lesson-grammar-tags">
+                ${grammarTags}
+              </div>
             </div>
-            <strong style="font-size:14px;color:#fff;display:block;margin-bottom:6px">${q.instruction || '[문제]'}</strong>
-            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">
-              정답: ${q.answer}번 (${q.options ? q.options[q.answer - 1] : ''})
-            </div>
-            <div style="font-size:11.5px;color:#94a3b8;background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;line-height:1.5">
-              ${q.explanation || '핵심 문법 및 어휘 해설'}
-            </div>
-          </div>
-          <div>
-            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:4px">학습 난이도 평가 (FSRS Spaced Repetition)</div>
-            <div class="fsrs-btn-row">
-              <button class="fsrs-btn again" onclick="rateFsrsQuestion(${idx}, 'again')">다시 (1일)</button>
-              <button class="fsrs-btn hard" onclick="rateFsrsQuestion(${idx}, 'hard')">어려움 (3일)</button>
-              <button class="fsrs-btn good" onclick="rateFsrsQuestion(${idx}, 'good')">알맞음 (7일)</button>
-              <button class="fsrs-btn easy" onclick="rateFsrsQuestion(${idx}, 'easy')">쉬움 (14일)</button>
+
+            <div class="tb-lesson-footer">
+              <div style="font-size:11.5px;color:${isCompleted ? '#34d399' : 'var(--text-muted)'};display:flex;align-items:center;gap:4px">
+                ${isCompleted ? '✓ 학습 완료' : '○ 학습 대기'}
+              </div>
+              <button class="tb-btn-study" onclick="event.stopPropagation(); openLessonStudio(${l.id})">
+                단원 학습하기 ➔
+              </button>
             </div>
           </div>
         `;
-        container.appendChild(card);
-      });
+      }).join('');
     }
 
-    function rateFsrsQuestion(idx, grade) {
-      const item = APP_STATE.fsrsReviewBank[idx];
-      if (!item) return;
+    function openLessonStudio(lessonId) {
+      APP_STATE.activeLessonId = lessonId;
+      localStorage.setItem('epstopik_last_studied_lesson', String(lessonId));
 
-      if (grade === 'easy' || grade === 'good') {
-        APP_STATE.fsrsReviewBank.splice(idx, 1);
-        showCbtToast(`'${grade.toUpperCase()}' 반영: 장기 기억에 정착되어 복습 완료 처리되었습니다.`, '🧠');
-      } else {
-        item.reps = (item.reps || 0) + 1;
-        item.stability = grade === 'hard' ? 3.0 : 1.0;
-        showCbtToast(`'${grade.toUpperCase()}' 반영: 기억 강화를 위해 재시험 주기가 단축되었습니다.`, '🔄');
+      const lesson = (APP_STATE.textbookLessons || []).find(l => l.id === lessonId);
+      if (!lesson) return;
+
+      document.getElementById('tb-overview-view').style.display = 'none';
+      const studioView = document.getElementById('tb-studio-view');
+      studioView.style.display = 'flex';
+
+      // Update studio headers
+      document.getElementById('studio-lesson-num').textContent = `Lesson ${String(lesson.lessonNum).padStart(2, '0')} (제${lesson.book}권)`;
+      document.getElementById('studio-title-ko').textContent = lesson.title;
+      document.getElementById('studio-title-en').textContent = lesson.titleEng || '';
+      document.getElementById('studio-goal-text').textContent = lesson.goal || '';
+
+      const catPill = document.getElementById('studio-category-pill');
+      if (catPill) {
+        catPill.textContent = lesson.category;
+        catPill.style.color = lesson.categoryColor || '#60a5fa';
+        catPill.style.background = (lesson.categoryColor || '#3b82f6') + '22';
       }
 
-      localStorage.setItem('fsrs_review_bank', JSON.stringify(APP_STATE.fsrsReviewBank));
-      updateFsrsBadge();
-      renderFsrsCards();
+      updateStudioActionButtons(lesson.id);
+
+      // Reset to vocab tab or current subtab
+      switchLessonSubtab('vocab');
+
+      // Scroll to studio
+      studioView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function closeLessonStudio() {
+      document.getElementById('tb-studio-view').style.display = 'none';
+      document.getElementById('tb-overview-view').style.display = 'block';
+      renderTextbookLessonCards();
+      updateTextbookProgress();
+    }
+
+    function updateStudioActionButtons(lessonId) {
+      const isBookmarked = (APP_STATE.bookmarkedLessons || []).includes(lessonId);
+      const isCompleted = (APP_STATE.completedLessons || []).includes(lessonId);
+
+      const bmBtn = document.getElementById('btn-studio-bookmark');
+      if (bmBtn) {
+        bmBtn.innerHTML = isBookmarked ? '⭐ 북마크 해제' : '☆ 북마크';
+        bmBtn.style.color = isBookmarked ? 'var(--gold)' : 'var(--text)';
+      }
+
+      const compBtn = document.getElementById('btn-studio-complete');
+      if (compBtn) {
+        compBtn.innerHTML = isCompleted ? '✓ 학습 완료됨' : '○ 학습 완료 체크';
+        compBtn.style.background = isCompleted ? 'rgba(16,185,129,0.15)' : 'var(--card)';
+      }
+
+      const compBadge = document.getElementById('studio-complete-badge');
+      if (compBadge) {
+        compBadge.style.display = isCompleted ? 'inline' : 'none';
+      }
+
+      const prevBtn = document.getElementById('btn-prev-lesson');
+      if (prevBtn) prevBtn.disabled = lessonId <= 1;
+
+      const nextBtn = document.getElementById('btn-next-lesson');
+      if (nextBtn) nextBtn.disabled = lessonId >= (APP_STATE.textbookLessons.length || 60);
+    }
+
+    function toggleStudioCurrentBookmark() {
+      toggleLessonBookmark(APP_STATE.activeLessonId);
+      updateStudioActionButtons(APP_STATE.activeLessonId);
+    }
+
+    function toggleStudioCurrentComplete() {
+      toggleLessonComplete(APP_STATE.activeLessonId);
+      updateStudioActionButtons(APP_STATE.activeLessonId);
+    }
+
+    function toggleLessonBookmark(lessonId, e) {
+      if (e) e.stopPropagation();
+      let bookmarks = APP_STATE.bookmarkedLessons || [];
+      if (bookmarks.includes(lessonId)) {
+        bookmarks = bookmarks.filter(id => id !== lessonId);
+        showCbtToast(`제${lessonId}과 북마크가 해제되었습니다.`, '☆');
+      } else {
+        bookmarks.push(lessonId);
+        showCbtToast(`제${lessonId}과가 북마크에 추가되었습니다!`, '⭐');
+      }
+      APP_STATE.bookmarkedLessons = bookmarks;
+      localStorage.setItem('epstopik_bookmarked_lessons', JSON.stringify(bookmarks));
+      updateTextbookProgress();
+      renderTextbookLessonCards();
+    }
+
+    function toggleLessonComplete(lessonId) {
+      let completed = APP_STATE.completedLessons || [];
+      if (completed.includes(lessonId)) {
+        completed = completed.filter(id => id !== lessonId);
+        showCbtToast(`제${lessonId}과 학습 완료가 취소되었습니다.`, '○');
+      } else {
+        completed.push(lessonId);
+        showCbtToast(`🎉 축하합니다! 제${lessonId}과 학습을 완료하셨습니다!`, '✓');
+      }
+      APP_STATE.completedLessons = completed;
+      localStorage.setItem('epstopik_completed_lessons', JSON.stringify(completed));
+      updateTextbookProgress();
+      renderTextbookLessonCards();
+    }
+
+    function goToPrevLesson() {
+      if (APP_STATE.activeLessonId > 1) {
+        openLessonStudio(APP_STATE.activeLessonId - 1);
+      }
+    }
+
+    function goToNextLesson() {
+      if (APP_STATE.activeLessonId < (APP_STATE.textbookLessons.length || 60)) {
+        openLessonStudio(APP_STATE.activeLessonId + 1);
+      }
+    }
+
+    function continueLastStudiedLesson() {
+      const lastId = parseInt(localStorage.getItem('epstopik_last_studied_lesson') || '1');
+      openLessonStudio(lastId);
+    }
+
+    function switchLessonSubtab(subtabName) {
+      APP_STATE.activeLessonSubtab = subtabName;
+      document.querySelectorAll('.tb-subtab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`tb-subtab-${subtabName}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      const tabs = ['vocab', 'dialogue', 'grammar', 'culture', 'quiz'];
+      tabs.forEach(t => {
+        const contentEl = document.getElementById(`studio-content-${t}`);
+        if (contentEl) contentEl.style.display = t === subtabName ? 'block' : 'none';
+      });
+
+      const lesson = (APP_STATE.textbookLessons || []).find(l => l.id === APP_STATE.activeLessonId);
+      if (!lesson) return;
+
+      if (subtabName === 'vocab') {
+        renderStudioVocab(lesson);
+      } else if (subtabName === 'dialogue') {
+        renderStudioDialogue(lesson);
+      } else if (subtabName === 'grammar') {
+        renderStudioGrammar(lesson);
+      } else if (subtabName === 'culture') {
+        renderStudioCulture(lesson);
+      } else if (subtabName === 'quiz') {
+        renderStudioQuiz(lesson);
+      }
+    }
+
+    function renderStudioVocab(lesson) {
+      const container = document.getElementById('studio-vocab-container');
+      const countEl = document.getElementById('studio-vocab-count');
+      if (!container) return;
+
+      const vocabs = lesson.vocabulary || [];
+      if (countEl) countEl.textContent = vocabs.length;
+
+      container.innerHTML = vocabs.map((v, idx) => `
+        <div class="tb-vocab-card">
+          <div>
+            <div class="tb-vocab-word-row">
+              <span class="tb-vocab-word">${escapeHtml(v.word)}</span>
+              <span class="tb-vocab-pron">[${escapeHtml(v.pron || '')}]</span>
+            </div>
+            <div class="tb-vocab-meaning" style="margin-top:6px">${escapeHtml(v.meaning)}</div>
+            ${v.example ? `
+              <div class="tb-vocab-example" style="margin-top:10px">
+                <span style="color:#fff;font-weight:600">${escapeHtml(v.example)}</span>
+              </div>
+            ` : ''}
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:8px">
+            <button class="btn-audio-skip" onclick="speakKoreanText('${escapeHtml(v.word)}')" style="gap:5px;padding:5px 10px">
+              🔊 발음 듣기
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderStudioDialogue(lesson) {
+      const container = document.getElementById('studio-dialogue-container');
+      if (!container) return;
+
+      const dialogues = lesson.dialogues || [];
+      const showTrans = APP_STATE.dialogueTranslationsVisible !== false;
+
+      container.innerHTML = dialogues.map((d, dIdx) => `
+        <div class="tb-dialogue-block">
+          <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.06);padding-bottom:8px">
+            <strong style="color:var(--cyan);font-size:14px">💬 ${escapeHtml(d.title || `대화 ${dIdx + 1}`)}</strong>
+            <button class="btn-audio-skip" onclick="playDialogueSet(${dIdx})" style="padding:4px 10px;font-size:11px">
+              ▶ 대화 전체 듣기
+            </button>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+            ${(d.lines || []).map((line, lIdx) => `
+              <div class="tb-dialogue-line">
+                <div class="tb-avatar-circle">
+                  ${line.speaker.includes('선생') ? '👩‍🏫' : line.speaker.includes('반장') ? '👨‍💼' : '🧑'}
+                </div>
+                <div class="tb-speech-bubble">
+                  <div class="tb-bubble-speaker">
+                    <span>${escapeHtml(line.speaker)}</span>
+                    ${line.role ? `<span style="font-size:11px;color:var(--text-muted)">(${escapeHtml(line.role)})</span>` : ''}
+                  </div>
+                  <div class="tb-bubble-text">${escapeHtml(line.text)}</div>
+                  <div class="tb-bubble-trans" style="display:${showTrans ? 'block' : 'none'}">${escapeHtml(line.trans || '')}</div>
+                  <div style="display:flex;justify-content:flex-end;margin-top:6px">
+                    <button class="btn-audio-skip" onclick="speakKoreanText('${escapeHtml(line.text)}')" style="padding:3px 8px;font-size:10.5px">
+                      🔊 듣기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleDialogueTranslations() {
+      APP_STATE.dialogueTranslationsVisible = !APP_STATE.dialogueTranslationsVisible;
+      const btn = document.getElementById('btn-toggle-dialogue-trans');
+      if (btn) {
+        btn.textContent = APP_STATE.dialogueTranslationsVisible ? '🌐 영문 번역 숨기기' : '🌐 영문 번역 보이기';
+      }
+      const lesson = (APP_STATE.textbookLessons || []).find(l => l.id === APP_STATE.activeLessonId);
+      if (lesson) renderStudioDialogue(lesson);
+    }
+
+    function playDialogueSet(dialogueIdx) {
+      const lesson = (APP_STATE.textbookLessons || []).find(l => l.id === APP_STATE.activeLessonId);
+      if (!lesson || !lesson.dialogues || !lesson.dialogues[dialogueIdx]) return;
+      const lines = lesson.dialogues[dialogueIdx].lines || [];
+      if (lines.length === 0) return;
+
+      let idx = 0;
+      function playNext() {
+        if (idx >= lines.length) return;
+        const line = lines[idx];
+        idx++;
+        speakKoreanText(line.text, playNext);
+      }
+      playNext();
+    }
+
+    function renderStudioGrammar(lesson) {
+      const container = document.getElementById('studio-grammar-container');
+      if (!container) return;
+
+      const grammars = lesson.grammar || [];
+      container.innerHTML = grammars.map(g => `
+        <div class="tb-grammar-box">
+          <div class="tb-grammar-title">
+            <span>📝 ${escapeHtml(g.name)}</span>
+            <span style="font-size:12px;color:var(--text-muted);font-weight:500">• ${escapeHtml(g.summary || '')}</span>
+          </div>
+          <p style="font-size:13.5px;color:#cbd5e1;line-height:1.6">${escapeHtml(g.details || '')}</p>
+          <div style="margin-top:8px">
+            <div style="font-size:12px;color:var(--cyan);font-weight:700;margin-bottom:6px">💡 대표 예문:</div>
+            ${(g.examples || []).map(ex => `
+              <div style="background:rgba(255,255,255,0.04);border-left:3px solid var(--accent-light);padding:8px 12px;border-radius:4px;margin-bottom:6px;font-size:13px;color:#fff;display:flex;justify-content:space-between;align-items:center">
+                <span>${escapeHtml(ex)}</span>
+                <button class="btn-audio-skip" onclick="speakKoreanText('${escapeHtml(ex.split('(')[0].trim())}')" style="padding:2px 6px;font-size:10px">
+                  🔊
+                </button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderStudioCulture(lesson) {
+      const textEl = document.getElementById('studio-culture-text');
+      if (textEl) {
+        textEl.textContent = lesson.culture || '고용허가제 표준교재 문화 팁이 준비되어 있습니다.';
+      }
+    }
+
+    function renderStudioQuiz(lesson) {
+      const container = document.getElementById('studio-quiz-container');
+      const scoreBadge = document.getElementById('studio-quiz-score-badge');
+      if (!container) return;
+
+      const quizzes = lesson.quiz || [];
+      APP_STATE.quizAnswersState = {};
+
+      if (scoreBadge) scoreBadge.textContent = `점수: 0 / ${quizzes.length}`;
+
+      container.innerHTML = quizzes.map((q, qIdx) => `
+        <div class="tb-quiz-card" id="tb-quiz-card-${qIdx}">
+          <div style="font-size:14.5px;font-weight:700;color:#fff;display:flex;align-items:flex-start;gap:8px">
+            <span style="color:var(--cyan)">Q${qIdx + 1}.</span>
+            <span>${escapeHtml(q.q)}</span>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr;gap:8px;margin-top:6px">
+            ${(q.options || []).map((opt, optIdx) => `
+              <button class="tb-quiz-option-btn" id="tb-quiz-opt-${qIdx}-${optIdx + 1}" onclick="submitQuizOption(${qIdx}, ${optIdx + 1}, ${q.ans})">
+                ${optIdx + 1}) ${escapeHtml(opt)}
+              </button>
+            `).join('')}
+          </div>
+
+          <div id="tb-quiz-feedback-${qIdx}" style="display:none;font-size:12.5px;padding:10px 12px;border-radius:8px;margin-top:4px">
+            <!-- Feedback & Explanation rendered by submitQuizOption -->
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function submitQuizOption(qIdx, selectedOpt, correctAns) {
+      const fbBox = document.getElementById(`tb-quiz-feedback-${qIdx}`);
+      const lesson = (APP_STATE.textbookLessons || []).find(l => l.id === APP_STATE.activeLessonId);
+      if (!lesson || !lesson.quiz || !lesson.quiz[qIdx]) return;
+
+      const quizItem = lesson.quiz[qIdx];
+      const isCorrect = (selectedOpt === correctAns);
+
+      // Disable buttons for this question
+      for (let i = 1; i <= 4; i++) {
+        const btn = document.getElementById(`tb-quiz-opt-${qIdx}-${i}`);
+        if (btn) {
+          btn.disabled = true;
+          if (i === correctAns) btn.classList.add('correct');
+          if (i === selectedOpt && !isCorrect) btn.classList.add('wrong');
+        }
+      }
+
+      APP_STATE.quizAnswersState[qIdx] = isCorrect;
+
+      // Show feedback
+      if (fbBox) {
+        fbBox.style.display = 'block';
+        if (isCorrect) {
+          fbBox.style.background = 'rgba(16,185,129,0.15)';
+          fbBox.style.border = '1px solid rgba(16,185,129,0.4)';
+          fbBox.style.color = '#34d399';
+          fbBox.innerHTML = `<strong>✓ 정답입니다!</strong> ${escapeHtml(quizItem.exp || '')}`;
+        } else {
+          fbBox.style.background = 'rgba(239,68,68,0.15)';
+          fbBox.style.border = '1px solid rgba(239,68,68,0.4)';
+          fbBox.style.color = '#f87171';
+          fbBox.innerHTML = `<strong>✕ 오답입니다 (정답: ${correctAns}번).</strong> ${escapeHtml(quizItem.exp || '')}`;
+        }
+      }
+
+      // Update total score
+      const totalAnswered = Object.keys(APP_STATE.quizAnswersState).length;
+      const correctCount = Object.values(APP_STATE.quizAnswersState).filter(Boolean).length;
+      const scoreBadge = document.getElementById('studio-quiz-score-badge');
+      if (scoreBadge) {
+        scoreBadge.textContent = `점수: ${correctCount} / ${lesson.quiz.length}`;
+      }
+
+      if (totalAnswered === lesson.quiz.length && correctCount === lesson.quiz.length) {
+        showCbtToast(`🎉 4문항 모두 만점! 제${lesson.lessonNum}과 마스터를 달성했습니다!`, '🏆');
+        if (!(APP_STATE.completedLessons || []).includes(lesson.id)) {
+          toggleLessonComplete(lesson.id);
+        }
+      }
+    }
+
+    function speakKoreanText(text, onEndCallback) {
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'ko-KR';
+      utterance.rate = 0.9;
+
+      const voices = window.speechSynthesis.getVoices();
+      const bestVoice = voices.find(v => (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('SunHi') || v.name.includes('Google')) && v.lang.startsWith('ko'))
+                     || voices.find(v => v.lang.startsWith('ko'));
+      if (bestVoice) utterance.voice = bestVoice;
+
+      if (onEndCallback) {
+        utterance.onend = onEndCallback;
+      }
+      window.speechSynthesis.speak(utterance);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       15. MULTILINGUAL TRANSLATION ENGINE (16 COUNTRIES)
+    ───────────────────────────────────────────────────────────── */
+    function initLanguageSelector() {
+      const select = document.getElementById('select-global-lang');
+      if (select) {
+        select.value = APP_STATE.selectedLanguage || 'vi';
+      }
+    }
+
+    function changeGlobalLanguage(langCode) {
+      APP_STATE.selectedLanguage = langCode;
+      localStorage.setItem('epstopik_user_lang', langCode);
+
+      const meta = (typeof EPSTOPIK_MULTILANG !== 'undefined' && EPSTOPIK_MULTILANG.countries)
+        ? EPSTOPIK_MULTILANG.countries.find(c => c.code === langCode)
+        : null;
+
+      const flag = meta ? meta.flag : '🌐';
+      const native = meta ? meta.native : langCode;
+      const greeting = meta ? ` (${meta.sampleGreeting})` : '';
+
+      showCbtToast(`${flag} ${native} 모국어 번역 엔진이 설정되었습니다.${greeting}`, flag);
+
+      // If translation box is open, refresh it immediately
+      if (APP_STATE.isTransOpen) {
+        const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+        if (q) updateQuestionTranslationUI(q);
+      }
+    }
+
+    function toggleCurrentQuestionTranslation() {
+      const transBox = document.getElementById('q-translation-box');
+      if (!transBox) return;
+
+      APP_STATE.isTransOpen = !APP_STATE.isTransOpen;
+      if (APP_STATE.isTransOpen) {
+        const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+        if (q) updateQuestionTranslationUI(q);
+        transBox.style.display = 'block';
+      } else {
+        transBox.style.display = 'none';
+      }
+    }
+
+    function closeQuestionTranslation() {
+      APP_STATE.isTransOpen = false;
+      const transBox = document.getElementById('q-translation-box');
+      if (transBox) transBox.style.display = 'none';
+    }
+
+    function updateQuestionTranslationUI(q) {
+      if (!q) return;
+      const transBox = document.getElementById('q-translation-box');
+      if (!transBox) return;
+
+      const lang = APP_STATE.selectedLanguage || 'vi';
+      const meta = (typeof EPSTOPIK_MULTILANG !== 'undefined' && EPSTOPIK_MULTILANG.countries)
+        ? EPSTOPIK_MULTILANG.countries.find(c => c.code === lang)
+        : null;
+
+      const flagEl = document.getElementById('q-trans-flag');
+      const titleEl = document.getElementById('q-trans-title');
+      if (flagEl) flagEl.textContent = meta ? meta.flag : '🌐';
+      if (titleEl) titleEl.textContent = `모국어 번역 (${meta ? meta.native : lang.toUpperCase()})`;
+
+      // Translate instruction
+      const instEl = document.getElementById('q-trans-instruction-text');
+      const instKo = formatQuestionInstruction(q);
+      let translatedInst = '';
+      if (typeof EPSTOPIK_MULTILANG !== 'undefined' && EPSTOPIK_MULTILANG.instructions) {
+        for (const [key, transMap] of Object.entries(EPSTOPIK_MULTILANG.instructions)) {
+          if (instKo.includes(key) && transMap[lang]) {
+            translatedInst = transMap[lang];
+            break;
+          }
+        }
+      }
+      if (!translatedInst) {
+        translatedInst = `[Hỏi & Đáp] ${instKo} (${meta ? meta.native : ''})`;
+      }
+      if (instEl) instEl.textContent = `📋 ${translatedInst}`;
+
+      // Translate body / passage
+      const bodyEl = document.getElementById('q-trans-body-text');
+      if (bodyEl) {
+        if (q.passage) {
+          bodyEl.textContent = `📖 지문: ${q.passage}`;
+          bodyEl.style.display = 'block';
+        } else {
+          bodyEl.style.display = 'none';
+        }
+      }
+
+      // Translate options
+      const optContainer = document.getElementById('q-trans-options-container');
+      if (optContainer) {
+        optContainer.innerHTML = (q.options || []).map((optText, idx) => {
+          let translatedOpt = '';
+          if (typeof EPSTOPIK_MULTILANG !== 'undefined' && EPSTOPIK_MULTILANG.vocabulary) {
+            for (const [vKey, vMap] of Object.entries(EPSTOPIK_MULTILANG.vocabulary)) {
+              if (optText.includes(vKey) && vMap[lang]) {
+                translatedOpt = ` ➔ ${vMap[lang]}`;
+                break;
+              }
+            }
+          }
+          return `
+            <div class="q-trans-opt-item">
+              <strong>${idx + 1}) ${escapeHtml(optText)}</strong>
+              ${translatedOpt ? `<span style="color:#60a5fa;margin-left:6px">${escapeHtml(translatedOpt)}</span>` : ''}
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Explanation
+      const expEl = document.getElementById('q-trans-exp-text');
+      if (expEl) {
+        if (q.explanation) {
+          expEl.textContent = `💡 정답 해설: ${q.explanation}`;
+          expEl.style.display = 'block';
+        } else {
+          expEl.style.display = 'none';
+        }
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       16. QUESTION BOOKMARKS & RETRY MISTAKES EXAM ENGINES
+    ───────────────────────────────────────────────────────────── */
+    function toggleCurrentQuestionBookmark() {
+      const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+      if (!q) return;
+
+      let bms = APP_STATE.questionBookmarks || [];
+      const isBookmarked = bms.includes(q.id);
+
+      if (isBookmarked) {
+        bms = bms.filter(id => id !== q.id);
+        showCbtToast(`문항 #${q.examNum} (ID: ${q.id}) 북마크가 해제되었습니다.`, '☆');
+      } else {
+        bms.push(q.id);
+        showCbtToast(`문항 #${q.examNum} (ID: ${q.id})이 북마크에 보관되었습니다!`, '⭐');
+      }
+
+      APP_STATE.questionBookmarks = bms;
+      localStorage.setItem('epstopik_question_bookmarks', JSON.stringify(bms));
+      updateQuestionBookmarkUI(q.id);
+    }
+
+    function updateQuestionBookmarkUI(qId) {
+      const btn = document.getElementById('btn-q-bookmark');
+      const icon = document.getElementById('q-bookmark-icon');
+      if (!btn) return;
+
+      const isBookmarked = (APP_STATE.questionBookmarks || []).includes(qId);
+      if (isBookmarked) {
+        btn.classList.add('active');
+        if (icon) icon.textContent = '⭐';
+      } else {
+        btn.classList.remove('active');
+        if (icon) icon.textContent = '☆';
+      }
+    }
+
+    function startWrongQuestionsExam() {
+      const wrongList = APP_STATE.wrongQuestions && APP_STATE.wrongQuestions.length > 0
+        ? APP_STATE.wrongQuestions
+        : (APP_STATE.fsrsReviewBank || []).map(item => {
+            const match = APP_STATE.allBank.find(b => b.id === item.id);
+            return match || item;
+          });
+
+      if (!wrongList || wrongList.length === 0) {
+        showCbtToast('현재 누적된 오답 문항이 없습니다. 모의고사를 먼저 응시해 보세요!', '⚠️');
+        return;
+      }
+
+      // Select up to 40 wrong questions
+      const pool = wrongList.slice(0, 40);
+      APP_STATE.currentExamQuestions = pool.map((q, idx) => ({
+        ...q,
+        examNum: idx + 1
+      }));
+
+      resetExamState();
+      switchMainTab('cbt');
+      showCbtToast(`🧠 오답 맞춤 모의고사 (${pool.length}문항)가 생성되었습니다!`, '🎯');
+    }
+
+    function startBookmarkedExam() {
+      const bmIds = APP_STATE.questionBookmarks || [];
+      if (bmIds.length === 0) {
+        showCbtToast('북마크한 문항이 없습니다. 문제 우측 상단의 [⭐ 북마크]를 눌러 저장하세요!', '⚠️');
+        return;
+      }
+
+      const pool = APP_STATE.allBank.filter(q => bmIds.includes(q.id)).slice(0, 40);
+      if (pool.length === 0) {
+        showCbtToast('북마크한 문항을 찾을 수 없습니다.', '⚠️');
+        return;
+      }
+
+      APP_STATE.currentExamQuestions = pool.map((q, idx) => ({
+        ...q,
+        examNum: idx + 1
+      }));
+
+      resetExamState();
+      switchMainTab('cbt');
+      showCbtToast(`⭐ 북마크 모음 맞춤 모의고사 (${pool.length}문항)가 생성되었습니다!`, '🌟');
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       17. MOBILE TOUCH SWIPE NAVIGATION GESTURE
+    ───────────────────────────────────────────────────────────── */
+    function initMobileTouchSwipe() {
+      const card = document.querySelector('.cbt-main-card');
+      if (!card) return;
+
+      let startX = 0;
+      let startY = 0;
+
+      card.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 1) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      card.addEventListener('touchend', (e) => {
+        if (e.changedTouches.length === 1) {
+          const deltaX = e.changedTouches[0].clientX - startX;
+          const deltaY = e.changedTouches[0].clientY - startY;
+
+          // Only trigger if horizontal swipe is prominent
+          if (Math.abs(deltaX) > 60 && Math.abs(deltaY) < 50) {
+            if (deltaX < 0) {
+              navigateQuestion(1); // Swipe left = next question
+            } else {
+              navigateQuestion(-1); // Swipe right = prev question
+            }
+          }
+        }
+      }, { passive: true });
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       18. INTERACTIVE HANGUL STROKE ORDER STUDIO
+    ───────────────────────────────────────────────────────────── */
+    const HANGUL_CHARS_INFO = {
+      'ㄱ': { name: '기역 (ㄱ)', pron: '[g / k]', strokes: 1, tip: '가로로 긋다가 부드럽게 꺾어 아래로 내립니다.' },
+      'ㄴ': { name: '니은 (ㄴ)', pron: '[n]', strokes: 1, tip: '위에서 아래로 내려오다 오른쪽으로 꺾습니다.' },
+      'ㄷ': { name: '디귿 (ㄷ)', pron: '[d / t]', strokes: 2, tip: '위 가로획을 긋고, 니은 모양을 이어 씁니다.' },
+      'ㄹ': { name: '리을 (ㄹ)', pron: '[r / l]', strokes: 3, tip: '기역, 가로선, 디귿 순서로 리듬감 있게 씁니다.' },
+      'ㅁ': { name: '미음 (ㅁ)', pron: '[m]', strokes: 3, tip: '세로선, 기역 모양, 닫는 가로선 순으로 네모를 완성합니다.' },
+      'ㅂ': { name: '비읍 (ㅂ)', pron: '[b / p]', strokes: 4, tip: '왼쪽 세로, 오른쪽 세로, 가운데 가로, 아래 가로 순서입니다.' },
+      'ㅅ': { name: '시옷 (ㅅ)', pron: '[s]', strokes: 2, tip: '왼쪽 빗금, 오른쪽 빗금으로 사람 인(人) 모양을 만듭니다.' },
+      'ㅇ': { name: '이응 (ㅇ)', pron: '[ng / 무음]', strokes: 1, tip: '위 12시 방향에서 시작하여 반시계 방향으로 둥글게 그립니다.' },
+      'ㅈ': { name: '지읒 (ㅈ)', pron: '[j]', strokes: 2, tip: '가로 획을 긋고, 시옷 모양을 잇습니다.' },
+      'ㅊ': { name: '치읓 (ㅊ)', pron: '[ch]', strokes: 3, tip: '위 꼭지 점/선, 가로 획, 시옷 순서입니다.' },
+      'ㅋ': { name: '키읔 (ㅋ)', pron: '[k (격음)]', strokes: 2, tip: '기역을 쓰고 가운데 가로획을 긋습니다.' },
+      'ㅌ': { name: '티읕 (ㅌ)', pron: '[t (격음)]', strokes: 3, tip: '위 가로, 가운데 가로, 니은 모양 순서입니다.' },
+      'ㅍ': { name: '피읖 (ㅍ)', pron: '[p (격음)]', strokes: 4, tip: '위 가로, 두 세로선, 아래 가로선 순서입니다.' },
+      'ㅎ': { name: '히읗 (ㅎ)', pron: '[h]', strokes: 3, tip: '위 꼭지 점, 짧은 가로선, 둥근 이응 순서입니다.' },
+      'ㅏ': { name: '아 (ㅏ)', pron: '[a]', strokes: 2, tip: '긴 세로선을 긋고 오른쪽으로 짧은 곁가지를 냅니다.' },
+      'ㅑ': { name: '야 (ㅑ)', pron: '[ya]', strokes: 3, tip: '세로선을 긋고 오른쪽에 두 곁가지를 냅니다.' },
+      'ㅓ': { name: '어 (ㅓ)', pron: '[eo]', strokes: 2, tip: '왼쪽 짧은 곁가지를 긋고 긴 세로선을 내립니다.' },
+      'ㅕ': { name: '여 (ㅕ)', pron: '[yeo]', strokes: 3, tip: '두 곁가지를 먼저 긋고 긴 세로선을 내립니다.' },
+      'ㅗ': { name: '오 (ㅗ)', pron: '[o]', strokes: 2, tip: '위 짧은 기둥을 세우고 아래 긴 가로선을 긋습니다.' },
+      'ㅛ': { name: '요 (ㅛ)', pron: '[yo]', strokes: 3, tip: '두 짧은 기둥을 세우고 아래 긴 가로선을 긋습니다.' },
+      'ㅜ': { name: '우 (ㅜ)', pron: '[u]', strokes: 2, tip: '긴 가로선을 긋고 가운데에서 아래로 내립니다.' },
+      'ㅠ': { name: '유 (ㅠ)', pron: '[yu]', strokes: 3, tip: '긴 가로선을 긋고 두 세로선을 아래로 내립니다.' },
+      'ㅡ': { name: '으 (ㅡ)', pron: '[eu]', strokes: 1, tip: '왼쪽에서 오른쪽으로 평평하게 한 획을 긋습니다.' },
+      'ㅣ': { name: '이 (ㅣ)', pron: '[i]', strokes: 1, tip: '위에서 아래로 곧게 똑바로 내립니다.' }
+    };
+
+    let hangulCanvas = null;
+    let hangulCtx = null;
+    let isDrawingHangul = false;
+
+    function initHangulPalette() {
+      const palette = document.getElementById('hangul-char-palette');
+      if (!palette) return;
+
+      palette.innerHTML = Object.keys(HANGUL_CHARS_INFO).map(ch => `
+        <button class="hangul-char-btn ${ch === 'ㄱ' ? 'active' : ''}" onclick="selectHangulChar('${ch}')">
+          ${ch}
+        </button>
+      `).join('');
+    }
+
+    function openHangulStrokeModal() {
+      const modal = document.getElementById('modal-hangul-stroke');
+      if (!modal) return;
+      modal.classList.add('open');
+      initHangulCanvas();
+      selectHangulChar(APP_STATE.activeHangulChar || 'ㄱ');
+    }
+
+    function closeHangulStrokeModal() {
+      const modal = document.getElementById('modal-hangul-stroke');
+      if (modal) modal.classList.remove('open');
+    }
+
+    function initHangulCanvas() {
+      hangulCanvas = document.getElementById('hangul-drawing-canvas');
+      if (!hangulCanvas) return;
+      hangulCtx = hangulCanvas.getContext('2d');
+
+      // Mouse events
+      hangulCanvas.onmousedown = (e) => {
+        isDrawingHangul = true;
+        const rect = hangulCanvas.getBoundingClientRect();
+        hangulCtx.beginPath();
+        hangulCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+      };
+
+      hangulCanvas.onmousemove = (e) => {
+        if (!isDrawingHangul) return;
+        const rect = hangulCanvas.getBoundingClientRect();
+        hangulCtx.lineWidth = 14;
+        hangulCtx.lineCap = 'round';
+        hangulCtx.lineJoin = 'round';
+        hangulCtx.strokeStyle = '#c084fc';
+        hangulCtx.shadowColor = 'rgba(192, 132, 252, 0.6)';
+        hangulCtx.shadowBlur = 8;
+        hangulCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+        hangulCtx.stroke();
+      };
+
+      hangulCanvas.onmouseup = () => { isDrawingHangul = false; };
+      hangulCanvas.onmouseleave = () => { isDrawingHangul = false; };
+
+      // Touch events (Mobile support)
+      hangulCanvas.ontouchstart = (e) => {
+        e.preventDefault();
+        isDrawingHangul = true;
+        const rect = hangulCanvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        hangulCtx.beginPath();
+        hangulCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      };
+
+      hangulCanvas.ontouchmove = (e) => {
+        e.preventDefault();
+        if (!isDrawingHangul) return;
+        const rect = hangulCanvas.getBoundingClientRect();
+        const touch = e.touches[0];
+        hangulCtx.lineWidth = 14;
+        hangulCtx.lineCap = 'round';
+        hangulCtx.lineJoin = 'round';
+        hangulCtx.strokeStyle = '#c084fc';
+        hangulCtx.shadowColor = 'rgba(192, 132, 252, 0.6)';
+        hangulCtx.shadowBlur = 8;
+        hangulCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        hangulCtx.stroke();
+      };
+
+      hangulCanvas.ontouchend = () => { isDrawingHangul = false; };
+    }
+
+    function selectHangulChar(ch) {
+      APP_STATE.activeHangulChar = ch;
+      document.querySelectorAll('.hangul-char-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.trim() === ch);
+      });
+
+      const info = HANGUL_CHARS_INFO[ch] || { name: ch, pron: '', strokes: 1, tip: '' };
+      document.getElementById('hangul-char-name').textContent = info.name;
+      document.getElementById('hangul-char-pron').textContent = info.pron;
+      document.getElementById('hangul-char-strokes').textContent = `${info.strokes}획`;
+      document.getElementById('hangul-char-tip').textContent = info.tip;
+
+      clearHangulCanvas();
+    }
+
+    function clearHangulCanvas() {
+      if (!hangulCanvas || !hangulCtx) return;
+      hangulCtx.clearRect(0, 0, hangulCanvas.width, hangulCanvas.height);
+
+      // Draw 4-quadrant guideline
+      hangulCtx.save();
+      hangulCtx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+      hangulCtx.lineWidth = 1;
+      hangulCtx.setLineDash([4, 4]);
+
+      // Cross lines
+      hangulCtx.beginPath();
+      hangulCtx.moveTo(hangulCanvas.width / 2, 0);
+      hangulCtx.lineTo(hangulCanvas.width / 2, hangulCanvas.height);
+      hangulCtx.moveTo(0, hangulCanvas.height / 2);
+      hangulCtx.lineTo(hangulCanvas.width, hangulCanvas.height / 2);
+      hangulCtx.stroke();
+      hangulCtx.restore();
+
+      // Draw faint guide character in the center
+      const ch = APP_STATE.activeHangulChar || 'ㄱ';
+      hangulCtx.save();
+      hangulCtx.font = 'bold 160px "Noto Sans KR", sans-serif';
+      hangulCtx.fillStyle = 'rgba(255, 255, 255, 0.07)';
+      hangulCtx.textAlign = 'center';
+      hangulCtx.textBaseline = 'middle';
+      hangulCtx.fillText(ch, hangulCanvas.width / 2, hangulCanvas.height / 2 + 10);
+      hangulCtx.restore();
+    }
+
+    function animateHangulStrokeGuide() {
+      clearHangulCanvas();
+      const ch = APP_STATE.activeHangulChar || 'ㄱ';
+      if (!hangulCtx) return;
+
+      let alpha = 0.1;
+      const animInterval = setInterval(() => {
+        alpha += 0.08;
+        if (alpha >= 0.8) {
+          clearInterval(animInterval);
+        }
+        hangulCtx.save();
+        hangulCtx.font = 'bold 160px "Noto Sans KR", sans-serif';
+        hangulCtx.strokeStyle = `rgba(6, 182, 212, ${alpha})`;
+        hangulCtx.lineWidth = 4;
+        hangulCtx.textAlign = 'center';
+        hangulCtx.textBaseline = 'middle';
+        hangulCtx.strokeText(ch, hangulCanvas.width / 2, hangulCanvas.height / 2 + 10);
+        hangulCtx.restore();
+      }, 50);
+    }
+
+    function speakCurrentHangulChar() {
+      const ch = APP_STATE.activeHangulChar || 'ㄱ';
+      speakKoreanText(ch);
     }
   </script>
+  <script src="topik_roadmap_ui.js"></script>
 </body>
 </html>
