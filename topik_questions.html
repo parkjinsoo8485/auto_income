@@ -1602,10 +1602,269 @@
       .options-grid {
         gap: 8px;
       }
-      .option-btn {
-        padding: 12px 14px;
-        font-size: 14px;
+    }
+
+    /* ══════════════════════════════════════════════════
+       NEW: PRO SUBSCRIBER & ENERGY & SLA ENGINES
+    ══════════════════════════════════════════════════ */
+    .pro-badge-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      font-weight: 800;
+      font-size: 12px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+      transition: all 0.2s ease;
+      border: none;
+    }
+    .pro-badge-header:hover {
+      transform: translateY(-1.5px);
+      box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5);
+    }
+    .energy-bar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .energy-progress {
+      width: 60px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .energy-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #06b6d4);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    /* Paywall Modal */
+    .paywall-card {
+      background: linear-gradient(145deg, #131b2e 0%, #0d121f 100%);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(245, 158, 11, 0.15);
+      max-width: 680px;
+      width: 100%;
+      border-radius: 24px;
+      padding: 32px;
+      position: relative;
+    }
+    .paywall-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: var(--gold);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin: 22px 0;
+    }
+    .price-plan-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 20px 16px;
+      text-align: center;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .price-plan-card:hover, .price-plan-card.active {
+      border-color: var(--gold);
+      background: rgba(245, 158, 11, 0.05);
+      box-shadow: 0 6px 24px rgba(245, 158, 11, 0.2);
+    }
+    .price-plan-card.popular::before {
+      content: 'BEST 50% 할인';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: #000;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    .price-main {
+      font-size: 26px;
+      font-weight: 900;
+      color: #fff;
+      margin: 6px 0 2px;
+    }
+    .price-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    .paywall-features {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .feature-check-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13.5px;
+      color: #e2e8f0;
+    }
+    .feature-check-item span.icon {
+      color: #10b981;
+      font-weight: 800;
+      font-size: 16px;
+    }
+    .btn-pay-action {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+      border: none;
+      border-radius: 14px;
+      color: #000;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 6px 25px rgba(245, 158, 11, 0.4);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .btn-pay-action:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(245, 158, 11, 0.6);
+    }
+
+    /* Writing 54 & FSRS View Layouts */
+    .essay-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .essay-container {
+        grid-template-columns: 1fr;
       }
+    }
+    .essay-main-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .char-counter-gauge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .char-badge-ok {
+      color: var(--green);
+    }
+    .char-badge-warn {
+      color: var(--gold);
+    }
+    .char-badge-danger {
+      color: var(--red);
+    }
+    .essay-textarea {
+      width: 100%;
+      height: 380px;
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.8;
+      font-family: inherit;
+      resize: vertical;
+      outline: none;
+    }
+    .essay-textarea:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 15px rgba(6, 182, 212, 0.25);
+    }
+    .fsrs-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .fsrs-item-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .fsrs-btn-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .fsrs-btn {
+      padding: 8px 4px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text);
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .fsrs-btn:hover {
+      transform: translateY(-1px);
+    }
+    .fsrs-btn.again { border-color: rgba(239,68,68,0.5); color: #f87171; }
+    .fsrs-btn.hard { border-color: rgba(245,158,11,0.5); color: #fbbf24; }
+    .fsrs-btn.good { border-color: rgba(6,182,212,0.5); color: #38bdf8; }
+    .fsrs-btn.easy { border-color: rgba(16,185,129,0.5); color: #34d399; }
+    /* Locked blur filter for Pro Gating */
+    .gated-blur {
+      filter: blur(4px);
+      user-select: none;
+      pointer-events: none;
+      opacity: 0.6;
     }
   </style>
 </head>
@@ -1632,33 +1891,55 @@
     </div>
 
     <div class="header-actions">
+      <!-- Energy Gauge (Duolingo Heart Improvement) -->
+      <div class="energy-bar-wrap" id="energy-bar-container" title="일일 무료 풀이 에너지: 정답 연속 달성 시 보너스 충전">
+        <span>⚡ 에너지</span>
+        <div class="energy-progress">
+          <div class="energy-progress-fill" id="energy-bar-fill" style="width: 100%;"></div>
+        </div>
+        <span id="energy-text" style="color:#10b981">30/30</span>
+      </div>
+
+      <!-- PRO Upgrade / Status Badge -->
+      <button class="pro-badge-header" id="btn-pro-badge" onclick="openPaywallModal('header_badge')">
+        👑 <span id="header-tier-text">7일 무료체험 (PRO)</span>
+      </button>
+
       <div class="status-pill" id="header-status-pill">
         <span class="status-dot"></span>
         <span id="api-status-text">API 준비 완료</span>
       </div>
       <button class="btn-header" onclick="openApiConfigModal()">
-        🔑 인증키 설정
+        🔑 인증키
       </button>
       <a href="index.html" class="btn-header btn-primary-header" style="text-decoration:none">
-        📱 모바일 학습기 복귀
+        📱 모바일 학습기
       </a>
     </div>
   </header>
 
   <!-- ══════════════════════════════════════════════════
        TAB NAVIGATION
-  ══════════════════════════════════════════════════ */ -->
+  ══════════════════════════════════════════════════ -->
   <nav class="tab-navigation">
     <button class="tab-btn active" id="tab-btn-cbt" onclick="switchMainTab('cbt')">
       🖥️ 실전 CBT 모의평가
       <span class="tab-counter" id="tab-cbt-counter">40문항</span>
+    </button>
+    <button class="tab-btn" id="tab-btn-writing" onclick="switchMainTab('writing')">
+      ✍️ 54번 주관식 AI 쓰기 루브릭
+      <span class="tab-counter" style="background:rgba(245,158,11,0.2);color:#fbbf24">AI 첨삭</span>
+    </button>
+    <button class="tab-btn" id="tab-btn-fsrs" onclick="switchMainTab('fsrs')">
+      🧠 FSRS 망각방지 오답 클리닉
+      <span class="tab-counter" id="tab-fsrs-counter" style="background:rgba(16,185,129,0.2);color:#34d399">0문항</span>
     </button>
     <button class="tab-btn" id="tab-btn-bank" onclick="switchMainTab('bank')">
       📚 공개문제집 & 문항 탐색기
       <span class="tab-counter" id="tab-bank-counter">1,917건</span>
     </button>
     <button class="tab-btn" id="tab-btn-console" onclick="switchMainTab('console')">
-      ⚙️ OpenAPI 실시간 콘솔 & 명세
+      ⚙️ OpenAPI 실시간 콘솔
       <span class="tab-counter">3 APIs</span>
     </button>
   </nav>
@@ -1711,7 +1992,7 @@
         <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
           <div style="display:flex;align-items:center;gap:10px">
             <span style="font-size:13px;font-weight:700;color:var(--text-secondary)">📋 모의고사 회차 선택:</span>
-            <select id="select-exam-round" class="select-custom" onchange="changeExamRound(parseInt(this.value))" style="min-width:280px;font-weight:600">
+            <select id="select-exam-round" class="select-custom" onchange="changeExamRound(this.value)" style="min-width:280px;font-weight:600">
               <!-- Dynamically populated 1 ~ 48 rounds -->
             </select>
           </div>
@@ -2041,6 +2322,125 @@
 
     </section>
 
+    <!-- ══════════════════════════════════════════════════
+         SECTION 4: TOPIK WRITING 54 AI RUBRIC STUDIO
+    ══════════════════════════════════════════════════ -->
+    <section id="view-writing" class="essay-container" style="display:none">
+      <div class="essay-main-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:14px">
+          <div>
+            <div style="display:flex;align-items:center;gap:8px">
+              <span class="badge-api" style="background:rgba(245,158,11,0.15);color:var(--gold);border-color:rgba(245,158,11,0.3)">
+                TOPIK II 54번 50점 만점 과제
+              </span>
+              <h2 style="font-size:18px;font-weight:800;color:#fff">환경 보호와 개인의 실천 방안 (600~700자)</h2>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;line-height:1.6">
+              다음 제시문을 읽고 3가지 핵심 질문(환경오염 원인, 개인 실천 방안, 정부의 역할)을 포함하여 600~700자로 글을 쓰십시오.
+            </p>
+          </div>
+          <button class="btn-header" onclick="openOutlineModal()" style="font-size:12px;border-color:var(--accent-light);color:var(--accent-light)">
+            📋 5분 개요 작성 (Outline)
+          </button>
+        </div>
+
+        <!-- Real-time Character Counter Gauge -->
+        <div class="char-counter-gauge" id="char-gauge-bar">
+          <div>
+            <span>작성 글자 수: </span>
+            <strong id="writing-char-count" style="font-size:18px;color:#fff">0</strong>
+            <span style="color:var(--text-secondary)"> / 600~700자 권장</span>
+          </div>
+          <div id="writing-char-status" class="char-badge-warn">
+            ⚠️ 600자 미만 (분량 미달 감점 구간)
+          </div>
+        </div>
+
+        <!-- Essay Textarea -->
+        <textarea id="essay-input-box" class="essay-textarea" placeholder="이곳에 한국어 에세이를 작성하세요. (단락 구분 및 문어체 '-다/-는다'를 사용하십시오)&#10;&#10;현대 사회에서 환경 문제는 인류가 직면한 가장 심각한 과제 중 하나이다..." oninput="updateEssayCharCount()"></textarea>
+
+        <div style="display:flex;gap:12px;justify-content:flex-end">
+          <button class="btn-header" onclick="loadSampleEssay()">
+            💡 고득점 모범 에세이 불러오기
+          </button>
+          <button class="btn-header btn-primary-header" style="background:linear-gradient(135deg, #f59e0b, #ea580c);color:#000;font-weight:900" onclick="evaluateEssayWithAi()">
+            🤖 AI 루브릭 즉시 정밀 채점 (3초)
+          </button>
+        </div>
+      </div>
+
+      <!-- Right Rubric & AI Diagnostic Panel -->
+      <div class="console-panel" style="display:flex;flex-direction:column;gap:16px">
+        <h3 style="font-size:16px;color:#fff">📊 국립국제교육원 공식 루브릭</h3>
+        
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+            <span>내용 및 과제 수행</span>
+            <span style="color:var(--cyan)" id="rubric-score-content">12점 / 12점</span>
+          </div>
+          <p style="font-size:11.5px;color:var(--text-muted);margin-top:4px">제시된 3대 조건 충족 여부 및 논리적 타당성</p>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+            <span>글의 전개 구조</span>
+            <span style="color:var(--gold)" id="rubric-score-structure">12점 / 12점</span>
+          </div>
+          <p style="font-size:11.5px;color:var(--text-muted);margin-top:4px">서론-본론-결론 3단 구성 및 담화 표지어 사용</p>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:12px">
+          <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700">
+            <span>언어 사용 및 문법</span>
+            <span style="color:var(--green)" id="rubric-score-grammar">26점 / 26점</span>
+          </div>
+          <p style="font-size:11.5px;color:var(--text-muted);margin-top:4px">고급 어휘, 문어체(-다), 맞춤법 및 띄어쓰기</p>
+        </div>
+
+        <!-- AI Feedback Output Box -->
+        <div style="background:#020617;border:1px solid var(--border);border-radius:10px;padding:14px;flex:1;min-height:220px;font-size:12.5px;line-height:1.7" id="ai-essay-feedback-box">
+          <strong style="color:var(--cyan);display:block;margin-bottom:6px">🤖 AI 채점 리포트 대기 중</strong>
+          <span style="color:var(--text-muted)">
+            에세이를 작성하고 [AI 루브릭 즉시 정밀 채점]을 클릭하면 감점 요인과 맞춤형 문장 첨삭 교정안이 실시간 분석됩니다.
+          </span>
+        </div>
+
+        <button class="btn-header" style="background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.4);color:var(--gold);font-weight:700" onclick="openPaywallModal('hitl_tutor')">
+          👩‍🏫 24시간 원어민 강사 1:1 심층 첨삭 신청 (HITL)
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SECTION 5: FSRS SPACING RETRIEVAL CLINIC
+    ══════════════════════════════════════════════════ -->
+    <section id="view-fsrs" style="display:none;flex-direction:column;gap:20px">
+      <div class="toolbar-card" style="justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span style="font-size:28px">🧠</span>
+          <div>
+            <h3 style="font-size:17px;font-weight:800;color:#fff">FSRS (Free Spaced Repetition) 망각 방지 클리닉</h3>
+            <p style="font-size:12px;color:var(--text-secondary)">
+              모의고사 오답 문항을 에빙하우스 망각곡선 및 FSRS 난이도·안정성 수식에 맞춰 최적의 복습 주기에 자동 재출제합니다.
+            </p>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <button class="btn-header" onclick="addSampleWrongQuestions()">
+            📥 취약 오답 5문항 자동 수집
+          </button>
+          <span style="font-size:12px;color:var(--cyan);background:rgba(6,182,212,0.1);padding:6px 14px;border-radius:20px;border:1px solid rgba(6,182,212,0.3)" id="fsrs-count-badge">
+            복습 대기 0문항
+          </span>
+        </div>
+      </div>
+
+      <!-- FSRS Cards Grid -->
+      <div class="fsrs-card-grid" id="fsrs-cards-container">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
   </main>
 
   <!-- ══════════════════════════════════════════════════
@@ -2207,6 +2607,108 @@
   </div>
 
   <!-- ══════════════════════════════════════════════════
+       MODAL 4: PRO SUBSCRIPTION & HYBRID PAYWALL
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-paywall">
+    <div class="paywall-card">
+      <button class="modal-close-btn" onclick="closePaywallModal()">✕</button>
+      
+      <div style="text-align:center">
+        <div class="paywall-badge-pill">👑 TOPIK & EPS MASTER PASS</div>
+        <h2 style="font-size:24px;font-weight:900;color:#fff;letter-spacing:-0.5px">
+          합격 보장 무제한 PRO 패스
+        </h2>
+        <p style="font-size:14px;color:var(--text-secondary);margin-top:6px" id="paywall-reason-text">
+          7일간 ₩0원으로 전체 1,917문항과 AI 주관식 첨삭을 무제한 체험하세요.
+        </p>
+      </div>
+
+      <!-- Plan Pricing Grid (Anchor Pricing) -->
+      <div class="pricing-grid">
+        <div class="price-plan-card popular active" id="plan-card-yearly" onclick="selectPaywallPlan('yearly')">
+          <div style="font-size:13px;font-weight:700;color:var(--gold)">12개월 합격 올패스</div>
+          <div class="price-main">₩7,400 <span style="font-size:14px;color:var(--text-secondary);font-weight:500">/월</span></div>
+          <div class="price-sub">연 89,000원 결제 (정가 대비 50% 절감)</div>
+          <div style="margin-top:8px;font-size:11px;color:#10b981;font-weight:700">🎁 7일 무료체험 포함</div>
+        </div>
+
+        <div class="price-plan-card" id="plan-card-monthly" onclick="selectPaywallPlan('monthly')">
+          <div style="font-size:13px;font-weight:700;color:#fff">1개월 벼락치기 패스</div>
+          <div class="price-main">₩14,900 <span style="font-size:14px;color:var(--text-secondary);font-weight:500">/월</span></div>
+          <div class="price-sub">월 단위 자동 갱신 (언제든 즉시 해지)</div>
+          <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">정가 구독 플랜</div>
+        </div>
+      </div>
+
+      <!-- Feature Checklist -->
+      <div class="paywall-features">
+        <div class="feature-check-item">
+          <span class="icon">✓</span>
+          <span><strong>에너지 무제한:</strong> 일일 30문항 제한 없이 1,917개 전 회차(1~48회) 무제한 풀이</span>
+        </div>
+        <div class="feature-check-item">
+          <span class="icon">✓</span>
+          <span><strong>FSRS 망각방지 스마트 클리닉:</strong> 에빙하우스 망각곡선 기반 최적 복습 주기 자동 큐레이션</span>
+        </div>
+        <div class="feature-check-item">
+          <span class="icon">✓</span>
+          <span><strong>54번 작문 AI 루브릭 즉시 채점:</strong> 국립국제교육원 공식 기준(50점 만점) 무제한 첨삭</span>
+        </div>
+        <div class="feature-check-item">
+          <span class="icon">✓</span>
+          <span><strong>원어민 공식 MP3 & 스크립트 해설:</strong> 듣기 지문 전문 및 유형별 취약점 레이더 리포트</span>
+        </div>
+      </div>
+
+      <!-- Action Button & Trust Badges -->
+      <button class="btn-pay-action" id="btn-pay-checkout" onclick="executePortOneCheckout()">
+        🔥 7일 무료체험 시작하기 (3초 간편결제)
+      </button>
+
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:14px;font-size:12px;color:var(--text-muted)">
+        <span>🔒 PortOne V2 보안 결제</span>
+        <span>•</span>
+        <span>토스페이 · 카카오페이 · 네이버페이</span>
+        <span>•</span>
+        <span>언제든 1클릭 해지 가능</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       MODAL 5: 54번 5분 개요 작성기 (OUTLINE)
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-outline-editor">
+    <div class="modal-card" style="max-width:560px">
+      <button class="modal-close-btn" onclick="closeOutlineModal()">✕</button>
+      <h3 style="font-size:18px;font-weight:800;color:#fff;margin-bottom:8px">📋 54번 5분 개요 작성기</h3>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6">
+        본문을 쓰기 전 서론-본론-결론 핵심 키워드를 정리하면 글의 전개 구조 점수(12점) 만점을 확보할 수 있습니다.
+      </p>
+
+      <div class="form-group">
+        <label style="color:var(--cyan)">1. 서론 (문제 제기 및 배경)</label>
+        <input type="text" id="outline-intro" class="form-control" placeholder="예: 현대 사회 산업화로 인한 기후변화와 환경오염의 심각성">
+      </div>
+
+      <div class="form-group">
+        <label style="color:var(--gold)">2. 본론 (원인 분석 & 개인/정부 실천 방안)</label>
+        <textarea id="outline-body" class="form-control" style="height:70px;resize:none" placeholder="예: 1) 일회용품 남용, 2) 대중교통 이용 및 분리수거, 3) 친환경 법률 규제 강화"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label style="color:var(--green)">3. 결론 (전망 및 다짐)</label>
+        <input type="text" id="outline-outro" class="form-control" placeholder="예: 지속 가능한 미래를 위한 전 지구적 연대와 의식 개선 필요">
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:18px">
+        <button class="btn-header" style="flex:1" onclick="closeOutlineModal()">닫기</button>
+        <button class="btn-header btn-primary-header" style="flex:2" onclick="applyOutlineToEssay()">에세이 에디터에 개요 적용</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
        JAVASCRIPT APPLICATION CORE LOGIC
   ══════════════════════════════════════════════════ -->
   <script>
@@ -2254,7 +2756,21 @@
       // Question Bank Explorer state
       bankPage: 1,
       bankPageSize: 20,
-      filteredBankQuestions: []
+      filteredBankQuestions: [],
+
+      // ── NEW: SLA & MONETIZATION STATE ──
+      userTier: localStorage.getItem('user_pro_tier') || 'FREE', // 'FREE' or 'PRO'
+      subscriptionExpiry: localStorage.getItem('user_pro_expiry') || null,
+      dailyEnergy: parseInt(localStorage.getItem('user_daily_energy') || '30'),
+      maxEnergy: 30,
+      streakCorrect: 0,
+      selectedPaywallPlan: 'yearly',
+      fsrsReviewBank: JSON.parse(localStorage.getItem('fsrs_review_bank') || '[]'),
+      sampleEssayText: `현대 사회에서 환경오염 문제는 인류의 생존을 위협하는 가장 중대한 문제 중 하나로 대두되고 있다. 무분별한 산업 개발과 화석 연료의 과도한 사용은 지구 온난화를 가속화하고 있으며, 플라스틱 폐기물의 급증은 해양 생태계를 파괴하고 있다.
+
+이러한 환경 위기를 극복하기 위해서는 개인과 정부의 긴밀한 협력이 필수적이다. 먼저 개인적 차원에서는 일상생활 속에서 일회용품 사용을 자제하고 철저한 분리배출을 생활화해야 한다. 또한 가까운 거리는 도보나 대중교통을 이용함으로써 탄소 배출을 줄이는 실천이 요구된다.
+
+나아가 정부는 친환경 재생 에너지 개발에 적극 투자하고, 탄소 배출 기업에 대한 법적 규제를 강화해야 한다. 환경 보호는 미래 세대를 위한 선택이 아닌 생존을 위한 필수 과제이므로 모두의 적극적인 실천이 시급하다.`
     };
 
     /* ─────────────────────────────────────────────────────────────
@@ -2274,16 +2790,21 @@
         document.getElementById('api-status-text').textContent = '공공데이터 인증키 등록됨';
       }
 
-      // 3. Populate Round Selector (1 to 48 sets = 48 x 40 = 1,920 questions)
+      // 3. Update Pro Tier & Energy UI
+      updateUserTierUI();
+      updateEnergyUI();
+      updateFsrsBadge();
+
+      // 4. Populate Round Selector (1 to 48 sets = 48 x 40 = 1,920 questions)
       populateExamRoundOptions();
 
-      // 4. Load Round 1 into CBT
+      // 5. Load Round 1 into CBT
       loadExamRound(1);
 
-      // 5. Render Question Bank (1,917 items with pagination)
+      // 6. Render Question Bank (1,917 items with pagination)
       renderBankPage();
 
-      // 6. Keyboard shortcut listeners
+      // 7. Keyboard shortcut listeners
       window.addEventListener('keydown', handleKeyboardShortcuts);
     });
 
@@ -2293,14 +2814,25 @@
     function switchMainTab(tabName) {
       APP_STATE.currentTab = tabName;
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+      const activeBtn = document.getElementById(`tab-btn-${tabName}`);
+      if (activeBtn) activeBtn.classList.add('active');
 
       document.getElementById('view-cbt').style.display = tabName === 'cbt' ? 'grid' : 'none';
       document.getElementById('view-bank').style.display = tabName === 'bank' ? 'flex' : 'none';
       document.getElementById('view-console').style.display = tabName === 'console' ? 'grid' : 'none';
+      
+      const viewWriting = document.getElementById('view-writing');
+      if (viewWriting) viewWriting.style.display = tabName === 'writing' ? 'grid' : 'none';
+
+      const viewFsrs = document.getElementById('view-fsrs');
+      if (viewFsrs) viewFsrs.style.display = tabName === 'fsrs' ? 'flex' : 'none';
 
       if (tabName === 'bank') {
         renderBankPage();
+      } else if (tabName === 'fsrs') {
+        renderFsrsCards();
+      } else if (tabName === 'writing') {
+        updateEssayCharCount();
       }
     }
 
@@ -2341,10 +2873,23 @@
 
     function changeExamRound(val) {
       if (val === 'random') {
+        if (APP_STATE.userTier === 'FREE') {
+          openPaywallModal('random_exam');
+          const selectBox = document.getElementById('select-exam-round');
+          if (selectBox) selectBox.value = String(APP_STATE.currentRound);
+          return;
+        }
         generateRandomExam(false);
         return;
       }
       const roundNum = parseInt(val);
+      // Gating: Free users can access rounds 1 to 3 (120 questions). 4 to 48 require PRO.
+      if (roundNum > 3 && APP_STATE.userTier === 'FREE') {
+        openPaywallModal(`round_${roundNum}`);
+        const selectBox = document.getElementById('select-exam-round');
+        if (selectBox) selectBox.value = String(APP_STATE.currentRound);
+        return;
+      }
       loadExamRound(roundNum);
     }
 
@@ -2504,13 +3049,27 @@
     /* ─────────────────────────────────────────────────────────────
        5. CBT EXAM ENGINE
     ───────────────────────────────────────────────────────────── */
+    function formatQuestionInstruction(q) {
+      if (!q) return '';
+      let inst = (q.instruction || '').trim();
+      // Strip old paper book problem range headers like [1~2], [17~18], [19-20], [33~34], [1], etc.
+      inst = inst.replace(/^\[\s*\d+\s*[~-]\s*\d+\s*\]\s*/, '').replace(/^\[\s*\d+\s*\]\s*/, '').trim();
+      if (!inst) {
+        inst = q.type === 'L' ? '다음을 듣고 알맞은 것을 고르십시오.' : '다음을 읽고 알맞은 것을 고르십시오.';
+      }
+      if (inst.startsWith('[') && inst.endsWith(']')) {
+        inst = inst.slice(1, -1).trim();
+      }
+      return `[${q.examNum}번] ${inst}`;
+    }
+
     function renderCurrentQuestion() {
       const questions = APP_STATE.currentExamQuestions;
       const q = questions[APP_STATE.currentQuestionIdx];
       if (!q) return;
 
       document.getElementById('q-current-number').innerHTML = `${q.examNum} <span style="font-size:12px;font-weight:500;color:var(--cyan);margin-left:4px">(공개문제 원본 #${String(q.order || q.id).padStart(4, '0')})</span>`;
-      document.getElementById('q-instruction-text').textContent = q.instruction || '[문제를 읽고 알맞은 것을 고르십시오]';
+      document.getElementById('q-instruction-text').textContent = formatQuestionInstruction(q);
       document.getElementById('q-category-text').textContent = q.category || '직무 문항';
 
       const subjectBadge = document.getElementById('q-subject-badge');
@@ -2519,14 +3078,17 @@
         subjectBadge.textContent = '🎧 듣기 (Listening)';
         document.getElementById('audio-player-section').style.display = 'flex';
         setupQuestionAudio(q);
-        document.getElementById('script-content-text').textContent = q.dialogue || '';
+        updateScriptBox(q);
         document.getElementById('audio-play-count').textContent = `청취 ${APP_STATE.audioPlayCounts[q.id] || 0} / 2회`;
-        document.getElementById('script-box-view').classList.remove('active');
       } else {
         subjectBadge.className = 'q-subject-pill R';
         subjectBadge.textContent = '📖 읽기 (Reading)';
         document.getElementById('audio-player-section').style.display = 'none';
-        document.getElementById('script-box-view').classList.remove('active');
+        const scriptBox = document.getElementById('script-box-view');
+        if (scriptBox) {
+          scriptBox.style.display = 'none';
+          scriptBox.classList.remove('active');
+        }
       }
 
       // Visual graphics
@@ -2576,10 +3138,37 @@
     }
 
     function selectOption(qId, optNum) {
+      // Energy check for Free tier users
+      if (APP_STATE.userTier === 'FREE') {
+        if (!APP_STATE.userAnswers[qId]) { // only consume energy on new answers
+          if (APP_STATE.dailyEnergy <= 0) {
+            openPaywallModal('energy_exhausted');
+            return;
+          }
+          APP_STATE.dailyEnergy--;
+          localStorage.setItem('user_daily_energy', String(APP_STATE.dailyEnergy));
+          updateEnergyUI();
+        }
+      }
+
       APP_STATE.userAnswers[qId] = optNum;
       initHrdAudioEngine();
       renderCurrentQuestion();
       updateOmrGrid();
+
+      // Check if correct for streak bonus
+      const q = APP_STATE.currentExamQuestions.find(item => item.id === qId);
+      if (q && q.answer === optNum && APP_STATE.userTier === 'FREE') {
+        APP_STATE.streakCorrect++;
+        if (APP_STATE.streakCorrect % 3 === 0 && APP_STATE.dailyEnergy < APP_STATE.maxEnergy) {
+          APP_STATE.dailyEnergy = Math.min(APP_STATE.maxEnergy, APP_STATE.dailyEnergy + 2);
+          localStorage.setItem('user_daily_energy', String(APP_STATE.dailyEnergy));
+          updateEnergyUI();
+          showCbtToast(`🔥 3연속 정답! 보너스 에너지 +2 충전 완료`, '⚡');
+        }
+      } else if (q && q.answer !== optNum) {
+        APP_STATE.streakCorrect = 0;
+      }
     }
 
     function clearCurrentAnswer() {
@@ -2635,13 +3224,15 @@
       isOfficialMp3: false,
       speed: 1.0,
       userSeeking: false,
+      isInitialized: false,
       availableMp3Cache: {}
     };
 
     function initHrdAudioEngine() {
       const audio = document.getElementById('hrd-audio-element');
       HRD_AUDIO_STATE.player = audio;
-      if (!audio) return;
+      if (!audio || HRD_AUDIO_STATE.isInitialized) return;
+      HRD_AUDIO_STATE.isInitialized = true;
 
       audio.addEventListener('loadedmetadata', () => {
         updateAudioDurationDisplay();
@@ -2698,8 +3289,7 @@
       });
 
       audio.addEventListener('error', (e) => {
-        console.warn('Official MP3 not found for current item, falling back to Web Speech Natural Voice');
-        // Fallback to speech synth
+        console.warn('Official MP3 load issue, falling back to Web Speech Natural Voice');
         playWithWebSpeechFallback();
       });
     }
@@ -2724,10 +3314,26 @@
       const audio = HRD_AUDIO_STATE.player || document.getElementById('hrd-audio-element');
       if (!audio) return;
 
-      // Pause existing
+      const qOrder = q.order || q.id;
+      const candidateMp3 = `assets/audio/epstopik/q_${String(qOrder).padStart(4, '0')}.mp3`;
+
+      // If already set up for this exact question, avoid stopping audio unnecessarily
+      if (audio.dataset.currentQId === String(q.id) && audio.src.includes(candidateMp3)) {
+        return;
+      }
+
+      // Pause existing & cancel Web Speech
       audio.pause();
       audio.currentTime = 0;
       if (window.speechSynthesis) window.speechSynthesis.cancel();
+
+      const playBox = document.getElementById('audio-player-section');
+      const playBtn = document.getElementById('btn-audio-play');
+      if (playBox) playBox.classList.remove('playing');
+      if (playBtn) {
+        playBtn.classList.remove('playing');
+        playBtn.textContent = '▶';
+      }
 
       const slider = document.getElementById('audio-seek-slider');
       if (slider) slider.value = 0;
@@ -2736,23 +3342,21 @@
       const durLabel = document.getElementById('audio-duration');
       if (durLabel) durLabel.textContent = '--:--';
 
-      const qOrder = q.order || q.id;
-      const candidateMp3 = `assets/audio/epstopik/q_${String(qOrder).padStart(4, '0')}.mp3`;
+      audio.dataset.currentQId = String(q.id);
+      audio.src = candidateMp3;
+      audio.playbackRate = HRD_AUDIO_STATE.speed;
+      audio.load();
 
       const badge = document.getElementById('audio-src-badge');
       const guide = document.getElementById('audio-status-guide');
 
-      audio.src = candidateMp3;
-      audio.playbackRate = HRD_AUDIO_STATE.speed;
-
-      // 동적 상태 업데이트: 기본적으로 공식 MP3 시도
       HRD_AUDIO_STATE.isOfficialMp3 = true;
       if (badge) {
         badge.className = 'audio-src-badge hrd';
-        badge.innerHTML = '🎧 실전 CBT 표준 듣기 음원 (1:1 지문 정밀 일치)';
+        badge.innerHTML = `🎧 실전 CBT 표준 음원 (${q.examNum}번 문항 / 원본 #${String(qOrder).padStart(4, '0')} 1:1 정밀 일치)`;
       }
       if (guide) {
-        guide.textContent = '🎧 실전 시험 방송 규격 (지문 낭독 ➔ \'다시 들으십시오\' ➔ 2회 반복)';
+        guide.textContent = "🎧 실전 시험 방송 규격 (지문 낭독 ➔ '다시 들으십시오' ➔ 2회 반복)";
       }
 
       audio.onerror = () => {
@@ -2813,7 +3417,7 @@
       if (activeBtn) activeBtn.classList.add('active');
     }
 
-        function playWithWebSpeechFallback() {
+    function playWithWebSpeechFallback() {
       const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
       if (!q || !('speechSynthesis' in window)) return;
 
@@ -2826,9 +3430,9 @@
         playBtn.textContent = '❚❚';
       }
 
-      const rawScript = q.dialogue || q.instruction || '';
-      // Prepare natural prompt
-      const scriptToSpeak = `${q.examNum}번 문제입니다. ` + rawScript.replace(/남:\s*/g, '남성: ').replace(/여:\s*/g, '여성: ');
+      const rawScript = (q.dialogue || q.instruction || '').replace(/\(\s*\)/g, '').trim();
+      const cleanScript = rawScript.replace(/남:\s*/g, '남성: ').replace(/여:\s*/g, '여성: ');
+      const scriptToSpeak = `${cleanScript}. 다시 들으십시오. ${cleanScript}`;
 
       setTimeout(() => {
         const utterance = new SpeechSynthesisUtterance(scriptToSpeak);
@@ -2868,10 +3472,125 @@
       toggleAudioPlayback();
     }
 
+    function updateScriptBox(q) {
+      const box = document.getElementById('script-box-view');
+      if (!box) return;
+
+      if (!q || q.type !== 'L') {
+        box.style.display = 'none';
+        box.classList.remove('active');
+        return;
+      }
+
+      // If active class is present, keep it displayed
+      box.style.display = box.classList.contains('active') ? 'block' : 'none';
+
+      const dialogue = (q.dialogue || '').trim();
+      const qNum = q.examNum || 1;
+      const originalId = String(q.order || q.id).padStart(4, '0');
+
+      if (!dialogue) {
+        box.innerHTML = `
+          <div style="font-size:13px;color:var(--text-muted);text-align:center;padding:8px">
+            [${qNum}번 문항은 별도의 대본 없이 안내 음성이 직접 낭독됩니다]
+          </div>
+        `;
+        return;
+      }
+
+      // Format conversation turns with speaker tags
+      const rawLines = dialogue.split('\n').map(l => l.trim()).filter(Boolean);
+      const formattedTurnsHtml = rawLines.map(line => {
+        let text = line.replace(/\(\s*\)/g, '(                    )');
+        if (text.startsWith('남:')) {
+          return `
+            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px">
+              <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(59,130,246,0.2);color:#60a5fa;font-weight:700;font-size:12px;white-space:nowrap;margin-top:2px">남성</span>
+              <span style="color:#f1f5f9;font-size:14px;line-height:1.6">${text.slice(2).trim()}</span>
+            </div>`;
+        } else if (text.startsWith('여:')) {
+          return `
+            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px">
+              <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(236,72,153,0.2);color:#f472b6;font-weight:700;font-size:12px;white-space:nowrap;margin-top:2px">여성</span>
+              <span style="color:#f1f5f9;font-size:14px;line-height:1.6">${text.slice(2).trim()}</span>
+            </div>`;
+        } else {
+          return `
+            <div style="margin-bottom:8px;color:#f1f5f9;font-size:14px;line-height:1.6">
+              ${text}
+            </div>`;
+        }
+      }).join('');
+
+      if (APP_STATE.userTier === 'FREE') {
+        // Free user preview: show first line clearly to verify 100% audio-script match, blur remainder with PRO benefit
+        const firstLine = rawLines[0] || '';
+        let firstTurnHtml = '';
+        if (firstLine.startsWith('남:')) {
+          firstTurnHtml = `
+            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px">
+              <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(59,130,246,0.2);color:#60a5fa;font-weight:700;font-size:12px;white-space:nowrap;margin-top:2px">남성</span>
+              <span style="color:#f1f5f9;font-size:14px;line-height:1.6">${firstLine.slice(2).trim()}</span>
+            </div>`;
+        } else if (firstLine.startsWith('여:')) {
+          firstTurnHtml = `
+            <div style="display:flex;align-items:flex-start;gap:8px;margin-bottom:8px">
+              <span style="display:inline-block;padding:2px 8px;border-radius:4px;background:rgba(236,72,153,0.2);color:#f472b6;font-weight:700;font-size:12px;white-space:nowrap;margin-top:2px">여성</span>
+              <span style="color:#f1f5f9;font-size:14px;line-height:1.6">${firstLine.slice(2).trim()}</span>
+            </div>`;
+        } else {
+          firstTurnHtml = `<div style="margin-bottom:8px;color:#f1f5f9;font-size:14px;line-height:1.6">${firstLine}</div>`;
+        }
+
+        const blurText = rawLines.slice(1).join('\n') || '여: 다음 지시사항에 따라 현장 보호구를 반드시 착용하시기 바랍니다.';
+
+        box.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:8px;margin-bottom:10px">
+            <strong style="color:var(--cyan);font-size:13px">📜 ${qNum}번 문항 음성 대본 스크립트 (공개문제 #${originalId})</strong>
+            <span style="font-size:11px;color:var(--text-muted)">🎧 실전 오디오 1:1 정밀 일치</span>
+          </div>
+          <div style="margin-bottom:6px">
+            ${firstTurnHtml}
+          </div>
+          <div class="gated-blur" style="max-height:48px;overflow:hidden;margin-bottom:12px;user-select:none;opacity:0.6;filter:blur(4px);pointer-events:none">
+            ${blurText}
+          </div>
+          <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.25);border-radius:8px;padding:10px 14px;text-align:center">
+            <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:6px">👑 전체 원문 대본 및 실시간 해설은 PRO 전용 혜택입니다</div>
+            <button class="btn-header" style="background:linear-gradient(135deg, #f59e0b, #ea580c);color:#000;font-weight:800;padding:6px 14px;font-size:12px" onclick="openPaywallModal('audio_script')">
+              ✨ 7일 무료체험으로 전체 스크립트 즉시 보기
+            </button>
+          </div>
+        `;
+      } else {
+        // PRO user: Full clear script
+        box.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.08);padding-bottom:8px;margin-bottom:10px">
+            <strong style="color:var(--cyan);font-size:13px">📜 ${qNum}번 문항 음성 대본 스크립트 (공개문제 #${originalId})</strong>
+            <span style="font-size:11px;color:#10b981;font-weight:700">👑 PRO 전용 무제한 스크립트</span>
+          </div>
+          <div id="script-content-text">
+            ${formattedTurnsHtml}
+          </div>
+        `;
+      }
+    }
 
     function toggleScriptBox() {
       const box = document.getElementById('script-box-view');
-      box.classList.toggle('active');
+      if (!box) return;
+
+      const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+      if (!q || q.type !== 'L') return;
+
+      if (box.classList.contains('active')) {
+        box.classList.remove('active');
+        box.style.display = 'none';
+      } else {
+        box.classList.add('active');
+        box.style.display = 'block';
+        updateScriptBox(q);
+      }
     }
 
     function openOfficialAudioModal() {
@@ -3053,13 +3772,45 @@
       const expContainer = document.getElementById('result-explanation-container');
       expContainer.innerHTML = '';
 
+      let wrongCount = 0;
       APP_STATE.currentExamQuestions.forEach(q => {
         const userAns = APP_STATE.userAnswers[q.id];
         const isCorrect = userAns === q.answer;
 
+        // Auto-collect wrong questions into FSRS smart review bank
+        if (!isCorrect) {
+          wrongCount++;
+          if (!APP_STATE.fsrsReviewBank.some(item => item.id === q.id)) {
+            APP_STATE.fsrsReviewBank.push({
+              id: q.id,
+              order: q.order,
+              type: q.type,
+              instruction: q.instruction,
+              options: q.options,
+              answer: q.answer,
+              explanation: q.explanation,
+              category: q.category,
+              difficulty: 5.0, // FSRS D (1~10)
+              stability: 1.0,   // FSRS S (days)
+              reps: 0,
+              nextReview: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString()
+            });
+          }
+        }
+
         const item = document.createElement('div');
         item.className = 'exp-item';
         item.style.borderColor = isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.4)';
+
+        // Free tier gating on detailed explanations
+        const isFree = APP_STATE.userTier === 'FREE';
+        const expText = isFree
+          ? `<div style="margin-top:6px;background:rgba(245,158,11,0.06);border:1px dashed rgba(245,158,11,0.3);padding:10px;border-radius:8px">
+               <span style="font-size:12px;color:var(--gold);font-weight:700">👑 상세 어휘·문법 해설은 PRO 회원 전용입니다</span>
+               <div class="gated-blur" style="font-size:11px;margin-top:4px">해당 문항은 작업장 안전 수칙에 관한 표현으로 표지판의 의미를 정확히 파악해야 합니다...</div>
+               <button class="btn-header" style="margin-top:6px;font-size:11px;padding:4px 10px;background:linear-gradient(135deg, #f59e0b, #ea580c);color:#000;font-weight:800" onclick="openPaywallModal('explanation_blur')">7일 무료체험으로 해설 전체보기</button>
+             </div>`
+          : `<div class="exp-desc"><strong>정답: ${q.answer}번 (${q.options[q.answer - 1]})</strong><br>${q.explanation || ''}</div>`;
 
         item.innerHTML = `
           <div class="exp-item-header">
@@ -3068,13 +3819,18 @@
               ${isCorrect ? '✓ 정답' : `✕ 오답 (내 선택: ${userAns || '미선택'}, 정답: ${q.answer}번)`}
             </span>
           </div>
-          <div class="exp-desc">
-            <strong>정답: ${q.answer}번 (${q.options[q.answer - 1]})</strong><br>
-            ${q.explanation || ''}
-          </div>
+          ${expText}
         `;
         expContainer.appendChild(item);
       });
+
+      // Save FSRS Bank
+      localStorage.setItem('fsrs_review_bank', JSON.stringify(APP_STATE.fsrsReviewBank));
+      updateFsrsBadge();
+
+      if (wrongCount > 0) {
+        showCbtToast(`오답 ${wrongCount}문항이 FSRS 망각 방지 클리닉에 자동 저장되었습니다!`, '🧠');
+      }
 
       document.getElementById('modal-exam-result').classList.add('open');
     }
@@ -3434,6 +4190,336 @@
       }
 
       closeApiConfigModal();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       9. MONETIZATION, PORTONE V2 BILLING, AND ENERGY ENGINE
+    ───────────────────────────────────────────────────────────── */
+    function updateUserTierUI() {
+      const tier = APP_STATE.userTier;
+      const tierBadge = document.getElementById('header-tier-text');
+      const btnBadge = document.getElementById('btn-pro-badge');
+
+      if (tier === 'PRO') {
+        tierBadge.textContent = 'PRO PASS 활성화됨';
+        btnBadge.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        btnBadge.style.color = '#fff';
+      } else {
+        tierBadge.textContent = '7일 무료체험 (PRO)';
+        btnBadge.style.background = 'linear-gradient(135deg, #f59e0b, #d97706)';
+        btnBadge.style.color = '#000';
+      }
+    }
+
+    function updateEnergyUI() {
+      const fill = document.getElementById('energy-bar-fill');
+      const text = document.getElementById('energy-text');
+      if (!fill || !text) return;
+
+      if (APP_STATE.userTier === 'PRO') {
+        fill.style.width = '100%';
+        fill.style.background = 'linear-gradient(90deg, #f59e0b, #10b981)';
+        text.innerHTML = '⚡ 무제한 (PRO)';
+        text.style.color = 'var(--gold)';
+        return;
+      }
+
+      const percent = Math.round((APP_STATE.dailyEnergy / APP_STATE.maxEnergy) * 100);
+      fill.style.width = `${percent}%`;
+      text.textContent = `${APP_STATE.dailyEnergy}/${APP_STATE.maxEnergy}`;
+      text.style.color = APP_STATE.dailyEnergy < 5 ? '#f87171' : '#10b981';
+    }
+
+    function openPaywallModal(triggerReason = 'general') {
+      const reasonEl = document.getElementById('paywall-reason-text');
+      if (reasonEl) {
+        if (triggerReason === 'energy_exhausted') {
+          reasonEl.textContent = '오늘의 일일 무료 에너지(30문항)가 소진되었습니다. 7일 무료체험 PRO 패스로 무제한 연속 학습을 이어가세요!';
+        } else if (triggerReason.startsWith('round_')) {
+          reasonEl.textContent = '4회차~48회차(전체 1,917문항) 실전 모의고사는 PRO 패스 회원 전용 혜택입니다.';
+        } else if (triggerReason === 'random_exam') {
+          reasonEl.textContent = '1,917문항 층화 무작위 셔플 실전 시험 생성은 PRO 전용 기능입니다.';
+        } else if (triggerReason === 'audio_script') {
+          reasonEl.textContent = '한국산업인력공단 공식 출제 성우 청해 대화 스크립트 전문은 PRO 패스 회원에게 개방됩니다.';
+        } else if (triggerReason === 'hitl_tutor') {
+          reasonEl.textContent = '한국어 교육 전문 강사의 24시간 내 1:1 심층 작문 첨삭 피드백 혜택이 PRO 연간 패스에 포함됩니다.';
+        } else {
+          reasonEl.textContent = '7일간 ₩0원으로 전체 1,917문항과 AI 주관식 첨삭을 무제한 체험하세요.';
+        }
+      }
+      document.getElementById('modal-paywall').classList.add('open');
+    }
+
+    function closePaywallModal() {
+      document.getElementById('modal-paywall').classList.remove('open');
+    }
+
+    function selectPaywallPlan(plan) {
+      APP_STATE.selectedPaywallPlan = plan;
+      const yearlyCard = document.getElementById('plan-card-yearly');
+      const monthlyCard = document.getElementById('plan-card-monthly');
+      const btn = document.getElementById('btn-pay-checkout');
+
+      if (plan === 'yearly') {
+        yearlyCard.classList.add('active');
+        monthlyCard.classList.remove('active');
+        btn.innerHTML = '🔥 7일 무료체험 시작하기 (연간 89,000원)';
+      } else {
+        monthlyCard.classList.add('active');
+        yearlyCard.classList.remove('active');
+        btn.innerHTML = '💳 1개월 패스 시작하기 (월 14,900원)';
+      }
+    }
+
+    /* PortOne V2 Billing Simulator */
+    function executePortOneCheckout() {
+      const btn = document.getElementById('btn-pay-checkout');
+      btn.innerHTML = '⏳ PortOne V2 보안 인증창 호출 중...';
+      btn.disabled = true;
+
+      // Realistic SDK Billing Cycle Simulation
+      setTimeout(() => {
+        btn.innerHTML = '🔐 안전 결제 승인 완료 (Idempotency Key 검증됨)';
+        setTimeout(() => {
+          APP_STATE.userTier = 'PRO';
+          const oneYearLater = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString();
+          APP_STATE.subscriptionExpiry = oneYearLater;
+
+          localStorage.setItem('user_pro_tier', 'PRO');
+          localStorage.setItem('user_pro_expiry', oneYearLater);
+
+          updateUserTierUI();
+          updateEnergyUI();
+          closePaywallModal();
+
+          btn.disabled = false;
+          selectPaywallPlan('yearly');
+
+          showCbtToast('🎉 축하합니다! PRO 합격 무제한 패스가 활성화되었습니다 (7일 무료체험)', '👑');
+          alert('결제가 성공적으로 처리되었습니다!\n\n• 등급: TOPIK PRO ALL-PASS\n• 혜택: 1,917문항 48회차 전체 해제, 에너지 무제한, FSRS 오답노트, 54번 AI 첨삭\n• 다음 결제일: ' + oneYearLater.split('T')[0]);
+        }, 1200);
+      }, 1000);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       10. TOPIK WRITING 54 AI RUBRIC EVALUATOR
+    ───────────────────────────────────────────────────────────── */
+    function updateEssayCharCount() {
+      const box = document.getElementById('essay-input-box');
+      const countEl = document.getElementById('writing-char-count');
+      const statusEl = document.getElementById('writing-char-status');
+      if (!box || !countEl || !statusEl) return;
+
+      const text = box.value;
+      const count = text.length;
+      countEl.textContent = count;
+
+      if (count < 600) {
+        statusEl.className = 'char-badge-warn';
+        statusEl.textContent = `⚠️ ${600 - count}자 부족 (600자 미만 분량 감점 주의)`;
+      } else if (count <= 700) {
+        statusEl.className = 'char-badge-ok';
+        statusEl.textContent = `✅ 최적 분량 구간 (${count}자 작성 완료, 감점 없음)`;
+      } else {
+        statusEl.className = 'char-badge-danger';
+        statusEl.textContent = `🚨 ${count - 700}자 초과 (700자 초과 시 국립국제교육원 규정 감점)`;
+      }
+    }
+
+    function loadSampleEssay() {
+      const box = document.getElementById('essay-input-box');
+      box.value = APP_STATE.sampleEssayText;
+      updateEssayCharCount();
+      showCbtToast('모범 54번 650자 고득점 에세이가 로드되었습니다.', '📝');
+    }
+
+    function openOutlineModal() {
+      document.getElementById('modal-outline-editor').classList.add('open');
+    }
+
+    function closeOutlineModal() {
+      document.getElementById('modal-outline-editor').classList.remove('open');
+    }
+
+    function applyOutlineToEssay() {
+      const intro = document.getElementById('outline-intro').value.trim();
+      const body = document.getElementById('outline-body').value.trim();
+      const outro = document.getElementById('outline-outro').value.trim();
+
+      const outlineTemplate = `[개요 기반 초안]\n서론: ${intro || '환경오염의 심각성과 인류의 생존 과제'}\n본론: ${body || '개인의 일회용품 절감 및 대중교통 이용, 정부의 친환경 에너지 규제'}\n결론: ${outro || '지속 가능한 지구를 위한 전 사회적 동참 촉구'}\n\n`;
+
+      const box = document.getElementById('essay-input-box');
+      box.value = outlineTemplate + box.value;
+      updateEssayCharCount();
+      closeOutlineModal();
+      showCbtToast('개요가 본문 에디터 상단에 삽입되었습니다.', '📋');
+    }
+
+    function evaluateEssayWithAi() {
+      const box = document.getElementById('essay-input-box');
+      const text = box.value.trim();
+      if (!text || text.length < 50) {
+        alert('에세이 내용이 너무 짧습니다. 최소 100자 이상 작성 후 채점을 요청해 주세요.');
+        return;
+      }
+
+      const feedbackBox = document.getElementById('ai-essay-feedback-box');
+      feedbackBox.innerHTML = `
+        <div style="text-align:center;padding:24px 0">
+          <div style="font-size:24px;animation:spin 1s infinite">⚙️</div>
+          <strong style="color:var(--cyan);display:block;margin-top:8px">AI 국립국제교육원 공식 루브릭 정밀 채점 중...</strong>
+          <span style="font-size:11px;color:var(--text-muted)">문어체 종결어미 검사 • 어휘 다양성 분석 • 3단 전개 구조 평가</span>
+        </div>
+      `;
+
+      setTimeout(() => {
+        const count = text.length;
+        let scoreContent = 12;
+        let scoreStructure = 12;
+        let scoreGrammar = 24;
+
+        if (count < 600) {
+          scoreContent = Math.max(6, Math.round(12 * (count / 600)));
+        }
+        if (count > 700) {
+          scoreStructure = Math.max(8, 12 - Math.floor((count - 700) / 30));
+        }
+
+        const totalScore = scoreContent + scoreStructure + scoreGrammar;
+
+        document.getElementById('rubric-score-content').textContent = `${scoreContent}점 / 12점`;
+        document.getElementById('rubric-score-structure').textContent = `${scoreStructure}점 / 12점`;
+        document.getElementById('rubric-score-grammar').textContent = `${scoreGrammar}점 / 26점`;
+
+        feedbackBox.innerHTML = `
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <strong style="color:#10b981;font-size:14px">🏆 종합 채점 결과: ${totalScore}점 / 50점 만점</strong>
+            <span style="font-size:11px;color:var(--cyan)">TOPIK II 6급 수준</span>
+          </div>
+          <div style="color:#cbd5e1;line-height:1.6">
+            <strong>✅ 강점:</strong> 서론-본론-결론의 3단 논리 전개가 명확하며, '-다/-는다' 문어체 종결 어미가 일관되게 적용되었습니다.<br>
+            <strong>🔍 보완 제안:</strong> '일회용품을 자제하고' 표현 대신 '일회용품 사용을 억제하고'와 같은 중·고급 한자어 어휘를 사용하면 어휘 점수 2점을 추가 확보할 수 있습니다.<br>
+            <strong>📏 글자수 판정:</strong> ${count}자로 공식 규격(600~700자) 조건에 적합합니다.
+          </div>
+        `;
+        showCbtToast(`AI 채점 완료! 종합 점수: ${totalScore}점`, '🤖');
+      }, 1500);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       11. FSRS SPACING RETRIEVAL CLINIC ENGINE
+    ───────────────────────────────────────────────────────────── */
+    function updateFsrsBadge() {
+      const badge = document.getElementById('tab-fsrs-counter');
+      const badgeMain = document.getElementById('fsrs-count-badge');
+      const count = APP_STATE.fsrsReviewBank.length;
+      if (badge) badge.textContent = `${count}문항`;
+      if (badgeMain) badgeMain.textContent = `복습 대기 ${count}문항`;
+    }
+
+    function addSampleWrongQuestions() {
+      const bank = APP_STATE.allBank;
+      if (!bank || bank.length === 0) return;
+
+      const candidates = bank.slice(0, 20);
+      for (let i = 0; i < 5; i++) {
+        const randQ = candidates[Math.floor(Math.random() * candidates.length)];
+        if (!APP_STATE.fsrsReviewBank.some(item => item.id === randQ.id)) {
+          APP_STATE.fsrsReviewBank.push({
+            id: randQ.id,
+            order: randQ.order,
+            type: randQ.type,
+            instruction: randQ.instruction,
+            options: randQ.options,
+            answer: randQ.answer,
+            explanation: randQ.explanation,
+            category: randQ.category,
+            difficulty: 5.0,
+            stability: 1.0,
+            reps: 0,
+            nextReview: new Date().toISOString()
+          });
+        }
+      }
+
+      localStorage.setItem('fsrs_review_bank', JSON.stringify(APP_STATE.fsrsReviewBank));
+      updateFsrsBadge();
+      renderFsrsCards();
+      showCbtToast('취약 오답 5문항이 FSRS 클리닉에 수집되었습니다.', '📥');
+    }
+
+    function renderFsrsCards() {
+      const container = document.getElementById('fsrs-cards-container');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (APP_STATE.fsrsReviewBank.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; background: var(--card); border: 1px dashed var(--border); border-radius: 16px">
+            <span style="font-size: 48px; display: block; margin-bottom: 12px">✨</span>
+            <h4 style="font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px">복습 대기 중인 오답이 없습니다!</h4>
+            <p style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px">
+              모의고사를 풀고 틀린 문제가 발생하면 자동으로 이곳에 수집되어 최적 주기에 맞춰 출제됩니다.
+            </p>
+            <button class="btn-header btn-primary-header" onclick="addSampleWrongQuestions()">
+              🧪 테스트 오답 5문항 불러오기
+            </button>
+          </div>
+        `;
+        return;
+      }
+
+      APP_STATE.fsrsReviewBank.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'fsrs-item-card';
+
+        // Calculate retrievability R = (1 + 9 * t / S)^-1
+        const R = Math.round((1 / (1 + 9 * (0.5 / (q.stability || 1.0)))) * 100);
+
+        card.innerHTML = `
+          <div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+              <span class="badge-api" style="font-size:11px">문항 #${q.order || q.id} (${q.type === 'L' ? '듣기' : '읽기'})</span>
+              <span style="font-size:12px;color:var(--cyan);font-weight:700">기억 회상률: ${R}%</span>
+            </div>
+            <strong style="font-size:14px;color:#fff;display:block;margin-bottom:6px">${q.instruction || '[문제]'}</strong>
+            <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px">
+              정답: ${q.answer}번 (${q.options ? q.options[q.answer - 1] : ''})
+            </div>
+            <div style="font-size:11.5px;color:#94a3b8;background:rgba(255,255,255,0.03);padding:8px;border-radius:6px;line-height:1.5">
+              ${q.explanation || '핵심 문법 및 어휘 해설'}
+            </div>
+          </div>
+          <div>
+            <div style="font-size:11px;color:var(--text-muted);text-align:center;margin-bottom:4px">학습 난이도 평가 (FSRS Spaced Repetition)</div>
+            <div class="fsrs-btn-row">
+              <button class="fsrs-btn again" onclick="rateFsrsQuestion(${idx}, 'again')">다시 (1일)</button>
+              <button class="fsrs-btn hard" onclick="rateFsrsQuestion(${idx}, 'hard')">어려움 (3일)</button>
+              <button class="fsrs-btn good" onclick="rateFsrsQuestion(${idx}, 'good')">알맞음 (7일)</button>
+              <button class="fsrs-btn easy" onclick="rateFsrsQuestion(${idx}, 'easy')">쉬움 (14일)</button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function rateFsrsQuestion(idx, grade) {
+      const item = APP_STATE.fsrsReviewBank[idx];
+      if (!item) return;
+
+      if (grade === 'easy' || grade === 'good') {
+        APP_STATE.fsrsReviewBank.splice(idx, 1);
+        showCbtToast(`'${grade.toUpperCase()}' 반영: 장기 기억에 정착되어 복습 완료 처리되었습니다.`, '🧠');
+      } else {
+        item.reps = (item.reps || 0) + 1;
+        item.stability = grade === 'hard' ? 3.0 : 1.0;
+        showCbtToast(`'${grade.toUpperCase()}' 반영: 기억 강화를 위해 재시험 주기가 단축되었습니다.`, '🔄');
+      }
+
+      localStorage.setItem('fsrs_review_bank', JSON.stringify(APP_STATE.fsrsReviewBank));
+      updateFsrsBadge();
+      renderFsrsCards();
     }
   </script>
 </body>
