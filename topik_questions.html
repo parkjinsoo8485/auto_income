@@ -1,0 +1,3402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>한국어능력시험(EPS-TOPIK) 공개문제 & CBT 모의평가 | 공공데이터 오픈API</title>
+  <meta name="description" content="한국산업인력공단 공공데이터포털 오픈API(QstbookInfo)를 활용한 고용허가제 한국어능력시험(EPS-TOPIK) 공개문제 풀이 및 CBT 실전 모의평가 시스템">
+  <script src="epstopik_1917_bank.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@300;400;500;600;700;800;900&family=Noto+Sans+KR:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #090d16;
+      --bg-elevated: #111827;
+      --card: #182234;
+      --card-hover: #1e2c44;
+      --border: #29384e;
+      --border-accent: rgba(99, 102, 241, 0.4);
+      --accent: #4f46e5;
+      --accent-light: #6366f1;
+      --accent-gradient: linear-gradient(135deg, #4f46e5, #9333ea);
+      --cyan: #06b6d4;
+      --cyan-gradient: linear-gradient(135deg, #06b6d4, #3b82f6);
+      --green: #10b981;
+      --green-bg: rgba(16, 185, 129, 0.12);
+      --gold: #f59e0b;
+      --gold-bg: rgba(245, 158, 11, 0.12);
+      --red: #ef4444;
+      --red-bg: rgba(239, 68, 68, 0.15);
+      --text: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.25);
+      --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.45);
+      --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #090d16 65%, #030712 100%);
+      color: var(--text);
+      font-family: 'Pretendard', 'Noto Sans KR', 'Inter', -apple-system, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+    }
+
+    /* ─── Top App Bar ─── */
+    .top-header {
+      background: rgba(17, 24, 39, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+      flex-shrink: 0;
+    }
+
+    .brand-title-wrap h1 {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      background: linear-gradient(135deg, #ffffff 40%, #c7d2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-api {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 30px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--green);
+      font-weight: 600;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.25); }
+    }
+
+    .btn-header {
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .btn-header:hover {
+      background: var(--card-hover);
+      border-color: var(--accent-light);
+      transform: translateY(-1px);
+    }
+
+    .btn-primary-header {
+      background: var(--accent-gradient);
+      border: none;
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+    }
+
+    .btn-primary-header:hover {
+      box-shadow: 0 6px 20px rgba(79, 70, 229, 0.55);
+      transform: translateY(-1.5px);
+    }
+
+    /* ─── Main Tabs Bar ─── */
+    .tab-navigation {
+      background: var(--bg-elevated);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .tab-btn {
+      padding: 14px 20px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .tab-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .tab-btn.active {
+      color: #fff;
+      border-bottom-color: var(--accent-light);
+      background: rgba(99, 102, 241, 0.08);
+    }
+
+    .tab-counter {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-size: 11px;
+    }
+
+    /* ─── Layout Container ─── */
+    .page-container {
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ─── API Info Banner ─── */
+    .api-info-banner {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.8));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .api-desc-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .api-icon-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .api-text-wrap strong {
+      font-size: 14px;
+      color: var(--text);
+      display: block;
+    }
+
+    .api-text-wrap span {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .api-key-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .api-key-code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.4);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      color: #38bdf8;
+    }
+
+    /* ══════════════════════════════════════════════════
+       TAB 1: CBT EXAM SIMULATOR
+    ══════════════════════════════════════════════════ */
+    .cbt-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 20px;
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .cbt-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Left Exam Area */
+    .cbt-main-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+    }
+
+    /* Exam Top Controls */
+    .cbt-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 18px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .candidate-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .candidate-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .candidate-details {
+      font-size: 13px;
+    }
+
+    .candidate-details strong {
+      font-size: 15px;
+      color: var(--text);
+      display: block;
+    }
+
+    .candidate-details span {
+      color: var(--text-secondary);
+    }
+
+    .cbt-timer-block {
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .timer-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .timer-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--cyan);
+      letter-spacing: 1px;
+    }
+
+    .timer-display.warning {
+      color: var(--red);
+      animation: pulseTimer 1s infinite;
+    }
+
+    @keyframes pulseTimer {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .btn-timer-pause {
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    /* Question Header */
+    .q-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .q-num-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid var(--border-accent);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #a5b4fc;
+    }
+
+    .q-subject-pill {
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .q-subject-pill.L {
+      background: rgba(6, 182, 212, 0.15);
+      color: var(--cyan);
+      border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+
+    .q-subject-pill.R {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .q-category-tag {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-elevated);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+    }
+
+    /* Question Title & Prompt */
+    .q-instruction {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    
+    /* ─── HRD-Korea Official MP3 Audio Player ─── */
+    .audio-player-box {
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.8));
+      border: 1px solid rgba(6, 182, 212, 0.35);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .audio-player-box::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #06b6d4, #3b82f6, #10b981);
+    }
+
+    .audio-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .audio-src-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      letter-spacing: -0.2px;
+    }
+
+    .audio-src-badge.hrd {
+      background: rgba(16, 185, 129, 0.15);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+    }
+
+    .audio-src-badge.fallback {
+      background: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+      border: 1px solid rgba(245, 158, 11, 0.4);
+    }
+
+    .audio-main-controls {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+    }
+
+    .btn-audio-play {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #06b6d4, #2563eb);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 14px rgba(6, 182, 212, 0.4);
+      flex-shrink: 0;
+    }
+
+    .btn-audio-play:hover {
+      transform: scale(1.06);
+      box-shadow: 0 6px 18px rgba(6, 182, 212, 0.6);
+    }
+
+    .btn-audio-play.playing {
+      background: linear-gradient(135deg, #10b981, #059669);
+      animation: pulseAudio 1.2s infinite;
+    }
+
+    .btn-audio-skip {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-radius: 8px;
+      padding: 6px 9px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-audio-skip:hover {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border-color: var(--cyan);
+    }
+
+    .audio-progress-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .audio-seek-slider {
+      width: 100%;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #1e293b;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .audio-seek-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--cyan);
+      cursor: pointer;
+      box-shadow: 0 0 8px rgba(6, 182, 212, 0.8);
+      transition: transform 0.1s ease;
+    }
+
+    .audio-seek-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.25);
+    }
+
+    .audio-time-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .audio-sub-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      flex-wrap: wrap;
+    }
+
+    .speed-btn-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .speed-pill {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .speed-pill.active {
+      background: rgba(6, 182, 212, 0.2);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    .audio-waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 24px;
+      margin-top: 4px;
+    }
+
+    .wave-bar {
+      width: 3px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 2px;
+      transition: height 0.2s ease;
+    }
+
+    .audio-player-box.playing .wave-bar {
+      animation: waveDance 0.8s infinite ease-in-out alternate;
+    }
+
+    .audio-player-box.playing .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .audio-player-box.playing .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .audio-player-box.playing .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+    .audio-player-box.playing .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+    .audio-player-box.playing .wave-bar:nth-child(6) { animation-delay: 0.15s; }
+
+    @keyframes waveDance {
+      from { height: 6px; }
+      to { height: 22px; }
+    }
+
+    .audio-right-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .audio-badge {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+    }
+
+    .btn-toggle-script {
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .btn-toggle-script:hover {
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+
+    /* Audio Script Reveal Box (Collapsible) */
+    .script-box {
+      display: none;
+      background: rgba(6, 182, 212, 0.06);
+      border: 1px dashed rgba(6, 182, 212, 0.3);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.7;
+      color: #cbd5e1;
+    }
+
+    .script-box.active {
+      display: block;
+    }
+
+    /* Passage / Dialogue Box (Reading or Context) */
+    .passage-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent-light);
+      border-radius: var(--radius-sm);
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      line-height: 1.8;
+      color: #e2e8f0;
+      white-space: pre-line;
+    }
+
+    /* Sign/Illustration Visual Box (for Work Signs, Notices) */
+    .visual-box {
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-bottom: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .work-sign-graphic {
+      width: 140px;
+      height: 140px;
+      border-radius: 16px;
+      background: #1e293b;
+      border: 3px solid var(--gold);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .work-sign-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .work-sign-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* Options List (1 ~ 4) */
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      padding: 16px 20px;
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: all 0.2s ease;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .option-btn:hover {
+      border-color: var(--accent-light);
+      background: rgba(99, 102, 241, 0.07);
+      transform: translateX(4px);
+    }
+
+    .option-btn.selected {
+      border-color: var(--accent-light);
+      background: rgba(99, 102, 241, 0.16);
+      box-shadow: 0 0 16px rgba(99, 102, 241, 0.3);
+    }
+
+    .option-btn.correct-show {
+      border-color: var(--green);
+      background: var(--green-bg);
+      color: #34d399;
+    }
+
+    .option-btn.wrong-show {
+      border-color: var(--red);
+      background: var(--red-bg);
+      color: #f87171;
+    }
+
+    .option-num-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+
+    .option-btn.selected .option-num-badge {
+      background: var(--accent-light);
+      border-color: var(--accent-light);
+      color: #fff;
+    }
+
+    .option-text {
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    /* Question Footer Navigation */
+    .cbt-nav-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .cbt-nav-btn {
+      padding: 12px 22px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text);
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+
+    .cbt-nav-btn:hover:not(:disabled) {
+      border-color: var(--accent-light);
+      background: var(--card);
+    }
+
+    .cbt-nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-submit-exam {
+      background: var(--accent-gradient);
+      border: none;
+      color: #fff;
+      padding: 12px 28px;
+      box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn-submit-exam:hover {
+      box-shadow: 0 6px 24px rgba(99, 102, 241, 0.6);
+      transform: translateY(-2px);
+    }
+
+    /* ── Right OMR Sheet Panel ── */
+    .cbt-omr-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 90px;
+    }
+
+    .omr-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .omr-title {
+      font-size: 15px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .omr-stats {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .omr-legend {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 14px;
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .omr-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-color-box {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+    }
+
+    /* OMR Question Grid */
+    .omr-grid-container {
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .omr-section-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin: 10px 0 6px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .omr-items-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .omr-cell {
+      height: 42px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.15s ease;
+      position: relative;
+    }
+
+    .omr-cell:hover {
+      border-color: var(--accent-light);
+      background: var(--card-hover);
+    }
+
+    .omr-cell .q-num-text {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .omr-cell .q-marked-val {
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text);
+    }
+
+    .omr-cell.marked {
+      border-color: rgba(99, 102, 241, 0.6);
+      background: rgba(99, 102, 241, 0.18);
+    }
+
+    .omr-cell.marked .q-marked-val {
+      color: #818cf8;
+    }
+
+    .omr-cell.current {
+      border: 2px solid var(--cyan);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+    }
+
+    .omr-cell.correct {
+      border-color: var(--green);
+      background: var(--green-bg);
+    }
+    .omr-cell.wrong {
+      border-color: var(--red);
+      background: var(--red-bg);
+    }
+
+    /* ══════════════════════════════════════════════════
+       TAB 2: API QUESTION EXPLORER & QUESTION BANK
+    ══════════════════════════════════════════════════ */
+    .explorer-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Filter Toolbar */
+    .toolbar-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-label {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .select-custom {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 14px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-custom:focus {
+      border-color: var(--accent-light);
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 8px 14px 8px 36px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .search-input-wrap input:focus {
+      border-color: var(--accent-light);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* Questions Table / Card List */
+    .api-records-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 16px;
+    }
+
+    .record-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .record-card:hover {
+      border-color: var(--accent-light);
+      background: var(--card-hover);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .record-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .record-idx {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--cyan);
+      background: rgba(6, 182, 212, 0.1);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .record-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .record-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .btn-solve-now {
+      background: rgba(99, 102, 241, 0.15);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #a5b4fc;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-solve-now:hover {
+      background: var(--accent-light);
+      color: #fff;
+    }
+
+    /* ══════════════════════════════════════════════════
+       TAB 3: API TEST CONSOLE & SPEC INSPECTOR
+    ══════════════════════════════════════════════════ */
+    .console-container {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 900px) {
+      .console-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .console-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .console-panel h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-light);
+    }
+
+    .endpoint-pill-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .endpoint-item {
+      padding: 10px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .endpoint-item:hover {
+      border-color: var(--accent-light);
+    }
+
+    .endpoint-item.active {
+      border-color: var(--accent-light);
+      background: rgba(99, 102, 241, 0.12);
+    }
+
+    .endpoint-method {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.15);
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+
+    .endpoint-name {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .endpoint-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .btn-exec-api {
+      width: 100%;
+      padding: 12px;
+      background: var(--accent-gradient);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-exec-api:hover {
+      box-shadow: 0 4px 18px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Response View */
+    .response-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .raw-viewer {
+      background: #020617;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: #94a3b8;
+      height: 480px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* ══════════════════════════════════════════════════
+       MODALS: SETTINGS & EXAM RESULT
+    ══════════════════════════════════════════════════ */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+      animation: modalFadeIn 0.2s ease;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      max-width: 620px;
+      width: 100%;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text);
+    }
+
+    /* Result Modal Contents */
+    .result-score-banner {
+      text-align: center;
+      padding: 24px 0 16px;
+    }
+
+    .result-trophy {
+      font-size: 64px;
+      margin-bottom: 8px;
+      display: block;
+      animation: bounce 0.6s ease;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .result-score-val {
+      font-size: 54px;
+      font-weight: 900;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
+    }
+
+    .result-status-badge {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .result-status-badge.pass {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .result-status-badge.fail {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .score-breakdown-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .score-breakdown-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+    }
+
+    .score-breakdown-card strong {
+      font-size: 20px;
+      color: var(--text);
+      display: block;
+    }
+
+    .score-breakdown-card span {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Explanation Accordion */
+    .explanation-list {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .exp-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+
+    .exp-item-header {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .exp-ans {
+      color: var(--green);
+    }
+
+    .exp-desc {
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    
+    /* ─── Pagination Buttons ─── */
+    .page-btn {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg-elevated);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .page-btn:hover:not(:disabled) {
+      border-color: var(--accent-light);
+      background: var(--card-hover);
+    }
+    .page-btn.active {
+      background: var(--accent-gradient);
+      border-color: transparent;
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
+    }
+    .page-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    
+    /* ─── Exam Toast Notification ─── */
+    .cbt-toast {
+      position: fixed;
+      top: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: linear-gradient(135deg, #1e1b4b, #0f172a);
+      border: 1px solid var(--cyan);
+      box-shadow: 0 10px 30px rgba(6, 182, 212, 0.35);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 700;
+      z-index: 99999;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .cbt-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .top-header {
+        padding: 10px 14px;
+      }
+      .brand-title-wrap h1 {
+        font-size: 16px;
+      }
+      .page-container {
+        padding: 12px;
+      }
+      .cbt-main-card {
+        padding: 16px;
+      }
+      .options-grid {
+        gap: 8px;
+      }
+      .option-btn {
+        padding: 12px 14px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="cbt-toast-box" class="cbt-toast">🎲 새로운 40문항 모의고사가 생성되었습니다!</div>>
+
+  <!-- ══════════════════════════════════════════════════
+       TOP HEADER
+  ══════════════════════════════════════════════════ -->
+  <header class="top-header">
+    <div class="brand-group">
+      <div class="brand-logo-icon">🇰🇷</div>
+      <div class="brand-title-wrap">
+        <h1>
+          한국어능력시험(EPS-TOPIK) 공개문제 센터
+          <span class="badge-api">공공데이터포털 연동</span>
+        </h1>
+        <div class="brand-sub">
+          <span>한국산업인력공단(HRD Korea) QstbookInfo OpenAPI</span>
+          <span>•</span>
+          <span id="api-mode-label">실시간 연동 & 실전문항 모드</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <div class="status-pill" id="header-status-pill">
+        <span class="status-dot"></span>
+        <span id="api-status-text">API 준비 완료</span>
+      </div>
+      <button class="btn-header" onclick="openApiConfigModal()">
+        🔑 인증키 설정
+      </button>
+      <a href="index.html" class="btn-header btn-primary-header" style="text-decoration:none">
+        📱 모바일 학습기 복귀
+      </a>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════════
+       TAB NAVIGATION
+  ══════════════════════════════════════════════════ */ -->
+  <nav class="tab-navigation">
+    <button class="tab-btn active" id="tab-btn-cbt" onclick="switchMainTab('cbt')">
+      🖥️ 실전 CBT 모의평가
+      <span class="tab-counter" id="tab-cbt-counter">40문항</span>
+    </button>
+    <button class="tab-btn" id="tab-btn-bank" onclick="switchMainTab('bank')">
+      📚 공개문제집 & 문항 탐색기
+      <span class="tab-counter" id="tab-bank-counter">1,917건</span>
+    </button>
+    <button class="tab-btn" id="tab-btn-console" onclick="switchMainTab('console')">
+      ⚙️ OpenAPI 실시간 콘솔 & 명세
+      <span class="tab-counter">3 APIs</span>
+    </button>
+  </nav>
+
+  <!-- ══════════════════════════════════════════════════
+       MAIN CONTENT CONTAINER
+  ══════════════════════════════════════════════════ -->
+  <main class="page-container">
+
+    <!-- API Info Banner -->
+    <div class="api-info-banner">
+      <div class="api-desc-left">
+        <div class="api-icon-circle">🌐</div>
+        <div class="api-text-wrap">
+          <strong>한국산업인력공단 한국어능력시험 공개문제 정보 (QstbookInfo)</strong>
+          <span>엔드포인트: http://apis.data.go.kr/B490007/QstbookInfo (개정목록, 컨텐츠, 공개문항 파일 인덱스)</span>
+        </div>
+      </div>
+      <div class="api-key-status">
+        <span style="font-size:12px;color:var(--text-secondary)">발급 인증키:</span>
+        <span class="api-key-code" id="display-api-key">내장 공공데이터 샘플 활성화됨</span>
+        <button class="btn-solve-now" onclick="openApiConfigModal()">변경</button>
+      </div>
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
+         SECTION 1: CBT EXAM SIMULATOR
+    ══════════════════════════════════════════════════ -->
+    <section id="view-cbt" class="cbt-container">
+      
+      <!-- Left Main Question Card -->
+      <div class="cbt-main-card">
+        <!-- Candidate & Timer Bar -->
+        <div class="cbt-top-bar">
+          <div class="candidate-info">
+            <div class="candidate-avatar">👤</div>
+            <div class="candidate-details">
+              <strong>수험번호: 2026-EPS-7701 (홍길동)</strong>
+              <span>고용허가제 한국어능력시험(EPS-TOPIK) CBT 실전평가</span>
+            </div>
+          </div>
+          <div class="cbt-timer-block">
+            <span class="timer-label">남은 시간</span>
+            <div class="timer-display" id="exam-timer-text">50:00</div>
+            <button class="btn-timer-pause" id="btn-timer-toggle" onclick="toggleExamTimer()">일시정지</button>
+          </div>
+        </div>
+
+        <!-- Exam Round Selector Toolbar (48 Rounds & Random 40) -->
+        <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;font-weight:700;color:var(--text-secondary)">📋 모의고사 회차 선택:</span>
+            <select id="select-exam-round" class="select-custom" onchange="changeExamRound(parseInt(this.value))" style="min-width:280px;font-weight:600">
+              <!-- Dynamically populated 1 ~ 48 rounds -->
+            </select>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <button class="btn-header" onclick="generateRandomExam()" style="padding:6px 14px;font-size:12px;background:rgba(99,102,241,0.15);border-color:rgba(99,102,241,0.4);color:#c7d2fe">
+              🎲 1,917문항 무작위 랜덤 시험 생성
+            </button>
+            <span id="current-pool-info" style="font-size:12px;color:var(--cyan);background:rgba(6,182,212,0.1);padding:5px 12px;border-radius:6px;border:1px solid rgba(6,182,212,0.25)">
+              총 1,917개 공개문항 라이브러리 가동 중
+            </span>
+          </div>
+        </div>
+
+
+        <!-- Question Meta -->
+        <div class="q-meta-row">
+          <div class="q-num-tag">
+            <span>문항</span>
+            <strong id="q-current-number" style="font-size:16px;color:#fff">1</strong>
+            <span style="font-size:12px;color:var(--text-secondary)">/ 40</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="q-subject-pill L" id="q-subject-badge">🎧 듣기 (Listening)</span>
+            <span class="q-category-tag" id="q-category-text">대화 및 이어지는 말</span>
+          </div>
+        </div>
+
+        <!-- Question Instruction -->
+        <h2 class="q-instruction" id="q-instruction-text">
+          [1~2] 다음을 듣고 이어지는 말로 가장 알맞은 것을 고르십시오.
+        </h2>
+
+                <!-- Audio Player Box (Listening Only - HRD-Korea Official MP3 Engine) -->
+        <audio id="hrd-audio-element" preload="auto"></audio>
+        <div class="audio-player-box" id="audio-player-section">
+          <!-- Top Row: Source Badge & Count & Script Toggle -->
+          <div class="audio-top-row">
+            <div style="display:flex;align-items:center;gap:10px">
+              <span id="audio-src-badge" class="audio-src-badge hrd">
+                🎧 실전 CBT 표준 듣기 음원 (1:1 지문 정밀 일치)
+              </span>
+              <span style="font-size:11px;color:var(--text-muted)">• 2회 반복 규정</span>
+            </div>
+            <div class="audio-right-controls">
+              <span class="audio-badge" id="audio-play-count">청취 0 / 2회</span>
+              <button class="btn-toggle-script" onclick="toggleScriptBox()">대본 보기 👁️</button>
+              <button class="btn-toggle-script" onclick="openOfficialAudioModal()" style="border-color:rgba(16,185,129,0.4);color:#34d399">공단 원본 음원 🏛️</button>
+            </div>
+          </div>
+
+          <!-- Main Row: Play/Pause, Seek Slider, Skip, Time -->
+          <div class="audio-main-controls">
+            <button class="btn-audio-play" id="btn-audio-play" onclick="toggleAudioPlayback()" title="재생 / 일시정지 (스페이스바)">
+              ▶
+            </button>
+            <button class="btn-audio-skip" onclick="skipAudioTime(-5)" title="5초 되감기">
+              ⏪ 5s
+            </button>
+            <button class="btn-audio-skip" onclick="skipAudioTime(5)" title="5초 빨리감기">
+              5s ⏩
+            </button>
+
+            <!-- Progress Seek Slider & Time -->
+            <div class="audio-progress-wrap">
+              <input type="range" class="audio-seek-slider" id="audio-seek-slider" min="0" max="100" value="0" oninput="onAudioSeekInput(this.value)">
+              <div class="audio-time-row">
+                <span id="audio-current-time">00:00</span>
+                <span id="audio-duration">00:00</span>
+              </div>
+            </div>
+
+            <!-- Waveform Animation -->
+            <div class="audio-waveform" style="margin-top:0">
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+              <span class="wave-bar"></span>
+            </div>
+          </div>
+
+          <!-- Sub Row: Speed Buttons & Mode Info -->
+          <div class="audio-sub-controls">
+            <div style="display:flex;align-items:center;gap:8px">
+              <span style="font-size:11px;color:var(--text-muted)">재생 속도:</span>
+              <div class="speed-btn-group">
+                <button class="speed-pill" id="speed-0-8" onclick="setAudioPlaybackSpeed(0.8)">0.8x</button>
+                <button class="speed-pill active" id="speed-1-0" onclick="setAudioPlaybackSpeed(1.0)">1.0x (표준)</button>
+                <button class="speed-pill" id="speed-1-2" onclick="setAudioPlaybackSpeed(1.2)">1.2x</button>
+              </div>
+            </div>
+            <div style="font-size:11px;color:var(--text-secondary)" id="audio-status-guide">
+              🎧 실전 시험 방송 규격 (지문 낭독 ➔ '다시 들으십시오' ➔ 2회 반복)
+            </div>
+          </div>
+        </div>
+
+        <!-- Script reveal box -->
+        <div class="script-box" id="script-box-view">
+          <strong>[음성 대본 스크립트]</strong><br>
+          <span id="script-content-text">남: 오늘 날씨가 참 좋네요. 주말에 등산 갈까요?</span>
+        </div>
+
+        <!-- Visual / Graphic Box (Workplace Signs / Notices) -->
+        <div class="visual-box" id="q-visual-box" style="display:none">
+          <div class="work-sign-graphic" id="sign-graphic-icon">⚠️</div>
+          <div class="work-sign-title" id="sign-graphic-title">위험: 안전모 착용 구역</div>
+          <div class="work-sign-sub" id="sign-graphic-sub">물건이 떨어질 위험이 있으니 반드시 안전모를 착용하십시오.</div>
+        </div>
+
+        <!-- Passage Card (Reading / Workplace context) -->
+        <div class="passage-card" id="q-passage-box" style="display:none">
+          <div id="q-passage-text"></div>
+        </div>
+
+        <!-- Options Grid -->
+        <div class="options-grid" id="options-container">
+          <!-- Dynamically populated via JS -->
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="cbt-nav-row">
+          <button class="cbt-nav-btn" id="btn-prev-q" onclick="navigateQuestion(-1)">
+            ◀ 이전 문항
+          </button>
+          <div style="display:flex;gap:10px">
+            <button class="cbt-nav-btn" onclick="clearCurrentAnswer()">
+              선택 취소
+            </button>
+            <button class="cbt-nav-btn" id="btn-next-q" onclick="navigateQuestion(1)">
+              다음 문항 ▶
+            </button>
+          </div>
+          <button class="cbt-nav-btn btn-submit-exam" onclick="confirmSubmitExam()">
+            답안 최종 제출 ✅
+          </button>
+        </div>
+      </div>
+
+      <!-- Right OMR Sheet Card -->
+      <aside class="cbt-omr-card">
+        <div class="omr-header">
+          <div class="omr-title">
+            <span>📋 OMR 답안지</span>
+          </div>
+          <div class="omr-stats">
+            답변 <span id="omr-answered-count" style="font-weight:700;color:var(--cyan)">0</span> / 40
+          </div>
+        </div>
+
+        <div class="omr-legend">
+          <div class="omr-legend-item">
+            <div class="legend-color-box" style="background:rgba(99,102,241,0.5)"></div>
+            <span>마킹완료</span>
+          </div>
+          <div class="omr-legend-item">
+            <div class="legend-color-box" style="background:var(--cyan)"></div>
+            <span>현재문항</span>
+          </div>
+          <div class="omr-legend-item">
+            <div class="legend-color-box" style="background:var(--bg-elevated);border:1px solid var(--border)"></div>
+            <span>미풀이</span>
+          </div>
+        </div>
+
+        <div class="omr-grid-container">
+          <!-- Listening 1~20 -->
+          <div class="omr-section-title">
+            <span>🎧 듣기 영역 (1 ~ 20)</span>
+            <span id="omr-l-score-badge">20문항</span>
+          </div>
+          <div class="omr-items-grid" id="omr-grid-listening">
+            <!-- 1 to 20 -->
+          </div>
+
+          <!-- Reading 21~40 -->
+          <div class="omr-section-title">
+            <span>📖 읽기 영역 (21 ~ 40)</span>
+            <span id="omr-r-score-badge">20문항</span>
+          </div>
+          <div class="omr-items-grid" id="omr-grid-reading">
+            <!-- 21 to 40 -->
+          </div>
+        </div>
+
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border)">
+          <button class="btn-exec-api" style="font-size:13px;padding:10px" onclick="confirmSubmitExam()">
+            시험 종료 및 자동 채점
+          </button>
+        </div>
+      </aside>
+
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SECTION 2: API QUESTION BANK & EXPLORER
+    ══════════════════════════════════════════════════ -->
+    <section id="view-bank" class="explorer-container" style="display:none">
+      
+      <!-- Toolbar Filter -->
+      <div class="toolbar-card">
+        <div class="filter-group">
+          <span class="filter-label">개정판 선택(revCd):</span>
+          <select class="select-custom" id="bank-rev-filter" onchange="filterBankQuestions()">
+            <option value="all">전체 개정판 (All Editions)</option>
+            <option value="1">1차 개정판 (First Revised Edition)</option>
+            <option value="2">2차 개정판 (Second Revised Edition)</option>
+            <option value="3" selected>특별한국어능력시험 직무문항 (Special EPS-TOPIK)</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <span class="filter-label">영역 구분:</span>
+          <select class="select-custom" id="bank-type-filter" onchange="filterBankQuestions()">
+            <option value="all">전체 (All)</option>
+            <option value="L">🎧 듣기분야 (Listening - L)</option>
+            <option value="R">📖 읽기분야 (Reading - R)</option>
+          </select>
+        </div>
+
+        <div class="search-input-wrap">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="bank-search-input" placeholder="문항순서, 고유번호, 또는 문제 내용 검색..." oninput="filterBankQuestions()">
+        </div>
+
+        <button class="btn-header" onclick="syncDataFromApi()">
+          🔄 API 실시간 동기화
+        </button>
+      </div>
+
+      <!-- Question List Grid -->
+      
+      <!-- Pagination Info Toolbar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:4px 0">
+        <div style="font-size:13px;color:var(--text-secondary)">
+          총 <strong id="bank-total-count" style="color:var(--cyan)">1,917</strong>건 중 <span id="bank-range-text">1 ~ 20</span>번째 문항 표시
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:12px;color:var(--text-muted)">페이지당:</span>
+          <select id="bank-page-size" class="select-custom" onchange="changeBankPageSize(parseInt(this.value))" style="padding:4px 10px;font-size:12px">
+            <option value="20" selected>20개씩 보기</option>
+            <option value="50">50개씩 보기</option>
+            <option value="100">100개씩 보기</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="api-records-grid" id="bank-records-container">
+        <!-- Rendered by JS -->
+      </div>
+          <!-- Bottom Pagination Navigator -->
+      <div id="bank-pagination-nav" style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px;flex-wrap:wrap">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════════════════
+         SECTION 3: API TEST CONSOLE & SPEC INSPECTOR
+    ══════════════════════════════════════════════════ -->
+    <section id="view-console" class="console-container" style="display:none">
+      
+      <div class="console-panel">
+        <h3>⚡ OpenAPI 엔드포인트 선택</h3>
+        
+        <div class="endpoint-pill-list">
+          <div class="endpoint-item active" onclick="selectEndpoint('list', this)">
+            <span class="endpoint-method">GET</span>
+            <span class="endpoint-name">getApiQstbookList</span>
+            <div class="endpoint-sub">한국어능력시험 공개문제집_개정 정보</div>
+          </div>
+
+          <div class="endpoint-item" onclick="selectEndpoint('cont', this)">
+            <span class="endpoint-method">GET</span>
+            <span class="endpoint-name">getApiQstbookCont</span>
+            <div class="endpoint-sub">한국어능력시험 공개문제집_컨텐츠 정보</div>
+          </div>
+
+          <div class="endpoint-item" onclick="selectEndpoint('files', this)">
+            <span class="endpoint-method">GET</span>
+            <span class="endpoint-name">getApiQstbookFiles</span>
+            <div class="endpoint-sub">한국어능력시험 공개문항 자료 정보 (1,917건)</div>
+          </div>
+        </div>
+
+        <h4 style="font-size:13px;margin:16px 0 10px;color:var(--text-secondary)">요청 파라미터</h4>
+        
+        <div class="form-group">
+          <label>한 페이지 결과 수 (numOfRows)</label>
+          <input type="number" id="param-num-rows" class="form-control" value="10">
+        </div>
+
+        <div class="form-group">
+          <label>페이지 번호 (pageNo)</label>
+          <input type="number" id="param-page-no" class="form-control" value="1">
+        </div>
+
+        <div class="form-group" id="group-param-revcd">
+          <label>구분번호 (revCd, 선택)</label>
+          <input type="text" id="param-rev-cd" class="form-control" value="3" placeholder="예: 1, 2, 3">
+        </div>
+
+        <div class="form-group">
+          <label>프록시 우회 (CORS 방지)</label>
+          <select id="param-cors-proxy" class="select-custom" style="width:100%">
+            <option value="direct">직접 호출 (Direct)</option>
+            <option value="allorigins" selected>AllOrigins 프록시 우회</option>
+            <option value="mock">내장 고품질 응답 (Mock Fallback)</option>
+          </select>
+        </div>
+
+        <button class="btn-exec-api" onclick="executeApiTest()">
+          🚀 API 요청 전송 (Send Request)
+        </button>
+      </div>
+
+      <div class="console-panel">
+        <div class="response-header">
+          <h3>📦 API 응답 결과 (Response Payload)</h3>
+          <span id="response-status-badge" class="badge-api">Status: 200 OK</span>
+        </div>
+        <div class="raw-viewer" id="api-raw-response">
+// 요청을 실행하면 이곳에 공공데이터포털(data.go.kr) XML / JSON 응답 원문이 실시간 표시됩니다.
+// 왼쪽 패널에서 엔드포인트를 선택하고 [API 요청 전송]을 클릭하세요.
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════════════
+       MODAL 1: API KEY SETTINGS
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-api-config">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeApiConfigModal()">✕</button>
+      <h2 style="font-size:20px;font-weight:800;margin-bottom:8px">🔑 공공데이터포털 API 인증키 설정</h2>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:20px;line-height:1.6">
+        공공데이터포털에서 발급받은 <strong>한국어능력시험 공개문제 정보 (QstbookInfo)</strong> 일반 인증키(Encoding 또는 Decoding)를 입력하세요. 입력하신 키는 브라우저 LocalStorage에 안전하게 저장됩니다.
+      </p>
+
+      <div class="form-group">
+        <label>공공데이터포털 serviceKey (인증키)</label>
+        <input type="text" id="input-service-key" class="form-control" placeholder="발급받은 인증키를 붙여넣으세요">
+      </div>
+
+      <div style="background:rgba(99,102,241,0.08);border:1px solid var(--border-accent);border-radius:8px;padding:12px;margin-bottom:20px;font-size:12px;color:#c7d2fe;line-height:1.6">
+        💡 <strong>인증키 발급 확인:</strong><br>
+        <a href="https://www.data.go.kr/iim/api/selectAPIAcountView.do" target="_blank" style="color:#38bdf8;text-decoration:underline">
+          공공데이터포털 마이페이지 &gt; 오픈API 활용신청 내역 바로가기 ↗
+        </a>
+      </div>
+
+      <div style="display:flex;gap:10px">
+        <button class="btn-header" style="flex:1" onclick="closeApiConfigModal()">취소</button>
+        <button class="btn-header btn-primary-header" style="flex:2" onclick="saveApiKey()">저장 및 즉시 적용</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       MODAL 2: EXAM RESULTS & SCORECARD
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-exam-result">
+    <div class="modal-card">
+      <button class="modal-close-btn" onclick="closeResultModal()">✕</button>
+      
+      <div class="result-score-banner">
+        <span class="result-trophy" id="result-trophy-emoji">🏆</span>
+        <div class="result-score-val" id="result-total-score">185 / 200</div>
+        <div class="result-status-badge pass" id="result-status-pill">최종 합격 (PASSED)</div>
+        <p style="font-size:14px;color:var(--text-secondary);margin-top:10px" id="result-summary-msg">
+          고용허가제 한국어능력시험(EPS-TOPIK) 합격 기준 점수(110점)를 초과 달성하였습니다!
+        </p>
+      </div>
+
+      <div class="score-breakdown-grid">
+        <div class="score-breakdown-card">
+          <span style="color:var(--cyan)">🎧 듣기 영역 (Listening)</span>
+          <strong id="result-l-score">90점 / 100점</strong>
+          <span id="result-l-correct-count">18문항 정답 (총 20문항)</span>
+        </div>
+        <div class="score-breakdown-card">
+          <span style="color:var(--gold)">📖 읽기 영역 (Reading)</span>
+          <strong id="result-r-score">95점 / 100점</strong>
+          <span id="result-r-correct-count">19문항 정답 (총 20문항)</span>
+        </div>
+      </div>
+
+      <h3 style="font-size:15px;margin-top:16px">📝 문항별 정답 및 상세 해설</h3>
+      <div class="explanation-list" id="result-explanation-container">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:24px">
+        <button class="btn-header" style="flex:1" onclick="restartExam()">🔄 시험 다시 치르기</button>
+        <button class="btn-header btn-primary-header" style="flex:1" onclick="closeResultModal()">확인 및 닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       MODAL 3: HRD-KOREA OFFICIAL FULL-SET AUDIO
+  ══════════════════════════════════════════════════ -->
+  <div class="modal-backdrop" id="modal-official-audio">
+    <div class="modal-card" style="max-width:680px">
+      <button class="modal-close-btn" onclick="closeOfficialAudioModal()">✕</button>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:24px">🏛️</span>
+        <h2 style="font-size:20px;font-weight:800">한국산업인력공단(HRD-Korea) 원본 MP3 음원</h2>
+      </div>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;line-height:1.6">
+        한국산업인력공단 공식 자료실에서 배포하는 <strong>공개문제집 40문항 단위 원본 통 MP3(Full Track)</strong> 파일 목록입니다.<br>
+        실전 CBT 모의고사에서는 문항별 맞춤형 1:1 음원이 자동 재생되며, 아래 공단 원본 음원도 브라우저에서 바로 청취 및 저장할 수 있습니다.
+      </p>
+
+      <div style="display:flex;flex-direction:column;gap:10px;max-height:360px;overflow-y:auto;padding-right:6px">
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#fff">공단 2차 개정판 01~40번 전체 통 음원 (01-40.mp3)</div>
+            <div style="font-size:12px;color:var(--text-muted)">용량: 2.44 MB • 공단 공식 출제 성우 육성</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <audio controls src="assets/audio/epstopik/official_full_sets/01-40.mp3" style="height:36px;width:180px"></audio>
+            <a href="assets/audio/epstopik/official_full_sets/01-40.mp3" download class="btn-audio-skip" style="padding:8px 12px;text-decoration:none">💾 다운로드</a>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#fff">공단 2차 개정판 41~80번 전체 통 음원 (41-80.mp3)</div>
+            <div style="font-size:12px;color:var(--text-muted)">용량: 4.10 MB • 공단 공식 출제 성우 육성</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <audio controls src="assets/audio/epstopik/official_full_sets/41-80.mp3" style="height:36px;width:180px"></audio>
+            <a href="assets/audio/epstopik/official_full_sets/41-80.mp3" download class="btn-audio-skip" style="padding:8px 12px;text-decoration:none">💾 다운로드</a>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#fff">공단 2차 개정판 81~120번 전체 통 음원 (81-120.mp3)</div>
+            <div style="font-size:12px;color:var(--text-muted)">용량: 4.99 MB • 공단 공식 출제 성우 육성</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <audio controls src="assets/audio/epstopik/official_full_sets/81-120.mp3" style="height:36px;width:180px"></audio>
+            <a href="assets/audio/epstopik/official_full_sets/81-120.mp3" download class="btn-audio-skip" style="padding:8px 12px;text-decoration:none">💾 다운로드</a>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#fff">공단 2차 개정판 121~160번 전체 통 음원 (121-160.mp3)</div>
+            <div style="font-size:12px;color:var(--text-muted)">용량: 4.64 MB • 공단 공식 출제 성우 육성</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <audio controls src="assets/audio/epstopik/official_full_sets/121-160.mp3" style="height:36px;width:180px"></audio>
+            <a href="assets/audio/epstopik/official_full_sets/121-160.mp3" download class="btn-audio-skip" style="padding:8px 12px;text-decoration:none">💾 다운로드</a>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#fff">공단 2차 개정판 161~200번 전체 통 음원 (161-200.mp3)</div>
+            <div style="font-size:12px;color:var(--text-muted)">용량: 4.23 MB • 공단 공식 출제 성우 육성</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <audio controls src="assets/audio/epstopik/official_full_sets/161-200.mp3" style="height:36px;width:180px"></audio>
+            <a href="assets/audio/epstopik/official_full_sets/161-200.mp3" download class="btn-audio-skip" style="padding:8px 12px;text-decoration:none">💾 다운로드</a>
+          </div>
+        </div>
+
+        <div style="background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#fff">공단 2차 개정판 201~240번 전체 통 음원 (201-240.mp3)</div>
+            <div style="font-size:12px;color:var(--text-muted)">용량: 3.75 MB • 공단 공식 출제 성우 육성</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <audio controls src="assets/audio/epstopik/official_full_sets/201-240.mp3" style="height:36px;width:180px"></audio>
+            <a href="assets/audio/epstopik/official_full_sets/201-240.mp3" download class="btn-audio-skip" style="padding:8px 12px;text-decoration:none">💾 다운로드</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+        <a href="https://epstopik.hrdkorea.or.kr" target="_blank" style="font-size:12px;color:var(--cyan);text-decoration:none">
+          🔗 HRD-Korea 한국산업인력공단 공식 웹사이트 바로가기 ↗
+        </a>
+        <button class="btn-header btn-primary-header" onclick="closeOfficialAudioModal()">확인 및 닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════
+       JAVASCRIPT APPLICATION CORE LOGIC
+  ══════════════════════════════════════════════════ -->
+  <script>
+    /* ─────────────────────────────────────────────────────────────
+       1. GLOBAL STATE & 1,917 FULL EPS-TOPIK QUESTION ENGINE
+    ───────────────────────────────────────────────────────────── */
+    function getGlobalQuestionBank() {
+      if (typeof EPSTOPIK_1917_BANK !== 'undefined' && Array.isArray(EPSTOPIK_1917_BANK) && EPSTOPIK_1917_BANK.length > 0) {
+        return EPSTOPIK_1917_BANK;
+      }
+      if (typeof window !== 'undefined') {
+        if (window.EPSTOPIK_1917_BANK && Array.isArray(window.EPSTOPIK_1917_BANK) && window.EPSTOPIK_1917_BANK.length > 0) {
+          return window.EPSTOPIK_1917_BANK;
+        }
+        if (window.EPS_FULL_1917_BANK && Array.isArray(window.EPS_FULL_1917_BANK) && window.EPS_FULL_1917_BANK.length > 0) {
+          return window.EPS_FULL_1917_BANK;
+        }
+      }
+      if (typeof globalThis !== 'undefined') {
+        if (globalThis.EPSTOPIK_1917_BANK && Array.isArray(globalThis.EPSTOPIK_1917_BANK) && globalThis.EPSTOPIK_1917_BANK.length > 0) {
+          return globalThis.EPSTOPIK_1917_BANK;
+        }
+        if (globalThis.EPS_FULL_1917_BANK && Array.isArray(globalThis.EPS_FULL_1917_BANK) && globalThis.EPS_FULL_1917_BANK.length > 0) {
+          return globalThis.EPS_FULL_1917_BANK;
+        }
+      }
+      return [];
+    }
+
+    const APP_STATE = {
+      apiKey: localStorage.getItem('epstopik_service_key') || '',
+      currentTab: 'cbt',
+      allBank: getGlobalQuestionBank(),
+      currentRound: 1,
+      currentExamQuestions: [], // 40 questions for active CBT exam
+      currentQuestionIdx: 0,
+      userAnswers: {}, // { qId: optionNum }
+      examTimeRemaining: 50 * 60, // 50 mins
+      examTimerInterval: null,
+      isTimerRunning: true,
+      selectedEndpoint: 'list',
+      speechSynth: window.speechSynthesis,
+      audioPlayCounts: {},
+      isAudioPlaying: false,
+      // Question Bank Explorer state
+      bankPage: 1,
+      bankPageSize: 20,
+      filteredBankQuestions: []
+    };
+
+    /* ─────────────────────────────────────────────────────────────
+       2. INITIALIZATION & LIFECYCLE
+    ───────────────────────────────────────────────────────────── */
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Ensure 1917 bank is loaded
+      if (!APP_STATE.allBank || APP_STATE.allBank.length === 0) {
+        APP_STATE.allBank = getGlobalQuestionBank();
+      }
+      APP_STATE.filteredBankQuestions = APP_STATE.allBank.slice();
+
+      // 2. Load API key
+      if (APP_STATE.apiKey) {
+        document.getElementById('input-service-key').value = APP_STATE.apiKey;
+        document.getElementById('display-api-key').textContent = APP_STATE.apiKey.substring(0, 8) + '••••••••';
+        document.getElementById('api-status-text').textContent = '공공데이터 인증키 등록됨';
+      }
+
+      // 3. Populate Round Selector (1 to 48 sets = 48 x 40 = 1,920 questions)
+      populateExamRoundOptions();
+
+      // 4. Load Round 1 into CBT
+      loadExamRound(1);
+
+      // 5. Render Question Bank (1,917 items with pagination)
+      renderBankPage();
+
+      // 6. Keyboard shortcut listeners
+      window.addEventListener('keydown', handleKeyboardShortcuts);
+    });
+
+    /* ─────────────────────────────────────────────────────────────
+       3. NAVIGATION & TABS
+    ───────────────────────────────────────────────────────────── */
+    function switchMainTab(tabName) {
+      APP_STATE.currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(`tab-btn-${tabName}`).classList.add('active');
+
+      document.getElementById('view-cbt').style.display = tabName === 'cbt' ? 'grid' : 'none';
+      document.getElementById('view-bank').style.display = tabName === 'bank' ? 'flex' : 'none';
+      document.getElementById('view-console').style.display = tabName === 'console' ? 'grid' : 'none';
+
+      if (tabName === 'bank') {
+        renderBankPage();
+      }
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       4. EXAM ROUND & SET RESOLVER (48 Sets x 40 Questions)
+    ───────────────────────────────────────────────────────────── */
+    function populateExamRoundOptions() {
+      const select = document.getElementById('select-exam-round');
+      if (!select) return;
+      select.innerHTML = '';
+
+      const totalL = APP_STATE.allBank.filter(q => q.type === 'L').length; // 960
+      const totalR = APP_STATE.allBank.filter(q => q.type === 'R').length; // 957
+      const totalRounds = Math.min(Math.floor(totalL / 20), Math.floor(totalR / 20)); // 47 or 48
+
+      for (let r = 1; r <= totalRounds; r++) {
+        const lStart = (r - 1) * 20 + 1;
+        const lEnd = r * 20;
+        const rStart = (r - 1) * 20 + 1;
+        const rEnd = r * 20;
+
+        const opt = document.createElement('option');
+        opt.value = r;
+        opt.textContent = `제 ${r}회 실전 모의고사 (듣기 ${lStart}~${lEnd}번 + 읽기 ${rStart}~${rEnd}번)`;
+        select.appendChild(opt);
+      }
+    }
+
+        function showCbtToast(msg, icon = '🎲') {
+      const toast = document.getElementById('cbt-toast-box');
+      if (!toast) return;
+      toast.innerHTML = `<span>${icon}</span> <span>${msg}</span>`;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    function changeExamRound(val) {
+      if (val === 'random') {
+        generateRandomExam(false);
+        return;
+      }
+      const roundNum = parseInt(val);
+      loadExamRound(roundNum);
+    }
+
+    function loadExamRound(roundNum) {
+      APP_STATE.currentRound = roundNum;
+      
+      const selectBox = document.getElementById('select-exam-round');
+      if (selectBox) selectBox.value = String(roundNum);
+
+      const allL = APP_STATE.allBank.filter(q => q.type === 'L');
+      const allR = APP_STATE.allBank.filter(q => q.type === 'R');
+
+      const lSlice = allL.slice((roundNum - 1) * 20, roundNum * 20);
+      const rSlice = allR.slice((roundNum - 1) * 20, roundNum * 20);
+
+      // Create sequential 40-question exam set (1~20 L, 21~40 R)
+      APP_STATE.currentExamQuestions = [
+        ...lSlice.map((q, idx) => ({ ...q, examNum: idx + 1 })),
+        ...rSlice.map((q, idx) => ({ ...q, examNum: idx + 21 }))
+      ];
+
+      document.getElementById('tab-cbt-counter').textContent = `제 ${roundNum}회 (40문항)`;
+      document.getElementById('current-pool-info').textContent = `제 ${roundNum}회 실전 모의평가 진행 중`;
+
+      showCbtToast(`제 ${roundNum}회 실전 모의고사(40문항)가 로드되었습니다!`, '📋');
+      resetExamState();
+    }
+
+    function generateRandomExam(notify = true) {
+      const allL = APP_STATE.allBank.filter(q => q.type === 'L');
+      const allR = APP_STATE.allBank.filter(q => q.type === 'R');
+
+      if (!allL.length || !allR.length) {
+        alert('문항 데이터베이스를 불러오는 중입니다. 잠시 후 다시 시도해 주세요.');
+        return;
+      }
+
+      // Fisher-Yates shuffle for true uniform randomness
+      function shuffleArray(arr) {
+        const copy = arr.slice();
+        for (let i = copy.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+      }
+
+      const shuffledL = shuffleArray(allL).slice(0, 20);
+      const shuffledR = shuffleArray(allR).slice(0, 20);
+
+      APP_STATE.currentRound = 'random';
+      APP_STATE.currentExamQuestions = [
+        ...shuffledL.map((q, idx) => ({ ...q, examNum: idx + 1 })),
+        ...shuffledR.map((q, idx) => ({ ...q, examNum: idx + 21 }))
+      ];
+
+      // Sync dropdown select box
+      const selectBox = document.getElementById('select-exam-round');
+      if (selectBox) {
+        let randomOpt = selectBox.querySelector('option[value="random"]');
+        if (!randomOpt) {
+          randomOpt = document.createElement('option');
+          randomOpt.value = 'random';
+          randomOpt.textContent = '🎲 1,917문항 무작위 랜덤 모의고사';
+          selectBox.insertBefore(randomOpt, selectBox.firstChild);
+        }
+        selectBox.value = 'random';
+      }
+
+      document.getElementById('tab-cbt-counter').textContent = '무작위 모의고사 (40문항)';
+      document.getElementById('current-pool-info').textContent = '🎲 1,917문항 무작위 추출 실전 모의고사 가동 중';
+
+      if (notify) {
+        showCbtToast('1,917개 뱅크에서 새로운 40문항 실전 모의고사가 무작위 추출되었습니다!', '✨');
+      }
+
+      resetExamState();
+    }
+
+    function loadSingleQuestionIntoCbt(globalQId) {
+      const targetQ = APP_STATE.allBank.find(q => q.id === globalQId);
+      if (!targetQ) return;
+
+      // Find which round contains this question
+      let targetRound = 1;
+      if (targetQ.type === 'L') {
+        targetRound = Math.floor((targetQ.order - 1) / 20) + 1;
+      } else {
+        targetRound = Math.floor((targetQ.order - 1) / 20) + 1;
+      }
+      targetRound = Math.max(1, Math.min(48, targetRound));
+
+      loadExamRound(targetRound);
+
+      // Find position in active 40
+      const inRoundIdx = APP_STATE.currentExamQuestions.findIndex(q => q.id === targetQ.id);
+      if (inRoundIdx !== -1) {
+        APP_STATE.currentQuestionIdx = inRoundIdx;
+      } else {
+        APP_STATE.currentQuestionIdx = 0;
+      }
+
+      initHrdAudioEngine();
+      renderCurrentQuestion();
+      switchMainTab('cbt');
+    }
+
+    function resetExamState() {
+      APP_STATE.userAnswers = {};
+      APP_STATE.currentQuestionIdx = 0;
+      APP_STATE.examTimeRemaining = 50 * 60;
+      APP_STATE.isTimerRunning = true;
+      renderOmrGrid();
+      initHrdAudioEngine();
+      renderCurrentQuestion();
+      startExamTimer();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       5. CBT EXAM ENGINE
+    ───────────────────────────────────────────────────────────── */
+    function renderCurrentQuestion() {
+      const questions = APP_STATE.currentExamQuestions;
+      const q = questions[APP_STATE.currentQuestionIdx];
+      if (!q) return;
+
+      document.getElementById('q-current-number').innerHTML = `${q.examNum} <span style="font-size:12px;font-weight:500;color:var(--cyan);margin-left:4px">(공개문제 원본 #${String(q.order || q.id).padStart(4, '0')})</span>`;
+      document.getElementById('q-instruction-text').textContent = q.instruction || '[문제를 읽고 알맞은 것을 고르십시오]';
+      document.getElementById('q-category-text').textContent = q.category || '직무 문항';
+
+      const subjectBadge = document.getElementById('q-subject-badge');
+      if (q.type === 'L') {
+        subjectBadge.className = 'q-subject-pill L';
+        subjectBadge.textContent = '🎧 듣기 (Listening)';
+        document.getElementById('audio-player-section').style.display = 'flex';
+        setupQuestionAudio(q);
+        document.getElementById('script-content-text').textContent = q.dialogue || '';
+        document.getElementById('audio-play-count').textContent = `청취 ${APP_STATE.audioPlayCounts[q.id] || 0} / 2회`;
+        document.getElementById('script-box-view').classList.remove('active');
+      } else {
+        subjectBadge.className = 'q-subject-pill R';
+        subjectBadge.textContent = '📖 읽기 (Reading)';
+        document.getElementById('audio-player-section').style.display = 'none';
+        document.getElementById('script-box-view').classList.remove('active');
+      }
+
+      // Visual graphics
+      const visualBox = document.getElementById('q-visual-box');
+      if (q.visual) {
+        visualBox.style.display = 'flex';
+        document.getElementById('sign-graphic-icon').textContent = q.visual.icon;
+        document.getElementById('sign-graphic-title').textContent = q.visual.title;
+        document.getElementById('sign-graphic-sub').textContent = q.visual.sub;
+      } else {
+        visualBox.style.display = 'none';
+      }
+
+      // Passage
+      const passageBox = document.getElementById('q-passage-box');
+      if (q.passage) {
+        passageBox.style.display = 'block';
+        document.getElementById('q-passage-text').textContent = q.passage;
+      } else {
+        passageBox.style.display = 'none';
+      }
+
+      // Options
+      const optionsContainer = document.getElementById('options-container');
+      optionsContainer.innerHTML = '';
+
+      const selectedOpt = APP_STATE.userAnswers[q.id];
+
+      q.options.forEach((optText, idx) => {
+        const optNum = idx + 1;
+        const btn = document.createElement('button');
+        btn.className = 'option-btn' + (selectedOpt === optNum ? ' selected' : '');
+        btn.onclick = () => selectOption(q.id, optNum);
+
+        btn.innerHTML = `
+          <div class="option-num-badge">${optNum}</div>
+          <div class="option-text">${optText}</div>
+        `;
+        optionsContainer.appendChild(btn);
+      });
+
+      // Prev / Next button states
+      document.getElementById('btn-prev-q').disabled = APP_STATE.currentQuestionIdx === 0;
+      document.getElementById('btn-next-q').disabled = APP_STATE.currentQuestionIdx === questions.length - 1;
+
+      updateOmrHighlight();
+    }
+
+    function selectOption(qId, optNum) {
+      APP_STATE.userAnswers[qId] = optNum;
+      initHrdAudioEngine();
+      renderCurrentQuestion();
+      updateOmrGrid();
+    }
+
+    function clearCurrentAnswer() {
+      const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+      if (q) {
+        delete APP_STATE.userAnswers[q.id];
+        initHrdAudioEngine();
+      renderCurrentQuestion();
+        updateOmrGrid();
+      }
+    }
+
+    function navigateQuestion(offset) {
+      const nextIdx = APP_STATE.currentQuestionIdx + offset;
+      if (nextIdx >= 0 && nextIdx < APP_STATE.currentExamQuestions.length) {
+        APP_STATE.currentQuestionIdx = nextIdx;
+        initHrdAudioEngine();
+      renderCurrentQuestion();
+      }
+    }
+
+    function jumpToQuestion(idx) {
+      if (idx >= 0 && idx < APP_STATE.currentExamQuestions.length) {
+        APP_STATE.currentQuestionIdx = idx;
+        initHrdAudioEngine();
+      renderCurrentQuestion();
+      }
+    }
+
+    function handleKeyboardShortcuts(e) {
+      if (APP_STATE.currentTab !== 'cbt') return;
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') return;
+
+      const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+      if (!q) return;
+
+      if (['1', '2', '3', '4'].includes(e.key)) {
+        selectOption(q.id, parseInt(e.key));
+      } else if (e.key === 'ArrowRight' || e.key.toLowerCase() === 'n') {
+        navigateQuestion(1);
+      } else if (e.key === 'ArrowLeft' || e.key.toLowerCase() === 'p') {
+        navigateQuestion(-1);
+      } else if (e.key === ' ' && q.type === 'L') {
+        e.preventDefault();
+        playCurrentQuestionAudio();
+      }
+    }
+
+        /* ─── HRD-Korea Official MP3 Audio Engine ─── */
+    const HRD_AUDIO_STATE = {
+      player: null,
+      currentUrl: '',
+      isOfficialMp3: false,
+      speed: 1.0,
+      userSeeking: false,
+      availableMp3Cache: {}
+    };
+
+    function initHrdAudioEngine() {
+      const audio = document.getElementById('hrd-audio-element');
+      HRD_AUDIO_STATE.player = audio;
+      if (!audio) return;
+
+      audio.addEventListener('loadedmetadata', () => {
+        updateAudioDurationDisplay();
+      });
+
+      audio.addEventListener('timeupdate', () => {
+        if (HRD_AUDIO_STATE.userSeeking) return;
+        const cur = audio.currentTime;
+        const dur = audio.duration || 1;
+        const pct = (cur / dur) * 100;
+        
+        const slider = document.getElementById('audio-seek-slider');
+        if (slider) slider.value = pct;
+
+        const curLabel = document.getElementById('audio-current-time');
+        if (curLabel) curLabel.textContent = formatAudioTime(cur);
+      });
+
+      audio.addEventListener('play', () => {
+        const box = document.getElementById('audio-player-section');
+        const playBtn = document.getElementById('btn-audio-play');
+        if (box) box.classList.add('playing');
+        if (playBtn) {
+          playBtn.classList.add('playing');
+          playBtn.textContent = '❚❚';
+        }
+      });
+
+      audio.addEventListener('pause', () => {
+        const box = document.getElementById('audio-player-section');
+        const playBtn = document.getElementById('btn-audio-play');
+        if (box) box.classList.remove('playing');
+        if (playBtn) {
+          playBtn.classList.remove('playing');
+          playBtn.textContent = '▶';
+        }
+      });
+
+      audio.addEventListener('ended', () => {
+        const box = document.getElementById('audio-player-section');
+        const playBtn = document.getElementById('btn-audio-play');
+        if (box) box.classList.remove('playing');
+        if (playBtn) {
+          playBtn.classList.remove('playing');
+          playBtn.textContent = '▶';
+        }
+
+        const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+        if (q) {
+          APP_STATE.audioPlayCounts[q.id] = (APP_STATE.audioPlayCounts[q.id] || 0) + 1;
+          const countEl = document.getElementById('audio-play-count');
+          if (countEl) countEl.textContent = `청취 ${APP_STATE.audioPlayCounts[q.id]} / 2회`;
+        }
+      });
+
+      audio.addEventListener('error', (e) => {
+        console.warn('Official MP3 not found for current item, falling back to Web Speech Natural Voice');
+        // Fallback to speech synth
+        playWithWebSpeechFallback();
+      });
+    }
+
+    function formatAudioTime(sec) {
+      if (isNaN(sec) || sec < 0) return '00:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    function updateAudioDurationDisplay() {
+      const audio = HRD_AUDIO_STATE.player;
+      const durLabel = document.getElementById('audio-duration');
+      if (audio && durLabel && !isNaN(audio.duration)) {
+        durLabel.textContent = formatAudioTime(audio.duration);
+      }
+    }
+
+    function setupQuestionAudio(q) {
+      if (!q || q.type !== 'L') return;
+      const audio = HRD_AUDIO_STATE.player || document.getElementById('hrd-audio-element');
+      if (!audio) return;
+
+      // Pause existing
+      audio.pause();
+      audio.currentTime = 0;
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+
+      const slider = document.getElementById('audio-seek-slider');
+      if (slider) slider.value = 0;
+      const curLabel = document.getElementById('audio-current-time');
+      if (curLabel) curLabel.textContent = '00:00';
+      const durLabel = document.getElementById('audio-duration');
+      if (durLabel) durLabel.textContent = '--:--';
+
+      const qOrder = q.order || q.id;
+      const candidateMp3 = `assets/audio/epstopik/q_${String(qOrder).padStart(4, '0')}.mp3`;
+
+      const badge = document.getElementById('audio-src-badge');
+      const guide = document.getElementById('audio-status-guide');
+
+      audio.src = candidateMp3;
+      audio.playbackRate = HRD_AUDIO_STATE.speed;
+
+      // 동적 상태 업데이트: 기본적으로 공식 MP3 시도
+      HRD_AUDIO_STATE.isOfficialMp3 = true;
+      if (badge) {
+        badge.className = 'audio-src-badge hrd';
+        badge.innerHTML = '🎧 실전 CBT 표준 듣기 음원 (1:1 지문 정밀 일치)';
+      }
+      if (guide) {
+        guide.textContent = '🎧 실전 시험 방송 규격 (지문 낭독 ➔ \'다시 들으십시오\' ➔ 2회 반복)';
+      }
+
+      audio.onerror = () => {
+        HRD_AUDIO_STATE.isOfficialMp3 = false;
+        if (badge) {
+          badge.className = 'audio-src-badge fallback';
+          badge.innerHTML = '🤖 고품질 신경망 AI 음성 (폴백 모드)';
+        }
+        if (guide) {
+          guide.textContent = '📢 표준 한국어 신경망 음성으로 낭독합니다.';
+        }
+      };
+    }
+
+    function toggleAudioPlayback() {
+      const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+      if (!q || q.type !== 'L') return;
+
+      const audio = HRD_AUDIO_STATE.player;
+      if (!audio) return;
+
+      if (!audio.paused) {
+        audio.pause();
+        return;
+      }
+
+      audio.play().catch(err => {
+        console.warn('MP3 play failed, falling back to speech synthesis:', err);
+        playWithWebSpeechFallback();
+      });
+    }
+
+    function skipAudioTime(seconds) {
+      const audio = HRD_AUDIO_STATE.player;
+      if (!audio) return;
+      audio.currentTime = Math.max(0, Math.min(audio.duration || 0, audio.currentTime + seconds));
+    }
+
+    function onAudioSeekInput(val) {
+      const audio = HRD_AUDIO_STATE.player;
+      if (!audio || isNaN(audio.duration)) return;
+      const targetTime = (val / 100) * audio.duration;
+      audio.currentTime = targetTime;
+    }
+
+    function setAudioPlaybackSpeed(spd) {
+      HRD_AUDIO_STATE.speed = spd;
+      const audio = HRD_AUDIO_STATE.player;
+      if (audio) audio.playbackRate = spd;
+
+      ['0-8', '1-0', '1-2'].forEach(id => {
+        const btn = document.getElementById(`speed-${id}`);
+        if (btn) btn.classList.remove('active');
+      });
+
+      const activeId = spd === 0.8 ? '0-8' : (spd === 1.2 ? '1-2' : '1-0');
+      const activeBtn = document.getElementById(`speed-${activeId}`);
+      if (activeBtn) activeBtn.classList.add('active');
+    }
+
+        function playWithWebSpeechFallback() {
+      const q = APP_STATE.currentExamQuestions[APP_STATE.currentQuestionIdx];
+      if (!q || !('speechSynthesis' in window)) return;
+
+      window.speechSynthesis.cancel();
+      const playBox = document.getElementById('audio-player-section');
+      const playBtn = document.getElementById('btn-audio-play');
+      if (playBox) playBox.classList.add('playing');
+      if (playBtn) {
+        playBtn.classList.add('playing');
+        playBtn.textContent = '❚❚';
+      }
+
+      const rawScript = q.dialogue || q.instruction || '';
+      // Prepare natural prompt
+      const scriptToSpeak = `${q.examNum}번 문제입니다. ` + rawScript.replace(/남:\s*/g, '남성: ').replace(/여:\s*/g, '여성: ');
+
+      setTimeout(() => {
+        const utterance = new SpeechSynthesisUtterance(scriptToSpeak);
+        utterance.lang = 'ko-KR';
+        utterance.rate = HRD_AUDIO_STATE.speed * 0.92;
+
+        const voices = window.speechSynthesis.getVoices();
+        const naturalVoice = voices.find(v => v.lang.includes('ko') && (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Online')))
+                          || voices.find(v => v.lang.includes('ko'));
+        if (naturalVoice) utterance.voice = naturalVoice;
+
+        utterance.onend = () => {
+          if (playBox) playBox.classList.remove('playing');
+          if (playBtn) {
+            playBtn.classList.remove('playing');
+            playBtn.textContent = '▶';
+          }
+          APP_STATE.audioPlayCounts[q.id] = (APP_STATE.audioPlayCounts[q.id] || 0) + 1;
+          const countEl = document.getElementById('audio-play-count');
+          if (countEl) countEl.textContent = `청취 ${APP_STATE.audioPlayCounts[q.id]} / 2회`;
+        };
+
+        utterance.onerror = () => {
+          if (playBox) playBox.classList.remove('playing');
+          if (playBtn) {
+            playBtn.classList.remove('playing');
+            playBtn.textContent = '▶';
+          }
+        };
+
+        window.speechSynthesis.speak(utterance);
+      }, 50);
+    }
+
+    // Keep backwards compatibility function
+    function playCurrentQuestionAudio() {
+      toggleAudioPlayback();
+    }
+
+
+    function toggleScriptBox() {
+      const box = document.getElementById('script-box-view');
+      box.classList.toggle('active');
+    }
+
+    function openOfficialAudioModal() {
+      const modal = document.getElementById('modal-official-audio');
+      if (modal) modal.classList.add('open');
+    }
+
+    function closeOfficialAudioModal() {
+      const modal = document.getElementById('modal-official-audio');
+      if (modal) {
+        modal.classList.remove('open');
+        modal.querySelectorAll('audio').forEach(a => a.pause());
+      }
+    }
+
+    /* ─── Timer Engine ─── */
+    function startExamTimer() {
+      if (APP_STATE.examTimerInterval) clearInterval(APP_STATE.examTimerInterval);
+
+      APP_STATE.examTimerInterval = setInterval(() => {
+        if (!APP_STATE.isTimerRunning) return;
+
+        if (APP_STATE.examTimeRemaining <= 0) {
+          clearInterval(APP_STATE.examTimerInterval);
+          alert('시험 시간이 종료되었습니다! 자동으로 답안이 제출됩니다.');
+          submitExam();
+          return;
+        }
+
+        APP_STATE.examTimeRemaining--;
+        const mins = Math.floor(APP_STATE.examTimeRemaining / 60);
+        const secs = APP_STATE.examTimeRemaining % 60;
+        const timerText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        
+        const timerElem = document.getElementById('exam-timer-text');
+        timerElem.textContent = timerText;
+
+        if (APP_STATE.examTimeRemaining < 300) {
+          timerElem.classList.add('warning');
+        } else {
+          timerElem.classList.remove('warning');
+        }
+      }, 1000);
+    }
+
+    function toggleExamTimer() {
+      APP_STATE.isTimerRunning = !APP_STATE.isTimerRunning;
+      const btn = document.getElementById('btn-timer-toggle');
+      btn.textContent = APP_STATE.isTimerRunning ? '일시정지' : '계속하기';
+      btn.style.color = APP_STATE.isTimerRunning ? 'var(--text-secondary)' : 'var(--gold)';
+    }
+
+    /* ─── OMR Sheet Grid ─── */
+    function renderOmrGrid() {
+      const listeningGrid = document.getElementById('omr-grid-listening');
+      const readingGrid = document.getElementById('omr-grid-reading');
+      listeningGrid.innerHTML = '';
+      readingGrid.innerHTML = '';
+
+      APP_STATE.currentExamQuestions.forEach((q, idx) => {
+        const cell = document.createElement('div');
+        cell.className = 'omr-cell';
+        cell.id = `omr-cell-${idx}`;
+        cell.onclick = () => jumpToQuestion(idx);
+
+        cell.innerHTML = `
+          <span class="q-num-text">${q.examNum}</span>
+          <span class="q-marked-val" id="omr-val-${q.id}">-</span>
+        `;
+
+        if (q.type === 'L') {
+          listeningGrid.appendChild(cell);
+        } else {
+          readingGrid.appendChild(cell);
+        }
+      });
+
+      updateOmrGrid();
+    }
+
+    function updateOmrGrid() {
+      let answeredCount = 0;
+
+      APP_STATE.currentExamQuestions.forEach((q, idx) => {
+        const cell = document.getElementById(`omr-cell-${idx}`);
+        const valElem = document.getElementById(`omr-val-${q.id}`);
+        const userMark = APP_STATE.userAnswers[q.id];
+
+        if (cell && valElem) {
+          if (userMark) {
+            cell.classList.add('marked');
+            valElem.textContent = userMark;
+            answeredCount++;
+          } else {
+            cell.classList.remove('marked');
+            valElem.textContent = '-';
+          }
+        }
+      });
+
+      document.getElementById('omr-answered-count').textContent = answeredCount;
+      updateOmrHighlight();
+    }
+
+    function updateOmrHighlight() {
+      document.querySelectorAll('.omr-cell').forEach((cell, idx) => {
+        if (idx === APP_STATE.currentQuestionIdx) {
+          cell.classList.add('current');
+        } else {
+          cell.classList.remove('current');
+        }
+      });
+    }
+
+    /* ─── Exam Submission & Scoring ─── */
+    function confirmSubmitExam() {
+      const answeredCount = Object.keys(APP_STATE.userAnswers).length;
+      const totalCount = APP_STATE.currentExamQuestions.length;
+      const unanswered = totalCount - answeredCount;
+
+      const confirmMsg = unanswered > 0
+        ? `미작성된 문항이 ${unanswered}개 있습니다.\n정말 최종 제출하고 채점하시겠습니까?`
+        : `40문항 전체에 답변하였습니다.\n최종 제출하고 채점하시겠습니까?`;
+
+      if (confirm(confirmMsg)) {
+        submitExam();
+      }
+    }
+
+    function submitExam() {
+      if (APP_STATE.examTimerInterval) clearInterval(APP_STATE.examTimerInterval);
+
+      let lCorrect = 0;
+      let rCorrect = 0;
+
+      APP_STATE.currentExamQuestions.forEach((q, idx) => {
+        const userAns = APP_STATE.userAnswers[q.id];
+        const isCorrect = userAns === q.answer;
+
+        if (isCorrect) {
+          if (q.type === 'L') lCorrect++;
+          else rCorrect++;
+        }
+
+        const cell = document.getElementById(`omr-cell-${idx}`);
+        if (cell) {
+          cell.classList.remove('correct', 'wrong');
+          cell.classList.add(isCorrect ? 'correct' : 'wrong');
+        }
+      });
+
+      const lScore = lCorrect * 5;
+      const rScore = rCorrect * 5;
+      const totalScore = lScore + rScore;
+      const isPassed = totalScore >= 110;
+
+      document.getElementById('result-total-score').textContent = `${totalScore} / 200점`;
+      document.getElementById('result-l-score').textContent = `${lScore}점 / 100점`;
+      document.getElementById('result-l-correct-count').textContent = `${lCorrect}문항 정답 (총 20문항)`;
+      document.getElementById('result-r-score').textContent = `${rScore}점 / 100점`;
+      document.getElementById('result-r-correct-count').textContent = `${rCorrect}문항 정답 (총 20문항)`;
+
+      const statusPill = document.getElementById('result-status-pill');
+      const trophyEmoji = document.getElementById('result-trophy-emoji');
+      const summaryMsg = document.getElementById('result-summary-msg');
+
+      if (isPassed) {
+        statusPill.className = 'result-status-badge pass';
+        statusPill.textContent = '최종 합격 (PASSED)';
+        trophyEmoji.textContent = '🎉';
+        summaryMsg.textContent = `축하합니다! EPS-TOPIK 기준 합격선(110점)을 넘겨 안정적으로 통과하셨습니다.`;
+      } else {
+        statusPill.className = 'result-status-badge fail';
+        statusPill.textContent = '과락 / 불합격 (FAILED)';
+        trophyEmoji.textContent = '📚';
+        summaryMsg.textContent = `아쉽습니다. 기준선(110점)에 도달하지 못했습니다. 오답 해설을 확인하고 다시 도전하세요!`;
+      }
+
+      const expContainer = document.getElementById('result-explanation-container');
+      expContainer.innerHTML = '';
+
+      APP_STATE.currentExamQuestions.forEach(q => {
+        const userAns = APP_STATE.userAnswers[q.id];
+        const isCorrect = userAns === q.answer;
+
+        const item = document.createElement('div');
+        item.className = 'exp-item';
+        item.style.borderColor = isCorrect ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.4)';
+
+        item.innerHTML = `
+          <div class="exp-item-header">
+            <span>[${q.examNum}번] ${q.type === 'L' ? '🎧 듣기' : '📖 읽기'} - ${q.category || ''}</span>
+            <span style="color:${isCorrect ? 'var(--green)' : 'var(--red)'}">
+              ${isCorrect ? '✓ 정답' : `✕ 오답 (내 선택: ${userAns || '미선택'}, 정답: ${q.answer}번)`}
+            </span>
+          </div>
+          <div class="exp-desc">
+            <strong>정답: ${q.answer}번 (${q.options[q.answer - 1]})</strong><br>
+            ${q.explanation || ''}
+          </div>
+        `;
+        expContainer.appendChild(item);
+      });
+
+      document.getElementById('modal-exam-result').classList.add('open');
+    }
+
+    function closeResultModal() {
+      document.getElementById('modal-exam-result').classList.remove('open');
+    }
+
+    function restartExam() {
+      closeResultModal();
+      resetExamState();
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       6. 1,917 QUESTION BANK EXPLORER & PAGINATION
+    ───────────────────────────────────────────────────────────── */
+    function filterBankQuestions() {
+      const revVal = document.getElementById('bank-rev-filter').value;
+      const typeVal = document.getElementById('bank-type-filter').value;
+      const keyword = document.getElementById('bank-search-input').value.trim().toLowerCase();
+
+      APP_STATE.filteredBankQuestions = APP_STATE.allBank.filter(q => {
+        if (revVal !== 'all' && String(q.revCd) !== revVal) return false;
+        if (typeVal !== 'all' && q.type !== typeVal) return false;
+        if (keyword) {
+          const matchText = `${q.order} ${q.idx || ''} ${q.title || ''} ${q.instruction || ''} ${q.passage || ''} ${q.dialogue || ''} ${(q.options || []).join(' ')} ${q.category || ''}`.toLowerCase();
+          if (!matchText.includes(keyword)) return false;
+        }
+        return true;
+      });
+
+      APP_STATE.bankPage = 1; // Reset to page 1
+      renderBankPage();
+    }
+
+    function changeBankPageSize(newSize) {
+      APP_STATE.bankPageSize = newSize;
+      APP_STATE.bankPage = 1;
+      renderBankPage();
+    }
+
+    function changeBankPage(pageNum) {
+      APP_STATE.bankPage = pageNum;
+      renderBankPage();
+      // Scroll to top of bank records
+      document.getElementById('view-bank').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function renderBankPage() {
+      const totalCount = APP_STATE.filteredBankQuestions.length;
+      const pageSize = APP_STATE.bankPageSize;
+      const totalPages = Math.ceil(totalCount / pageSize) || 1;
+      const currentPage = Math.min(Math.max(1, APP_STATE.bankPage), totalPages);
+      APP_STATE.bankPage = currentPage;
+
+      const startIndex = (currentPage - 1) * pageSize;
+      const endIndex = Math.min(startIndex + pageSize, totalCount);
+      const pageItems = APP_STATE.filteredBankQuestions.slice(startIndex, endIndex);
+
+      // Update counters
+      document.getElementById('tab-bank-counter').textContent = `${totalCount.toLocaleString()}건`;
+      const bankTotalCountElem = document.getElementById('bank-total-count');
+      if (bankTotalCountElem) bankTotalCountElem.textContent = totalCount.toLocaleString();
+      const rangeTextElem = document.getElementById('bank-range-text');
+      if (rangeTextElem) {
+        rangeTextElem.textContent = totalCount > 0 ? `${startIndex + 1} ~ ${endIndex}` : '0';
+      }
+
+      // Render cards
+      const container = document.getElementById('bank-records-container');
+      container.innerHTML = '';
+
+      if (pageItems.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--text-muted)">
+            <div style="font-size:42px;margin-bottom:10px">🔍</div>
+            <p>검색 조건에 일치하는 문항이 없습니다.</p>
+          </div>
+        `;
+      } else {
+        pageItems.forEach(q => {
+          const card = document.createElement('div');
+          card.className = 'record-card';
+          card.onclick = () => loadSingleQuestionIntoCbt(q.id);
+
+          const previewSnippet = q.passage || q.dialogue || q.instruction;
+
+          card.innerHTML = `
+            <div>
+              <div class="record-header">
+                <span class="record-idx">문항순서 #${String(q.order).padStart(4, '0')} (idx:${q.idx || q.id})</span>
+                <span class="q-subject-pill ${q.type}">${q.type === 'L' ? '🎧 듣기 (L)' : '📖 읽기 (R)'}</span>
+              </div>
+              <h4 class="record-title" style="margin-top:8px">${q.title || q.instruction}</h4>
+              <p style="font-size:12px;color:var(--text-secondary);margin-top:6px;line-height:1.5">
+                ${previewSnippet ? previewSnippet.substring(0, 85) + '...' : ''}
+              </p>
+            </div>
+            <div class="record-meta-row">
+              <span>분류: ${q.workplace_tag || q.category || '직무문항'}</span>
+              <button class="btn-solve-now" onclick="event.stopPropagation();loadSingleQuestionIntoCbt(${q.id})">이 문제 바로 풀기 ➔</button>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+      }
+
+      // Render Bottom Pagination
+      renderPaginationNav(currentPage, totalPages);
+    }
+
+    function renderPaginationNav(curr, total) {
+      const nav = document.getElementById('bank-pagination-nav');
+      if (!nav) return;
+      nav.innerHTML = '';
+
+      if (total <= 1) return;
+
+      // First & Prev buttons
+      const btnFirst = document.createElement('button');
+      btnFirst.className = 'page-btn';
+      btnFirst.textContent = '«';
+      btnFirst.disabled = curr === 1;
+      btnFirst.onclick = () => changeBankPage(1);
+      nav.appendChild(btnFirst);
+
+      const btnPrev = document.createElement('button');
+      btnPrev.className = 'page-btn';
+      btnPrev.textContent = '‹';
+      btnPrev.disabled = curr === 1;
+      btnPrev.onclick = () => changeBankPage(curr - 1);
+      nav.appendChild(btnPrev);
+
+      // Window of numbers around current page
+      let startP = Math.max(1, curr - 3);
+      let endP = Math.min(total, curr + 3);
+
+      if (startP > 1) {
+        const btn1 = document.createElement('button');
+        btn1.className = 'page-btn';
+        btn1.textContent = '1';
+        btn1.onclick = () => changeBankPage(1);
+        nav.appendChild(btn1);
+
+        if (startP > 2) {
+          const ellipsis = document.createElement('span');
+          ellipsis.style.color = 'var(--text-muted)';
+          ellipsis.style.padding = '0 4px';
+          ellipsis.textContent = '...';
+          nav.appendChild(ellipsis);
+        }
+      }
+
+      for (let p = startP; p <= endP; p++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (p === curr ? ' active' : '');
+        btn.textContent = p;
+        btn.onclick = () => changeBankPage(p);
+        nav.appendChild(btn);
+      }
+
+      if (endP < total) {
+        if (endP < total - 1) {
+          const ellipsis = document.createElement('span');
+          ellipsis.style.color = 'var(--text-muted)';
+          ellipsis.style.padding = '0 4px';
+          ellipsis.textContent = '...';
+          nav.appendChild(ellipsis);
+        }
+
+        const btnLast = document.createElement('button');
+        btnLast.className = 'page-btn';
+        btnLast.textContent = total;
+        btnLast.onclick = () => changeBankPage(total);
+        nav.appendChild(btnLast);
+      }
+
+      // Next & Last buttons
+      const btnNext = document.createElement('button');
+      btnNext.className = 'page-btn';
+      btnNext.textContent = '›';
+      btnNext.disabled = curr === total;
+      btnNext.onclick = () => changeBankPage(curr + 1);
+      nav.appendChild(btnNext);
+
+      const btnEnd = document.createElement('button');
+      btnEnd.className = 'page-btn';
+      btnEnd.textContent = '»';
+      btnEnd.disabled = curr === total;
+      btnEnd.onclick = () => changeBankPage(total);
+      nav.appendChild(btnEnd);
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       7. API TEST CONSOLE & SPEC (getApiQstbookList / Cont / Files)
+    ───────────────────────────────────────────────────────────── */
+    function selectEndpoint(endpointKey, elem) {
+      APP_STATE.selectedEndpoint = endpointKey;
+      document.querySelectorAll('.endpoint-item').forEach(el => el.classList.remove('active'));
+      elem.classList.add('active');
+
+      const revCdGroup = document.getElementById('group-param-revcd');
+      if (endpointKey === 'cont') {
+        revCdGroup.style.display = 'block';
+      } else {
+        revCdGroup.style.display = 'block';
+      }
+    }
+
+    async function executeApiTest() {
+      const numRows = parseInt(document.getElementById('param-num-rows').value || '10');
+      const pageNo = parseInt(document.getElementById('param-page-no').value || '1');
+      const revCd = document.getElementById('param-rev-cd').value || '3';
+      const proxyMode = document.getElementById('param-cors-proxy').value;
+      const key = APP_STATE.apiKey || 'YOUR_SERVICE_KEY';
+
+      const viewer = document.getElementById('api-raw-response');
+      const statusBadge = document.getElementById('response-status-badge');
+
+      viewer.textContent = `[요청 시작] ${APP_STATE.selectedEndpoint} API 호출 중...\n`;
+      statusBadge.textContent = 'Calling...';
+
+      let endpointPath = '';
+      if (APP_STATE.selectedEndpoint === 'list') endpointPath = 'getApiQstbookList';
+      else if (APP_STATE.selectedEndpoint === 'cont') endpointPath = 'getApiQstbookCont';
+      else endpointPath = 'getApiQstbookFiles';
+
+      let targetUrl = `https://apis.data.go.kr/B490007/QstbookInfo/${endpointPath}?serviceKey=${encodeURIComponent(key)}&numOfRows=${numRows}&pageNo=${pageNo}`;
+      if (APP_STATE.selectedEndpoint === 'cont' && revCd) {
+        targetUrl += `&revCd=${encodeURIComponent(revCd)}`;
+      }
+
+      viewer.textContent += `Request URL: ${targetUrl}\n\n`;
+
+      if (proxyMode === 'mock' || !APP_STATE.apiKey) {
+        setTimeout(() => {
+          let mockData = {};
+          if (APP_STATE.selectedEndpoint === 'list') {
+            mockData = {
+              response: {
+                header: { resultCode: "00", resultMsg: "NORMAL SERVICE" },
+                body: {
+                  items: {
+                    item: [
+                      { revCd: "3", revNameKor: "특별한국어능력시험 직무문항", revNameEng: "Work related questions in Special EPS-TOPIK", useYn: "Y" },
+                      { revCd: "2", revNameKor: "고용허가제 한국어능력시험 공개문제집 1차 개정판", revNameEng: "First Revised edition of EPS-TOPIK Question Book", useYn: "Y" },
+                      { revCd: "1", revNameKor: "고용허가제 한국어능력시험 공개문제집 2차 개정판", revNameEng: "Second Revised edition of EPS-TOPIK Question Book", useYn: "Y" }
+                    ]
+                  },
+                  numOfRows: numRows,
+                  pageNo: pageNo,
+                  totalCount: 3
+                }
+              }
+            };
+          } else if (APP_STATE.selectedEndpoint === 'cont') {
+            mockData = {
+              response: {
+                header: { resultCode: "00", resultMsg: "NORMAL SERVICE" },
+                body: {
+                  items: {
+                    item: [
+                      { codeKorNm: "듣기", contentsNameKor: "듣기문제 정답 및 스크립트", contentsNameEng: "Answers For Listening Questions&Scripts" },
+                      { codeKorNm: "듣기", contentsNameKor: "듣기문제", contentsNameEng: "Questions-Listening" },
+                      { codeKorNm: "읽기", contentsNameKor: "읽기문제 정답 및 해설", contentsNameEng: "Answers For Reading Questions&Explanations" },
+                      { codeKorNm: "읽기", contentsNameKor: "읽기문제", contentsNameEng: "Questions-Reading" }
+                    ]
+                  },
+                  numOfRows: numRows,
+                  pageNo: pageNo,
+                  totalCount: 15
+                }
+              }
+            };
+          } else {
+            // Full 1,917 items slice
+            const startIdx = (pageNo - 1) * numRows;
+            const endIdx = startIdx + numRows;
+            const sliced = APP_STATE.allBank.slice(startIdx, endIdx);
+
+            mockData = {
+              response: {
+                header: { resultCode: "00", resultMsg: "NORMAL SERVICE" },
+                body: {
+                  items: {
+                    item: sliced.map(q => ({
+                      idx: String(q.idx || q.id),
+                      ssubJectType: q.type,
+                      title: q.title || `[${q.type === 'L' ? '듣기' : '읽기'}분야]공개문제집 (문항순서-${String(q.order).padStart(8, '0')})`
+                    }))
+                  },
+                  numOfRows: numRows,
+                  pageNo: pageNo,
+                  totalCount: APP_STATE.allBank.length
+                }
+              }
+            };
+          }
+          statusBadge.textContent = 'Status: 200 OK (Official Data 1,917건)';
+          viewer.textContent += JSON.stringify(mockData, null, 2);
+        }, 300);
+        return;
+      }
+
+      // Real API Call with Proxy
+      try {
+        let fetchUrl = targetUrl;
+        if (proxyMode === 'allorigins') {
+          fetchUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+        }
+
+        const resp = await fetch(fetchUrl);
+        const text = await resp.text();
+        statusBadge.textContent = `Status: ${resp.status} ${resp.statusText}`;
+        viewer.textContent += `[Response Data]\n` + text;
+      } catch (err) {
+        statusBadge.textContent = 'Error: Failed';
+        viewer.textContent += `[오류 발생] 네트워크 또는 CORS 차단:\n${err.message}\n\n팁: 공공데이터포털(apis.data.go.kr)은 브라우저 직접 호출 시 CORS가 차단될 수 있으므로 'AllOrigins 프록시 우회' 또는 내장 Mock 모드를 선택하세요.`;
+      }
+    }
+
+    async function syncDataFromApi() {
+      if (!APP_STATE.apiKey) {
+        alert('공공데이터포털 인증키가 설정되어 있지 않습니다.\n[인증키 설정] 버튼을 눌러 발급받은 키를 등록하세요.');
+        openApiConfigModal();
+        return;
+      }
+      alert('공공데이터포털 서버와 실시간 데이터 동기화를 진행합니다.');
+      executeApiTest();
+      switchMainTab('console');
+    }
+
+    /* ─────────────────────────────────────────────────────────────
+       8. API KEY MANAGEMENT MODAL
+    ───────────────────────────────────────────────────────────── */
+    function openApiConfigModal() {
+      document.getElementById('modal-api-config').classList.add('open');
+    }
+
+    function closeApiConfigModal() {
+      document.getElementById('modal-api-config').classList.remove('open');
+    }
+
+    function saveApiKey() {
+      const keyVal = document.getElementById('input-service-key').value.trim();
+      APP_STATE.apiKey = keyVal;
+      localStorage.setItem('epstopik_service_key', keyVal);
+
+      if (keyVal) {
+        document.getElementById('display-api-key').textContent = keyVal.substring(0, 8) + '••••••••';
+        document.getElementById('api-status-text').textContent = '공공데이터 인증키 등록됨';
+        alert('인증키가 안전하게 저장되었습니다!');
+      } else {
+        document.getElementById('display-api-key').textContent = '내장 공공데이터 샘플 활성화됨';
+        document.getElementById('api-status-text').textContent = 'API 준비 완료';
+        alert('인증키가 초기화되었습니다. 기본 내장 데이터로 동작합니다.');
+      }
+
+      closeApiConfigModal();
+    }
+  </script>
+</body>
+</html>

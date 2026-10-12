@@ -75,6 +75,17 @@ class WarehouseRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, directory=BASE_DIR, **kwargs)
 
+    def translate_path(self, path):
+        # path 파싱
+        clean_path = path.split('?', 1)[0].split('#', 1)[0].lstrip('/')
+        test_path = os.path.join(BASE_DIR, clean_path)
+        if os.path.exists(test_path):
+            return test_path
+        root_path = os.path.join(ROOT_DIR, clean_path)
+        if os.path.exists(root_path):
+            return root_path
+        return super().translate_path(path)
+
     def log_message(self, format, *args):
         # 콘솔 버퍼 지연 방지 및 간결한 로깅
         sys.stdout.write(f"[{self.log_date_time_string()}] {self.address_string()} - {format%args}\n")
