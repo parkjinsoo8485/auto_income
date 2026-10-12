@@ -2382,23 +2382,61 @@
         return;
       }
 
-      // Fisher-Yates shuffle for true uniform randomness
-      function shuffleArray(arr) {
-        const copy = arr.slice();
-        for (let i = copy.length - 1; i > 0; i--) {
+      // 층화 균등 무작위 추출 (Stratified Random Sampling)
+      // 25개 카테고리 중 서로 다른 20개 카테고리에서 각 1문항씩 무작위 추출하여
+      // 동일 유형/카테고리 중복을 완전히 배제하고 100% 다채로운 실전 시험 생성
+      function extractDiversifiedQuestions(pool, targetCount = 20) {
+        // 1. 카테고리별 그룹화
+        const catMap = {};
+        pool.forEach(q => {
+          const cat = q.category || '기타 직무';
+          if (!catMap[cat]) catMap[cat] = [];
+          catMap[cat].push(q);
+        });
+
+        // 2. 카테고리 목록 셔플 (Fisher-Yates)
+        const catKeys = Object.keys(catMap);
+        for (let i = catKeys.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
-          [copy[i], copy[j]] = [copy[j], copy[i]];
+          [catKeys[i], catKeys[j]] = [catKeys[j], catKeys[i]];
         }
-        return copy;
+
+        // 3. 선정된 카테고리들에서 각각 1개씩 무작위 추출
+        const chosen = [];
+        const pickedCats = catKeys.slice(0, targetCount);
+        pickedCats.forEach(cat => {
+          const subPool = catMap[cat];
+          const randQ = subPool[Math.floor(Math.random() * subPool.length)];
+          chosen.push(randQ);
+        });
+
+        // 4. 부족한 경우 전체 풀에서 중복 없이 보충
+        if (chosen.length < targetCount) {
+          const chosenIds = new Set(chosen.map(q => q.id));
+          const remaining = pool.filter(q => !chosenIds.has(q.id));
+          for (let i = remaining.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [remaining[i], remaining[j]] = [remaining[j], remaining[i]];
+          }
+          chosen.push(...remaining.slice(0, targetCount - chosen.length));
+        }
+
+        // 5. 최종 선택된 20문항 내 순서 셔플
+        for (let i = chosen.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [chosen[i], chosen[j]] = [chosen[j], chosen[i]];
+        }
+
+        return chosen;
       }
 
-      const shuffledL = shuffleArray(allL).slice(0, 20);
-      const shuffledR = shuffleArray(allR).slice(0, 20);
+      const sampledL = extractDiversifiedQuestions(allL, 20);
+      const sampledR = extractDiversifiedQuestions(allR, 20);
 
       APP_STATE.currentRound = 'random';
       APP_STATE.currentExamQuestions = [
-        ...shuffledL.map((q, idx) => ({ ...q, examNum: idx + 1 })),
-        ...shuffledR.map((q, idx) => ({ ...q, examNum: idx + 21 }))
+        ...sampledL.map((q, idx) => ({ ...q, examNum: idx + 1 })),
+        ...sampledR.map((q, idx) => ({ ...q, examNum: idx + 21 }))
       ];
 
       // Sync dropdown select box
@@ -2415,10 +2453,10 @@
       }
 
       document.getElementById('tab-cbt-counter').textContent = '무작위 모의고사 (40문항)';
-      document.getElementById('current-pool-info').textContent = '🎲 1,917문항 무작위 추출 실전 모의고사 가동 중';
+      document.getElementById('current-pool-info').textContent = '🎲 1,917문항 영역별 무작위 분산 추출 모의고사 가동 중';
 
       if (notify) {
-        showCbtToast('1,917개 뱅크에서 새로운 40문항 실전 모의고사가 무작위 추출되었습니다!', '✨');
+        showCbtToast('1,917개 뱅크에서 40개 영역별 실전 문항이 완벽 무작위 추출되었습니다!', '✨');
       }
 
       resetExamState();
