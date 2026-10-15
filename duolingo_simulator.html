@@ -1420,7 +1420,7 @@ function renderListenComprehension(challenge, container) {
   container.appendChild(choiceList);
 }
 
-/* ── 4. Character Trace 렌더러 (한글 획순 쓰기) ── */
+/* ── 4. Character Trace 렌더러 (한글 정밀 획순 애니메이션 엔진) ── */
 function renderCharacterTrace(challenge, container) {
   const canvasWrap = document.createElement('div');
   canvasWrap.className = 'trace-canvas-container';
@@ -1439,25 +1439,25 @@ function renderCharacterTrace(challenge, container) {
 
   const btnAnim = document.createElement('button');
   btnAnim.className = 'btn-3d btn-blue';
-  btnAnim.style.padding = '8px 14px';
-  btnAnim.style.fontSize = '13px';
-  btnAnim.textContent = '✨ 획순 가이드 보기';
+  btnAnim.style.padding = '10px 16px';
+  btnAnim.style.fontSize = '14px';
+  btnAnim.innerHTML = '✨ 획순 가이드 보기';
   
   const btnClear = document.createElement('button');
   btnClear.className = 'btn-3d';
-  btnClear.style.padding = '8px 14px';
-  btnClear.style.fontSize = '13px';
+  btnClear.style.padding = '10px 16px';
+  btnClear.style.fontSize = '14px';
   btnClear.style.background = 'var(--gray-200)';
   btnClear.style.color = 'var(--gray-700)';
   btnClear.style.boxShadow = '0 3px 0 var(--gray-300)';
-  btnClear.textContent = '🔄 다시 쓰기';
+  btnClear.innerHTML = '🔄 다시 쓰기';
 
   ctrlRow.appendChild(btnAnim);
   ctrlRow.appendChild(btnClear);
   canvasWrap.appendChild(ctrlRow);
 
   const guideText = document.createElement('div');
-  guideText.style.marginTop = '10px';
+  guideText.style.marginTop = '12px';
   guideText.style.fontWeight = '800';
   guideText.style.color = 'var(--gray-700)';
   guideText.textContent = `단어 예시: ${challenge.word} (${challenge.meaning})`;
@@ -1478,30 +1478,336 @@ function renderCharacterTrace(challenge, container) {
 
   drawBaseGuide();
 
-  let drawing = false;
-  let strokeCount = 0;
+  // ── 정밀 획순 벡터 DB & 음절 분해 ──
+  const STROKE_DB = {
+    'ㅇ': [{ type: 'circle', cx: 50, cy: 50, r: 35 }],
+    'ㄱ': [{ type: 'lines', pts: [[15, 20], [85, 20], [85, 85]] }],
+    'ㄴ': [{ type: 'lines', pts: [[18, 15], [18, 85], [85, 85]] }],
+    'ㄷ': [
+      { type: 'lines', pts: [[15, 18], [85, 18]] },
+      { type: 'lines', pts: [[18, 18], [18, 85], [85, 85]] }
+    ],
+    'ㄹ': [
+      { type: 'lines', pts: [[15, 18], [85, 18], [85, 50]] },
+      { type: 'lines', pts: [[15, 50], [85, 50]] },
+      { type: 'lines', pts: [[18, 50], [18, 85], [85, 85]] }
+    ],
+    'ㅁ': [
+      { type: 'lines', pts: [[18, 15], [18, 85]] },
+      { type: 'lines', pts: [[18, 18], [85, 18], [85, 85]] },
+      { type: 'lines', pts: [[18, 85], [85, 85]] }
+    ],
+    'ㅂ': [
+      { type: 'lines', pts: [[22, 15], [22, 85]] },
+      { type: 'lines', pts: [[78, 15], [78, 85]] },
+      { type: 'lines', pts: [[22, 50], [78, 50]] },
+      { type: 'lines', pts: [[22, 85], [78, 85]] }
+    ],
+    'ㅅ': [
+      { type: 'lines', pts: [[50, 15], [18, 85]] },
+      { type: 'lines', pts: [[42, 50], [82, 85]] }
+    ],
+    'ㅈ': [
+      { type: 'lines', pts: [[18, 18], [82, 18]] },
+      { type: 'lines', pts: [[50, 18], [18, 85]] },
+      { type: 'lines', pts: [[42, 52], [82, 85]] }
+    ],
+    'ㅊ': [
+      { type: 'lines', pts: [[50, 6], [50, 20]] },
+      { type: 'lines', pts: [[18, 22], [82, 22]] },
+      { type: 'lines', pts: [[50, 22], [18, 85]] },
+      { type: 'lines', pts: [[42, 52], [82, 85]] }
+    ],
+    'ㅋ': [
+      { type: 'lines', pts: [[15, 18], [85, 18], [85, 85]] },
+      { type: 'lines', pts: [[15, 50], [75, 50]] }
+    ],
+    'ㅌ': [
+      { type: 'lines', pts: [[18, 18], [82, 18]] },
+      { type: 'lines', pts: [[18, 50], [82, 50]] },
+      { type: 'lines', pts: [[18, 18], [18, 85], [82, 85]] }
+    ],
+    'ㅍ': [
+      { type: 'lines', pts: [[18, 18], [82, 18]] },
+      { type: 'lines', pts: [[36, 18], [36, 85]] },
+      { type: 'lines', pts: [[64, 18], [64, 85]] },
+      { type: 'lines', pts: [[18, 85], [82, 85]] }
+    ],
+    'ㅎ': [
+      { type: 'lines', pts: [[50, 6], [50, 20]] },
+      { type: 'lines', pts: [[18, 22], [82, 22]] },
+      { type: 'circle', cx: 50, cy: 62, r: 24 }
+    ],
+    'ㅏ': [
+      { type: 'lines', pts: [[50, 12], [50, 88]] },
+      { type: 'lines', pts: [[50, 50], [88, 50]] }
+    ],
+    'ㅑ': [
+      { type: 'lines', pts: [[50, 12], [50, 88]] },
+      { type: 'lines', pts: [[50, 36], [88, 36]] },
+      { type: 'lines', pts: [[50, 64], [88, 64]] }
+    ],
+    'ㅓ': [
+      { type: 'lines', pts: [[12, 50], [50, 50]] },
+      { type: 'lines', pts: [[50, 12], [50, 88]] }
+    ],
+    'ㅕ': [
+      { type: 'lines', pts: [[12, 36], [50, 36]] },
+      { type: 'lines', pts: [[12, 64], [50, 64]] },
+      { type: 'lines', pts: [[50, 12], [50, 88]] }
+    ],
+    'ㅗ': [
+      { type: 'lines', pts: [[50, 15], [50, 65]] },
+      { type: 'lines', pts: [[12, 65], [88, 65]] }
+    ],
+    'ㅛ': [
+      { type: 'lines', pts: [[36, 15], [36, 65]] },
+      { type: 'lines', pts: [[64, 15], [64, 65]] },
+      { type: 'lines', pts: [[12, 65], [88, 65]] }
+    ],
+    'ㅜ': [
+      { type: 'lines', pts: [[12, 35], [88, 35]] },
+      { type: 'lines', pts: [[50, 35], [50, 85]] }
+    ],
+    'ㅠ': [
+      { type: 'lines', pts: [[12, 35], [88, 35]] },
+      { type: 'lines', pts: [[36, 35], [36, 85]] },
+      { type: 'lines', pts: [[64, 35], [64, 85]] }
+    ],
+    'ㅡ': [{ type: 'lines', pts: [[12, 50], [88, 50]] }],
+    'ㅣ': [{ type: 'lines', pts: [[50, 12], [50, 88]] }]
+  };
+
+  function getCharacterStrokes(char) {
+    const code = char.charCodeAt(0) - 0xAC00;
+    const chos = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+    const jungs = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+    const jongs = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+    let strokes = [];
+
+    function transform(stk, box) {
+      if (stk.type === 'circle') {
+        return {
+          type: 'circle',
+          cx: box.x + (stk.cx / 100) * box.w,
+          cy: box.y + (stk.cy / 100) * box.h,
+          r: (stk.r / 100) * Math.min(box.w, box.h)
+        };
+      }
+      return {
+        type: 'lines',
+        pts: stk.pts.map(p => [
+          box.x + (p[0] / 100) * box.w,
+          box.y + (p[1] / 100) * box.h
+        ])
+      };
+    }
+
+    if (code >= 0 && code <= 11171) {
+      const jong = code % 28;
+      const jung = Math.floor((code - jong) / 28) % 21;
+      const cho = Math.floor((code - jong) / 28 / 21);
+      const choChar = chos[cho];
+      const jungChar = jungs[jung];
+      const jongChar = jongs[jong];
+
+      const isVert = [0, 1, 2, 3, 4, 5, 6, 7, 20].includes(jung);
+      const hasJong = jong > 0;
+
+      let choBox, jungBox, jongBox;
+      if (isVert && !hasJong) {
+        choBox = { x: 26, y: 35, w: 92, h: 165 };
+        jungBox = { x: 122, y: 25, w: 92, h: 185 };
+      } else if (!isVert && !hasJong) {
+        choBox = { x: 35, y: 25, w: 170, h: 90 };
+        jungBox = { x: 25, y: 120, w: 190, h: 95 };
+      } else {
+        choBox = { x: 25, y: 20, w: 92, h: 95 };
+        jungBox = { x: 122, y: 15, w: 92, h: 105 };
+        jongBox = { x: 45, y: 130, w: 150, h: 85 };
+      }
+
+      if (STROKE_DB[choChar]) {
+        STROKE_DB[choChar].forEach(s => strokes.push(transform(s, choBox)));
+      }
+      if (STROKE_DB[jungChar]) {
+        STROKE_DB[jungChar].forEach(s => strokes.push(transform(s, jungBox)));
+      }
+      if (jongChar && STROKE_DB[jongChar]) {
+        STROKE_DB[jongChar].forEach(s => strokes.push(transform(s, jongBox)));
+      }
+    } else if (STROKE_DB[char]) {
+      const fullBox = { x: 35, y: 35, w: 170, h: 170 };
+      STROKE_DB[char].forEach(s => strokes.push(transform(s, fullBox)));
+    }
+    return strokes;
+  }
+
+  function drawBrushHead(ctx, x, y) {
+    ctx.save();
+    ctx.fillStyle = '#ffc800';
+    ctx.shadowColor = '#ffc800';
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(x, y, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawPolylineProgress(ctx, pts, progress) {
+    if (pts.length < 2) return;
+    let totalLen = 0;
+    const lens = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const dist = Math.hypot(pts[i+1][0] - pts[i][0], pts[i+1][1] - pts[i][1]);
+      lens.push(dist);
+      totalLen += dist;
+    }
+
+    const targetDist = totalLen * progress;
+    let curDist = 0;
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    let lastX = pts[0][0], lastY = pts[0][1];
+
+    for (let i = 0; i < lens.length; i++) {
+      const segLen = lens[i];
+      if (curDist + segLen <= targetDist) {
+        ctx.lineTo(pts[i+1][0], pts[i+1][1]);
+        curDist += segLen;
+        lastX = pts[i+1][0];
+        lastY = pts[i+1][1];
+      } else {
+        const remain = targetDist - curDist;
+        const frac = remain / (segLen || 1);
+        lastX = pts[i][0] + (pts[i+1][0] - pts[i][0]) * frac;
+        lastY = pts[i][1] + (pts[i+1][1] - pts[i][1]) * frac;
+        ctx.lineTo(lastX, lastY);
+        break;
+      }
+    }
+    ctx.stroke();
+    drawBrushHead(ctx, lastX, lastY);
+  }
+
+  let isAnimating = false;
 
   btnClear.onclick = () => {
     SoundEffects.playTap();
-    strokeCount = 0;
+    isAnimating = false;
     drawBaseGuide();
     document.getElementById('btn-action').disabled = true;
   };
 
   btnAnim.onclick = () => {
-    SoundEffects.playTap();
+    if (isAnimating) return;
+    isAnimating = true;
+
+    btnAnim.innerHTML = '⏳ 획순 그리는 중...';
+    btnAnim.disabled = true;
+    btnClear.disabled = true;
+    document.getElementById('btn-action').disabled = true;
+
     drawBaseGuide();
-    ctx.save();
-    ctx.font = 'bold 150px Gungsuh, serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = 'rgba(88, 204, 2, 0.45)';
-    ctx.fillText(challenge.character, 120, 120);
-    ctx.restore();
-    SoundEffects.playCorrect(1);
-    strokeCount = 2;
-    document.getElementById('btn-action').disabled = false;
+
+    const strokes = getCharacterStrokes(challenge.character);
+    if (!strokes.length) {
+      // Fallback
+      ctx.fillStyle = 'rgba(88, 204, 2, 0.6)';
+      ctx.fillText(challenge.character, 120, 120);
+      finishAnim();
+      return;
+    }
+
+    let strokeIdx = 0;
+
+    function runNextStroke() {
+      if (!isAnimating) return;
+      if (strokeIdx >= strokes.length) {
+        finishAnim();
+        return;
+      }
+
+      const currentStroke = strokes[strokeIdx];
+      SoundEffects.playTap();
+
+      const badgeNum = strokeIdx + 1;
+      let badgePos = { x: 0, y: 0 };
+      if (currentStroke.type === 'circle') {
+        badgePos = { x: currentStroke.cx, y: currentStroke.cy - currentStroke.r - 10 };
+      } else {
+        badgePos = { x: currentStroke.pts[0][0] - 12, y: currentStroke.pts[0][1] - 12 };
+      }
+
+      // Draw badge
+      ctx.save();
+      ctx.fillStyle = '#1cb0f6';
+      ctx.beginPath();
+      ctx.arc(badgePos.x, badgePos.y, 11, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 12px Nunito, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(badgeNum, badgePos.x, badgePos.y);
+      ctx.restore();
+
+      let startTime = null;
+      const duration = 400; // ms
+
+      function step(timestamp) {
+        if (!isAnimating) return;
+        if (!startTime) startTime = timestamp;
+        const progress = Math.min(1.0, (timestamp - startTime) / duration);
+
+        ctx.save();
+        ctx.lineWidth = 14;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.strokeStyle = '#58cc02';
+
+        if (currentStroke.type === 'circle') {
+          const startAngle = -Math.PI / 2;
+          const currentAngle = startAngle + (Math.PI * 2 * progress);
+          ctx.beginPath();
+          ctx.arc(currentStroke.cx, currentStroke.cy, currentStroke.r, startAngle, currentAngle);
+          ctx.stroke();
+
+          const headX = currentStroke.cx + currentStroke.r * Math.cos(currentAngle);
+          const headY = currentStroke.cy + currentStroke.r * Math.sin(currentAngle);
+          drawBrushHead(ctx, headX, headY);
+        } else {
+          drawPolylineProgress(ctx, currentStroke.pts, progress);
+        }
+        ctx.restore();
+
+        if (progress < 1.0) {
+          requestAnimationFrame(step);
+        } else {
+          strokeIdx++;
+          setTimeout(runNextStroke, 180);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    function finishAnim() {
+      isAnimating = false;
+      btnAnim.innerHTML = '✨ 획순 다시 보기';
+      btnAnim.disabled = false;
+      btnClear.disabled = false;
+      SoundEffects.playCorrect(1);
+      document.getElementById('btn-action').disabled = false;
+    }
+
+    runNextStroke();
   };
+
+  // 터치 & 마우스 수동 드로잉 인터랙션
+  let drawing = false;
 
   function getPos(e) {
     const rect = canvas.getBoundingClientRect();
@@ -1511,23 +1817,22 @@ function renderCharacterTrace(challenge, container) {
   }
 
   function startDraw(e) {
+    if (isAnimating) return;
     drawing = true;
-    strokeCount++;
     const pos = getPos(e);
     ctx.beginPath();
     ctx.moveTo(pos.x, pos.y);
     ctx.lineWidth = 14;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
     ctx.strokeStyle = '#58cc02';
   }
   function moveDraw(e) {
-    if (!drawing) return;
+    if (!drawing || isAnimating) return;
     const pos = getPos(e);
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
-    if (strokeCount >= 2) {
-      document.getElementById('btn-action').disabled = false;
-    }
+    document.getElementById('btn-action').disabled = false;
   }
   function endDraw() { drawing = false; }
 
