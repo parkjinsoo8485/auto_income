@@ -1,0 +1,133 @@
+{
+  "title": "한글 완전 정복 6단계 커리큘럼",
+  "description": "국립국어원 표준 교수법 및 듀오링고 Characters 모델 기반 한글 마스터 단계",
+  "stages": [
+    {
+      "step": 1,
+      "id": "basic_vowels",
+      "title": "1단계: 기본 모음 (10개)",
+      "desc": "하늘(ㆍ), 땅(ㅡ), 사람(ㅣ) 천지인 원리로 익히는 소리의 기둥",
+      "items": [
+        { "char": "ㅏ", "rom": "a", "sound": "아" },
+        { "char": "ㅑ", "rom": "ya", "sound": "야" },
+        { "char": "ㅓ", "rom": "eo", "sound": "어" },
+        { "char": "ㅕ", "rom": "yeo", "sound": "여" },
+        { "char": "ㅗ", "rom": "o", "sound": "오" },
+        { "char": "ㅛ", "rom": "yo", "sound": "요" },
+        { "char": "ㅜ", "rom": "u", "sound": "우" },
+        { "char": "ㅠ", "rom": "yu", "sound": "유" },
+        { "char": "ㅡ", "rom": "eu", "sound": "으" },
+        { "char": "ㅣ", "rom": "i", "sound": "이" }
+      ],
+      "practice_words": [
+        { "word": "아이", "meaning": "Child" },
+        { "word": "오이", "meaning": "Cucumber" },
+        { "word": "우유", "meaning": "Milk" },
+        { "word": "여우", "meaning": "Fox" }
+      ]
+    },
+    {
+      "step": 2,
+      "id": "basic_consonants",
+      "title": "2단계: 기본 자음 (14개)",
+      "desc": "혀, 입술, 이, 목구멍 발음 기관의 모양을 본뜬 과학적 자음",
+      "items": [
+        { "char": "ㄱ", "rom": "g/k", "sound": "기역" },
+        { "char": "ㄴ", "rom": "n", "sound": "니은" },
+        { "char": "ㄷ", "rom": "d/t", "sound": "디귿" },
+        { "char": "ㄹ", "rom": "r/l", "sound": "리을" },
+        { "char": "ㅁ", "rom": "m", "sound": "미음" },
+        { "char": "ㅂ", "rom": "b/p", "sound": "비읍" },
+        { "char": "ㅅ", "rom": "s", "sound": "시옷" },
+        { "char": "ㅇ", "rom": "ng", "sound": "이응" },
+        { "char": "ㅈ", "rom": "j", "sound": "지읒" },
+        { "char": "ㅊ", "rom": "ch", "sound": "치읓" },
+        { "char": "ㅋ", "rom": "k", "sound": "키읔" },
+        { "char": "ㅌ", "rom": "t", "sound": "티읕" },
+        { "char": "ㅍ", "rom": "p", "sound": "피읖" },
+        { "char": "ㅎ", "rom": "h", "sound": "히읗" }
+      ],
+      "practice_words": [
+        { "word": "가구", "meaning": "Furniture" },
+        { "word": "나비", "meaning": "Butterfly" },
+        { "word": "다리", "meaning": "Bridge / Leg" },
+        { "word": "라디오", "meaning": "Radio" },
+        { "word": "모자", "meaning": "Hat" },
+        { "word": "바지", "meaning": "Pants" },
+        { "word": "사자", "meaning": "Lion" }
+      ]
+    },
+    {
+      "step": 3,
+      "id": "syllable_blocks",
+      "title": "3단계: 2분법 음절 조합 (초성 + 중성)",
+      "desc": "자음과 모음이 만나 하나의 완전한 소리 블록을 이루는 원리",
+      "rules": [
+        "세로 모음(ㅏ, ㅑ, ㅓ, ㅕ, ㅣ): 자음 오른쪽에 결합 (가, 나, 다...)",
+        "가로 모음(ㅗ, ㅛ, ㅜ, ㅠ, ㅡ): 자음 아래쪽에 결합 (고, 노, 도...)"
+      ],
+      "interactive_matrix": {
+        "cho": ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ"],
+        "jung": ["ㅏ", "ㅓ", "ㅗ", "ㅜ", "ㅣ"]
+      }
+    },
+    {
+      "step": 4,
+      "id": "double_consonants_compound_vowels",
+      "title": "4단계: 쌍자음 (5개) & 복합 모음 (11개)",
+      "desc": "된소리(목에 힘을 준 강한 소리)와 두 모음이 결합한 이중모음",
+      "double_consonants": [
+        { "char": "ㄲ", "rom": "kk", "sound": "쌍기역" },
+        { "char": "ㄸ", "rom": "tt", "sound": "쌍디귿" },
+        { "char": "ㅃ", "rom": "pp", "sound": "쌍비읍" },
+        { "char": "ㅆ", "rom": "ss", "sound": "쌍시옷" },
+        { "char": "ㅉ", "rom": "jj", "sound": "쌍지읒" }
+      ],
+      "compound_vowels": [
+        { "char": "ㅐ", "rom": "ae", "sound": "애" },
+        { "char": "ㅒ", "rom": "yae", "sound": "얘" },
+        { "char": "ㅔ", "rom": "e", "sound": "에" },
+        { "char": "ㅖ", "rom": "ye", "sound": "예" },
+        { "char": "ㅘ", "rom": "wa", "sound": "와" },
+        { "char": "ㅙ", "rom": "wae", "sound": "왜" },
+        { "char": "ㅚ", "rom": "oe", "sound": "외" },
+        { "char": "ㅝ", "rom": "wo", "sound": "워" },
+        { "char": "ㅞ", "rom": "we", "sound": "웨" },
+        { "char": "ㅟ", "rom": "wi", "sound": "위" },
+        { "char": "ㅢ", "rom": "ui", "sound": "의" }
+      ],
+      "practice_words": [
+        { "word": "까치", "meaning": "Magpie" },
+        { "word": "꼬리", "meaning": "Tail" },
+        { "word": "사과", "meaning": "Apple" },
+        { "word": "의사", "meaning": "Doctor" }
+      ]
+    },
+    {
+      "step": 5,
+      "id": "batchim_finals",
+      "title": "5단계: 받침 (종성 7대 대표음)",
+      "desc": "음절 아래에 놓이는 마침소리. 모든 자음은 7가지 대표음으로 귀결",
+      "representative_rules": [
+        { "rep": "ㄱ", "members": "ㄱ, ㅋ, ㄲ, ㄳ, ㄺ", "example": "책 [책], 부엌 [부억]" },
+        { "rep": "ㄴ", "members": "ㄴ, ㄵ, ㄶ", "example": "눈 [눈], 편지 [편지]" },
+        { "rep": "ㄷ", "members": "ㄷ, ㅅ, ㅈ, ㅊ, ㅌ, ㅎ, ㅆ", "example": "옷 [옫], 꽃 [꼳], 낮 [낟]" },
+        { "rep": "ㄹ", "members": "ㄹ, ㄼ, ㄽ, ㄾ, ㅀ", "example": "달 [달], 물 [물]" },
+        { "rep": "ㅁ", "members": "ㅁ, ㄻ", "example": "밤 [밤], 엄마 [엄마]" },
+        { "rep": "ㅂ", "members": "ㅂ, ㅍ, ㅄ, ㄿ", "example": "밥 [밥], 잎 [입]" },
+        { "rep": "ㅇ", "members": "ㅇ (울림소리)", "example": "공 [공], 가방 [가방]" }
+      ]
+    },
+    {
+      "step": 6,
+      "id": "mastery_linking_rules",
+      "title": "6단계: 연음 법칙 & 실전 획순 마스터",
+      "desc": "받침 뒤에 모음이 올 때 소리가 이어지는 연음 현상과 완전한 단어 쓰기",
+      "linking_examples": [
+        { "written": "한국어", "pronounced": "한구거", "meaning": "Korean Language" },
+        { "written": "밥을 먹어요", "pronounced": "바블 머거요", "meaning": "I eat rice" },
+        { "written": "음악", "pronounced": "으막", "meaning": "Music" }
+      ]
+    }
+  ]
+}

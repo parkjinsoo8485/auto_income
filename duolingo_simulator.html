@@ -699,6 +699,148 @@ body {
 .stat-card-duo.streak { border-color: #ff9600; background: #fff4e5; }
 .stat-card-duo-val { font-size: 22px; font-weight: 900; }
 .stat-card-duo-lbl { font-size: 12px; font-weight: 800; color: var(--gray-700); margin-top: 4px; }
+/* ── 하단 탭 네비게이션 ── */
+.bottom-nav-bar {
+  height: 64px;
+  background: #fff;
+  border-top: 2px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  z-index: 40;
+}
+.nav-tab-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  cursor: pointer;
+  color: var(--gray-400);
+  font-size: 11px;
+  font-weight: 800;
+  transition: all 0.15s;
+  flex: 1;
+  height: 100%;
+}
+.nav-tab-btn.active {
+  color: var(--green-dark);
+}
+.nav-tab-icon {
+  font-size: 20px;
+}
+
+/* ── 뷰 화면 3: 한글 문자 학습소 (Hangul Characters Hub) ── */
+#view-characters {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px 90px;
+  background: #fbfbfb;
+  flex-direction: column;
+  gap: 20px;
+}
+.hangul-stage-card {
+  background: #fff;
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: 0 4px 0 var(--gray-200);
+}
+.hangul-stage-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--gray-800);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.hangul-stage-desc {
+  font-size: 12px;
+  color: var(--gray-700);
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+.jamo-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+.jamo-tile {
+  background: var(--gray-100);
+  border: 2px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.1s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 0 var(--gray-300);
+}
+.jamo-tile:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+.jamo-char {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--gray-800);
+  font-family: 'Gungsuh', 'Noto Sans KR', sans-serif;
+}
+.jamo-rom {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--blue-dark);
+  margin-top: 2px;
+}
+
+/* ── 실시간 음절 조합기 (Syllable Builder) ── */
+.syllable-builder-box {
+  background: #f0fdf4;
+  border: 2px solid var(--green);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.syllable-display-char {
+  font-size: 56px;
+  font-weight: 900;
+  font-family: 'Gungsuh', serif;
+  color: var(--green-dark);
+  cursor: pointer;
+}
+.syllable-selectors {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.syllable-select-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.syllable-select-col label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--gray-700);
+  text-align: center;
+}
+.syllable-select-col select {
+  padding: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  border-radius: 8px;
+  border: 1.5px solid var(--gray-300);
+  background: #fff;
+  text-align: center;
+}
 </style>
 </head>
 <body>
@@ -811,7 +953,75 @@ body {
     <h2 style="font-size:20px; font-weight:800; margin-bottom:8px;">Google AdMob 보상형 광고 재생 중</h2>
     <p style="color:#aaa; font-size:14px; margin-bottom:20px;">광고 시청 완료 후 즉시 보상이 지급됩니다...</p>
     <div style="font-size:32px; font-weight:900; color:var(--gold);" id="ad-countdown">3</div>
-  </div>
+  <!-- 7. 한글 문자 학습소 뷰 (Hangul Characters Hub) -->
+  <main id="view-characters">
+    <div style="background:linear-gradient(135deg, var(--green), #3b82f6); color:#fff; border-radius:var(--radius-md); padding:16px 20px; box-shadow:0 4px 0 var(--green-dark);">
+      <h2 style="font-size:18px; font-weight:900;">한글 완전 정복 6단계</h2>
+      <p style="font-size:13px; opacity:0.95; margin-top:4px;">소리를 누르고 따라하며 자모와 음절 원리를 마스터하세요!</p>
+    </div>
+
+    <!-- 3단계 실시간 음절 조합기 -->
+    <div class="syllable-builder-box">
+      <div style="font-size:13px; font-weight:900; color:var(--green-dark);">✨ 실시간 음절 조합 실습실 (초성+중성+종성)</div>
+      <div class="syllable-display-char" id="syllable-result" onclick="speakCurrentSyllable()" title="누르면 소리가 납니다">가</div>
+      <div style="font-size:12px; color:var(--gray-700); font-weight:700;">👆 글자를 누르면 원어민 발음이 재생됩니다</div>
+      
+      <div class="syllable-selectors">
+        <div class="syllable-select-col">
+          <label>초성 (자음)</label>
+          <select id="sel-cho" onchange="updateSyllableBuilder()"></select>
+        </div>
+        <div class="syllable-select-col">
+          <label>중성 (모음)</label>
+          <select id="sel-jung" onchange="updateSyllableBuilder()"></select>
+        </div>
+        <div class="syllable-select-col">
+          <label>종성 (받침)</label>
+          <select id="sel-jong" onchange="updateSyllableBuilder()"></select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1단계: 기본 모음 10개 -->
+    <div class="hangul-stage-card">
+      <div class="hangul-stage-title"><span>🌱 1단계: 기본 모음 (10개)</span></div>
+      <div class="hangul-stage-desc">천지인(ㆍ, ㅡ, ㅣ) 상형 원리 • 자모 타일을 누르면 발음이 재생됩니다</div>
+      <div class="jamo-grid" id="grid-basic-vowels"></div>
+    </div>
+
+    <!-- 2단계: 기본 자음 14개 -->
+    <div class="hangul-stage-card">
+      <div class="hangul-stage-title"><span>🌿 2단계: 기본 자음 (14개)</span></div>
+      <div class="hangul-stage-desc">발음 기관(혀, 입술, 이, 목구멍)의 모양을 본뜬 과학적 자음</div>
+      <div class="jamo-grid" id="grid-basic-consonants"></div>
+    </div>
+
+    <!-- 4단계: 쌍자음 5개 & 복합 모음 11개 -->
+    <div class="hangul-stage-card">
+      <div class="hangul-stage-title"><span>⚡ 4단계: 쌍자음 (5개) & 복합 모음 (11개)</span></div>
+      <div class="hangul-stage-desc">된소리(목에 힘을 준 강한 소리)와 결합 모음</div>
+      <div class="jamo-grid" id="grid-double-compound"></div>
+    </div>
+
+    <!-- 5단계: 받침 7대 대표음 -->
+    <div class="hangul-stage-card">
+      <div class="hangul-stage-title"><span>🧱 5단계: 받침 (종성 7대 대표음)</span></div>
+      <div class="hangul-stage-desc">모든 받침은 [ㄱ, ㄴ, ㄷ, ㄹ, ㅁ, ㅂ, ㅇ] 7가지 소리로 마감됩니다</div>
+      <div class="jamo-grid" id="grid-batchim" style="grid-template-columns: repeat(4, 1fr);"></div>
+    </div>
+  </main>
+
+  <!-- 하단 탭 네비게이션 -->
+  <nav class="bottom-nav-bar" id="main-bottom-nav">
+    <div class="nav-tab-btn active" id="tab-roadmap" onclick="switchMainTab('roadmap')">
+      <div class="nav-tab-icon">🗺️</div>
+      <div>학습 코스</div>
+    </div>
+    <div class="nav-tab-btn" id="tab-characters" onclick="switchMainTab('characters')">
+      <div class="nav-tab-icon">🔤</div>
+      <div>한글 문자</div>
+    </div>
+  </nav>
 
 </div>
 
@@ -1523,10 +1733,117 @@ function openGemsShop() {
   alert(`현재 보유 보석: 💎 ${APP.gems}개\n레슨을 클리어할 때마다 보석 20개가 지급됩니다!`);
 }
 
-// 초기 로드맵 기동
+/* ── 한글 문자 학습소 (Hangul Characters Hub) 로직 ── */
+const HANGUL_DATA = {
+  vowels: [
+    {c: 'ㅏ', r: 'a'}, {c: 'ㅑ', r: 'ya'}, {c: 'ㅓ', r: 'eo'}, {c: 'ㅕ', r: 'yeo'},
+    {c: 'ㅗ', r: 'o'}, {c: 'ㅛ', r: 'yo'}, {c: 'ㅜ', r: 'u'}, {c: 'ㅠ', r: 'yu'},
+    {c: 'ㅡ', r: 'eu'}, {c: 'ㅣ', r: 'i'}
+  ],
+  consonants: [
+    {c: 'ㄱ', r: 'g/k'}, {c: 'ㄴ', r: 'n'}, {c: 'ㄷ', r: 'd/t'}, {c: 'ㄹ', r: 'r/l'},
+    {c: 'ㅁ', r: 'm'}, {c: 'ㅂ', r: 'b/p'}, {c: 'ㅅ', r: 's'}, {c: 'ㅇ', r: 'ng'},
+    {c: 'ㅈ', r: 'j'}, {c: 'ㅊ', r: 'ch'}, {c: 'ㅋ', r: 'k'}, {c: 'ㅌ', r: 't'},
+    {c: 'ㅍ', r: 'p'}, {c: 'ㅎ', r: 'h'}
+  ],
+  double_compound: [
+    {c: 'ㄲ', r: 'kk'}, {c: 'ㄸ', r: 'tt'}, {c: 'ㅃ', r: 'pp'}, {c: 'ㅆ', r: 'ss'}, {c: 'ㅉ', r: 'jj'},
+    {c: 'ㅐ', r: 'ae'}, {c: 'ㅒ', r: 'yae'}, {c: 'ㅔ', r: 'e'}, {c: 'ㅖ', r: 'ye'},
+    {c: 'ㅘ', r: 'wa'}, {c: 'ㅙ', r: 'wae'}, {c: 'ㅚ', r: 'oe'}, {c: 'ㅝ', r: 'wo'},
+    {c: 'ㅞ', r: 'we'}, {c: 'ㅟ', r: 'wi'}, {c: 'ㅢ', r: 'ui'}
+  ],
+  batchim: [
+    {c: '[ㄱ]', r: '책, 잎'}, {c: '[ㄴ]', r: '눈, 편지'}, {c: '[ㄷ]', r: '옷, 꽃, 낮'}, {c: '[ㄹ]', r: '달, 물'},
+    {c: '[ㅁ]', r: '밤, 봄'}, {c: '[ㅂ]', r: '밥, 입'}, {c: '[ㅇ]', r: '공, 강'}
+  ],
+  choList: ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ'],
+  jungList: ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ'],
+  jongList: ['(없음)', 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
+};
+
+function switchMainTab(tab) {
+  SoundEffects.playTap();
+  const viewRoadmap = document.getElementById('view-roadmap');
+  const viewCharacters = document.getElementById('view-characters');
+  const tabRoadmap = document.getElementById('tab-roadmap');
+  const tabCharacters = document.getElementById('tab-characters');
+
+  if (tab === 'roadmap') {
+    viewRoadmap.style.display = 'flex';
+    viewCharacters.style.display = 'none';
+    tabRoadmap.classList.add('active');
+    tabCharacters.classList.remove('active');
+  } else {
+    viewRoadmap.style.display = 'none';
+    viewCharacters.style.display = 'flex';
+    tabRoadmap.classList.remove('active');
+    tabCharacters.classList.add('active');
+  }
+}
+
+function initHangulCharactersHub() {
+  function renderGrid(containerId, list) {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = '';
+    list.forEach(item => {
+      const tile = document.createElement('div');
+      tile.className = 'jamo-tile';
+      tile.innerHTML = `<span class="jamo-char">${item.c}</span><span class="jamo-rom">${item.r}</span>`;
+      tile.onclick = () => {
+        SoundEffects.playTap();
+        speakKorean(item.c.replace(/[\[\]]/g, ''));
+      };
+      el.appendChild(tile);
+    });
+  }
+
+  renderGrid('grid-basic-vowels', HANGUL_DATA.vowels);
+  renderGrid('grid-basic-consonants', HANGUL_DATA.consonants);
+  renderGrid('grid-double-compound', HANGUL_DATA.double_compound);
+  renderGrid('grid-batchim', HANGUL_DATA.batchim);
+
+  // 셀렉트 박스 채우기
+  const selCho = document.getElementById('sel-cho');
+  const selJung = document.getElementById('sel-jung');
+  const selJong = document.getElementById('sel-jong');
+
+  if (selCho && selJung && selJong) {
+    selCho.innerHTML = HANGUL_DATA.choList.map((c, i) => `<option value="${i}">${c}</option>`).join('');
+    selJung.innerHTML = HANGUL_DATA.jungList.map((c, i) => `<option value="${i}">${c}</option>`).join('');
+    selJong.innerHTML = HANGUL_DATA.jongList.map((c, i) => `<option value="${i}">${c}</option>`).join('');
+    updateSyllableBuilder(false);
+  }
+}
+
+function updateSyllableBuilder(playAudio = true) {
+  const choIdx = parseInt(document.getElementById('sel-cho').value, 10);
+  const jungIdx = parseInt(document.getElementById('sel-jung').value, 10);
+  const jongIdx = parseInt(document.getElementById('sel-jong').value, 10);
+
+  const charCode = 0xAC00 + (choIdx * 21 + jungIdx) * 28 + jongIdx;
+  const assembled = String.fromCharCode(charCode);
+  const resEl = document.getElementById('syllable-result');
+  resEl.textContent = assembled;
+
+  if (playAudio) {
+    SoundEffects.playTap();
+    speakKorean(assembled);
+  }
+}
+
+function speakCurrentSyllable() {
+  const resEl = document.getElementById('syllable-result');
+  if (resEl) {
+    speakKorean(resEl.textContent);
+  }
+}
+
+// 초기 로드맵 및 한글 학습소 기동
 window.addEventListener('DOMContentLoaded', () => {
   updateGlobalHeader();
   renderRoadmap();
+  initHangulCharactersHub();
 });
 </script>
 
