@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DuolingoSessionSchema",
+  "description": "Clean-Room Reverse Engineered Schema of Duolingo Learning Sessions",
+  "type": "object",
+  "required": ["sessionId", "unitId", "lessonIndex", "hearts", "maxHearts", "xpReward", "challenges"],
+  "properties": {
+    "sessionId": { "type": "string" },
+    "courseId": { "type": "string", "default": "ko_for_en" },
+    "unitId": { "type": "integer" },
+    "unitTitle": { "type": "string" },
+    "lessonIndex": { "type": "integer" },
+    "hearts": { "type": "integer", "default": 5 },
+    "maxHearts": { "type": "integer", "default": 5 },
+    "xpReward": { "type": "integer", "default": 15 },
+    "challenges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "prompt"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["translate_tokens", "match_pairs", "listen_comprehension", "character_trace", "multiple_choice"]
+          },
+          "prompt": { "type": "string" },
+          "promptAudio": { "type": "string" },
+          "targetText": { "type": "string" },
+          "tokens": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "correctSequence": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "pairs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "korean": { "type": "string" },
+                "meaning": { "type": "string" }
+              }
+            }
+          },
+          "options": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "correctIndex": { "type": "integer" },
+          "character": { "type": "string" },
+          "hint": { "type": "string" }
+        }
+      }
+    }
+  }
+}
