@@ -19,6 +19,8 @@
   --red-light: #ffdfe0;
   --gold: #ffc800;
   --gold-dark: #e5a500;
+  --purple: #ce82ff;
+  --purple-dark: #a558d6;
   --gray-100: #f7f7f7;
   --gray-200: #e5e5e5;
   --gray-300: #d0d0d0;
@@ -71,7 +73,7 @@ body {
   }
 }
 
-/* ── 상단 글로벌 헤더 (Top Navigation) ── */
+/* ── 상단 글로벌 헤더 ── */
 .duo-header {
   height: 60px;
   border-bottom: 2px solid var(--gray-200);
@@ -85,14 +87,14 @@ body {
 .stat-group {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
   font-size: 15px;
   font-weight: 800;
 }
 .stat-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   cursor: pointer;
   transition: transform 0.1s;
 }
@@ -101,7 +103,39 @@ body {
 .stat-item.gems { color: var(--blue); }
 .stat-item.hearts { color: var(--red); }
 
-/* ── 3D 택타일 버튼 기본 스타일 (Duolingo 3D Button) ── */
+/* ── 일일 목표 게이지 바 (Daily Goal Bar) ── */
+.daily-goal-bar-wrap {
+  width: 100%;
+  background: #fff;
+  padding: 8px 18px 10px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.daily-goal-text {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--gray-700);
+  white-space: nowrap;
+}
+.daily-goal-track {
+  flex: 1;
+  height: 10px;
+  background: var(--gray-200);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.daily-goal-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--gold), #ff9600);
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+/* ── 3D 택타일 버튼 기본 스타일 ── */
 .btn-3d {
   position: relative;
   border: none;
@@ -128,9 +162,7 @@ body {
   color: #fff;
   box-shadow: 0 4px 0 var(--green-dark);
 }
-.btn-primary:active {
-  box-shadow: 0 0 0 var(--green-dark);
-}
+.btn-primary:active { box-shadow: 0 0 0 var(--green-dark); }
 .btn-primary:disabled {
   background: var(--gray-200);
   color: var(--gray-400);
@@ -153,11 +185,18 @@ body {
 }
 .btn-danger:active { box-shadow: 0 0 0 var(--red-dark); }
 
+.btn-purple {
+  background: var(--purple);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--purple-dark);
+}
+.btn-purple:active { box-shadow: 0 0 0 var(--purple-dark); }
+
 /* ── 뷰 화면 1: 로드맵 트리 (Snake Path View) ── */
 #view-roadmap {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 16px 100px;
+  padding: 18px 16px 100px;
   background: #fbfbfb;
   display: flex;
   flex-direction: column;
@@ -169,7 +208,7 @@ body {
   color: #fff;
   border-radius: var(--radius-md);
   padding: 16px 20px;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
   box-shadow: 0 4px 0 var(--green-dark);
 }
 .unit-banner h2 { font-size: 17px; font-weight: 800; }
@@ -180,11 +219,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 28px;
 }
 .stage-node-wrapper {
   position: relative;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   width: 100%;
 }
@@ -235,6 +276,13 @@ body {
   font-weight: 900;
 }
 
+.stage-stars-row {
+  margin-top: 6px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: var(--gold);
+}
+
 .start-bubble {
   position: absolute;
   bottom: 84px;
@@ -248,6 +296,7 @@ body {
   box-shadow: 0 4px 12px rgba(0,0,0,0.08);
   white-space: nowrap;
   animation: bounce 1.4s infinite ease-in-out;
+  z-index: 5;
 }
 .start-bubble::after {
   content: '';
@@ -314,12 +363,35 @@ body {
   color: var(--red);
   font-weight: 900;
   font-size: 17px;
+  cursor: pointer;
+}
+
+/* ── 콤보 피버 배너 (Combo Badge) ── */
+.combo-badge {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #ff9600, #ff4b4b);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  border-radius: 20px;
+  padding: 4px 14px;
+  margin: 0 auto 12px;
+  width: fit-content;
+  box-shadow: 0 4px 12px rgba(255, 75, 75, 0.35);
+  animation: popCombo 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popCombo {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .challenge-content {
   flex: 1;
   overflow-y: auto;
-  padding: 16px 22px 140px;
+  padding: 8px 22px 140px;
   display: flex;
   flex-direction: column;
 }
@@ -474,7 +546,7 @@ body {
   cursor: crosshair;
 }
 
-/* ── 하단 액션 플로팅 서랍 (Bottom Drawer Feedback) ── */
+/* ── 하단 액션 플로팅 서랍 ── */
 .bottom-drawer {
   position: absolute;
   bottom: 0;
@@ -515,7 +587,70 @@ body {
 }
 .feedback-desc.show { display: block; }
 
-/* ── 축하 결과 화면 (Celebration Screen) ── */
+/* ── 하트 소진 페이월 모달 (AdMob 보상형 광고 팝업) ── */
+.modal-overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(4px);
+  z-index: 100;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.modal-overlay.show { display: flex; }
+
+.duo-modal-card {
+  width: 100%;
+  max-width: 380px;
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  text-align: center;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+  animation: popModal 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+@keyframes popModal {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-heart-icon { font-size: 56px; margin-bottom: 12px; }
+.modal-title { font-size: 22px; font-weight: 900; color: var(--red-dark); margin-bottom: 8px; }
+.modal-desc { font-size: 14px; color: var(--gray-700); font-weight: 600; line-height: 1.5; margin-bottom: 24px; }
+.modal-btn-stack { display: flex; flex-direction: column; gap: 12px; }
+
+/* 광고 시청 시뮬레이션 오버레이 */
+.ad-sim-overlay {
+  display: none;
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: #111;
+  color: #fff;
+  z-index: 150;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+.ad-sim-overlay.show { display: flex; }
+.ad-sim-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid rgba(255,255,255,0.2);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── 축하 결과 화면 (Celebration View) ── */
 #view-celebration {
   display: none;
   flex: 1;
@@ -539,6 +674,12 @@ body {
   font-size: 26px;
   font-weight: 900;
   color: var(--gold-dark);
+  margin-bottom: 8px;
+}
+.celebration-stars {
+  font-size: 28px;
+  color: var(--gold);
+  letter-spacing: 4px;
   margin-bottom: 24px;
 }
 .stat-box-row {
@@ -564,15 +705,23 @@ body {
 
 <div id="app-container">
 
-  <!-- 1. 헤더 (공통 네비게이션) -->
+  <!-- 1. 상단 글로벌 헤더 -->
   <header class="duo-header" id="main-header">
     <div style="font-weight:900; font-size:17px; color:var(--green-dark);">🇰🇷 TOPIK-DUO</div>
     <div class="stat-group">
       <div class="stat-item streak" title="연속 학습일">🔥 <span id="val-streak">7</span></div>
-      <div class="stat-item gems" title="보석">💎 <span id="val-gems">480</span></div>
-      <div class="stat-item hearts" title="하트" onclick="refillHeartsAlert()">❤️ <span id="val-hearts">5</span></div>
+      <div class="stat-item gems" title="보석" onclick="openGemsShop()">💎 <span id="val-gems">500</span></div>
+      <div class="stat-item hearts" title="하트" onclick="openHeartModal()">❤️ <span id="val-hearts">5</span></div>
     </div>
   </header>
+
+  <!-- 일일 목표 XP 진행 바 -->
+  <div class="daily-goal-bar-wrap" id="daily-goal-wrap">
+    <div class="daily-goal-text">일일 목표: <span id="val-daily-xp">25</span> / 50 XP</div>
+    <div class="daily-goal-track">
+      <div class="daily-goal-fill" id="daily-goal-fill" style="width: 50%;"></div>
+    </div>
+  </div>
 
   <!-- 2. 로드맵 트리 뷰 (Snake Learning Path) -->
   <main id="view-roadmap">
@@ -582,7 +731,7 @@ body {
     </div>
 
     <div class="snake-container" id="snake-container">
-      <!-- 뱀 모양 스테이지 노드들이 JS로 동적 생성됩니다 -->
+      <!-- 뱀 모양 스테이지 노드 동적 주입 -->
     </div>
   </main>
 
@@ -593,8 +742,11 @@ body {
       <div class="progress-track">
         <div class="progress-fill" id="lesson-progress-fill"></div>
       </div>
-      <div class="lesson-heart-badge">❤️ <span id="lesson-hearts-val">5</span></div>
+      <div class="lesson-heart-badge" onclick="openHeartModal()">❤️ <span id="lesson-hearts-val">5</span></div>
     </div>
+
+    <!-- 콤보 피버 배너 -->
+    <div class="combo-badge" id="combo-badge">🔥 <span id="combo-text">2 COMBO!</span></div>
 
     <div class="challenge-content" id="challenge-content">
       <!-- 챌린지 UI 동적 주입 -->
@@ -614,14 +766,15 @@ body {
   <!-- 4. 축하/결과 화면 (Celebration View) -->
   <section id="view-celebration">
     <div class="duo-trophy">🦉🎉</div>
-    <h1 class="celebration-title">레슨 완료!</h1>
+    <h1 class="celebration-title">단원 마스터!</h1>
+    <div class="celebration-stars" id="celebration-stars">★★★</div>
     <div class="stat-box-row">
       <div class="stat-card-duo xp">
-        <div class="stat-card-duo-val" style="color:var(--gold-dark);">+15</div>
+        <div class="stat-card-duo-val" style="color:var(--gold-dark);" id="stat-xp-gained">+15</div>
         <div class="stat-card-duo-lbl">획득한 XP</div>
       </div>
       <div class="stat-card-duo streak">
-        <div class="stat-card-duo-val" style="color:#ff9600;">8일</div>
+        <div class="stat-card-duo-val" style="color:#ff9600;" id="stat-streak-val">8일</div>
         <div class="stat-card-duo-lbl">연속 학습</div>
       </div>
       <div class="stat-card-duo" style="border-color:var(--green); background:#f0fff0;">
@@ -631,6 +784,34 @@ body {
     </div>
     <button class="btn-3d btn-primary" style="width:100%;" onclick="returnToRoadmap()">계속하기</button>
   </section>
+
+  <!-- 5. 하트 소진 페이월 모달 (AdMob 보상형 광고 시뮬레이션) -->
+  <div class="modal-overlay" id="modal-heart">
+    <div class="duo-modal-card">
+      <div class="modal-heart-icon">💔</div>
+      <h2 class="modal-title">하트가 부족해요!</h2>
+      <p class="modal-desc">실수를 복구하려면 하트가 필요합니다.<br>광고를 시청하고 하트 5개를 무료로 충전하세요!</p>
+      <div class="modal-btn-stack">
+        <button class="btn-3d btn-primary" onclick="watchRewardAd()">
+          🎬 무료 광고 시청 (+5 ❤️)
+        </button>
+        <button class="btn-3d btn-blue" onclick="buyHeartsWithGems()">
+          💎 100 보석으로 즉시 충전
+        </button>
+        <button class="btn-3d" style="background:var(--gray-200); color:var(--gray-700); box-shadow:0 4px 0 var(--gray-300);" onclick="closeHeartModal()">
+          나중에 하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. AdMob 보상형 동영상 광고 시뮬레이터 오버레이 -->
+  <div class="ad-sim-overlay" id="ad-sim-overlay">
+    <div class="ad-sim-spinner"></div>
+    <h2 style="font-size:20px; font-weight:800; margin-bottom:8px;">Google AdMob 보상형 광고 재생 중</h2>
+    <p style="color:#aaa; font-size:14px; margin-bottom:20px;">광고 시청 완료 후 즉시 보상이 지급됩니다...</p>
+    <div style="font-size:32px; font-weight:900; color:var(--gold);" id="ad-countdown">3</div>
+  </div>
 
 </div>
 
@@ -660,20 +841,22 @@ const SoundEffects = {
     osc.start();
     osc.stop(this.ctx.currentTime + 0.05);
   },
-  playCorrect() {
+  playCorrect(combo = 0) {
     this.init();
-    const notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 (치어리딩 팡파르)
+    // 콤보가 올라갈수록 베이스 주파수 상향 (치어리딩 팡파르 피버)
+    const baseMult = 1 + Math.min(0.4, combo * 0.08);
+    const notes = [523.25 * baseMult, 659.25 * baseMult, 783.99 * baseMult, 1046.50 * baseMult];
     notes.forEach((freq, idx) => {
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       osc.type = 'triangle';
       osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.07);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.07 + 0.25);
+      gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.06);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.06 + 0.25);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
-      osc.start(this.ctx.currentTime + idx * 0.07);
-      osc.stop(this.ctx.currentTime + idx * 0.07 + 0.25);
+      osc.start(this.ctx.currentTime + idx * 0.06);
+      osc.stop(this.ctx.currentTime + idx * 0.06 + 0.25);
     });
   },
   playWrong() {
@@ -689,6 +872,21 @@ const SoundEffects = {
     gain.connect(this.ctx.destination);
     osc.start();
     osc.stop(this.ctx.currentTime + 0.3);
+  },
+  playAdReward() {
+    this.init();
+    [400, 600, 800, 1200].forEach((freq, i) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.2, this.ctx.currentTime + i * 0.08);
+      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + i * 0.08 + 0.3);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(this.ctx.currentTime + i * 0.08);
+      osc.stop(this.ctx.currentTime + i * 0.08 + 0.3);
+    });
   }
 };
 
@@ -703,23 +901,43 @@ function speakKorean(text) {
   }
 }
 
-/* ── 앱 상태 관리 (State Machine) ── */
+/* ── 앱 상태 관리 (LocalStorage 영속화) ── */
 const APP = {
-  streak: 7,
-  gems: 480,
+  streak: parseInt(localStorage.getItem('duo_streak') || '7', 10),
+  gems: parseInt(localStorage.getItem('duo_gems') || '500', 10),
   hearts: 5,
   maxHearts: 5,
+  dailyXp: parseInt(localStorage.getItem('duo_daily_xp') || '25', 10),
+  dailyGoal: 50,
+  unitStars: JSON.parse(localStorage.getItem('duo_unit_stars') || '{}'),
   course: window.DUOLINGO_COURSE || [],
   currentUnit: null,
   currentChallengeIndex: 0,
   userAnswers: [],
   wrongCount: 0,
-  state: 'ROADMAP', // ROADMAP | PLAYING | FEEDBACK_CORRECT | FEEDBACK_WRONG | CELEBRATION
-  selectedTokenSlots: [], // for translate_tokens
-  selectedPairCards: []   // for match_pairs
+  comboCount: 0,
+  selectedTokenSlots: [],
+  selectedPairCards: []
 };
 
-/* ── 로드맵 렌더링 (Snake Pattern) ── */
+function saveAppState() {
+  localStorage.setItem('duo_streak', String(APP.streak));
+  localStorage.setItem('duo_gems', String(APP.gems));
+  localStorage.setItem('duo_daily_xp', String(APP.dailyXp));
+  localStorage.setItem('duo_unit_stars', JSON.stringify(APP.unitStars));
+}
+
+function updateGlobalHeader() {
+  document.getElementById('val-streak').textContent = APP.streak;
+  document.getElementById('val-gems').textContent = APP.gems;
+  document.getElementById('val-hearts').textContent = APP.hearts;
+  document.getElementById('val-daily-xp').textContent = APP.dailyXp;
+  
+  const pct = Math.min(100, Math.round((APP.dailyXp / APP.dailyGoal) * 100));
+  document.getElementById('daily-goal-fill').style.width = `${pct}%`;
+}
+
+/* ── 로드맵 렌더링 (Snake Pattern & 별점) ── */
 function renderRoadmap() {
   const container = document.getElementById('snake-container');
   container.innerHTML = '';
@@ -729,25 +947,23 @@ function renderRoadmap() {
   document.getElementById('unit-title').textContent = `${unit.title}`;
   document.getElementById('unit-desc').textContent = `${unit.titleEng} • ${unit.category}`;
 
-  // 뱀처럼 좌우로 흔들리는 패턴 오프셋
   const xOffsets = [0, 48, 72, 48, 0, -48, -72, -48];
 
-  APP.course.slice(0, 15).forEach((item, index) => {
+  APP.course.slice(0, 20).forEach((item, index) => {
     const wrapper = document.createElement('div');
     wrapper.className = 'stage-node-wrapper';
     
     const offset = xOffsets[index % xOffsets.length];
     
     const node = document.createElement('div');
-    node.className = `stage-node ${item.status || 'locked'}`;
+    const isCompleted = item.status === 'completed' || APP.unitStars[item.unitId];
+    node.className = `stage-node ${isCompleted ? 'completed' : (item.status || 'locked')}`;
     node.style.transform = `translateX(${offset}px)`;
 
-    // 스테이지 아이콘
-    if (item.status === 'completed') {
+    if (isCompleted) {
       node.innerHTML = `✓<div class="stage-crown">👑</div>`;
     } else if (item.status === 'unlocked') {
       node.innerHTML = `★`;
-      // 시작 툴팁
       const bubble = document.createElement('div');
       bubble.className = 'start-bubble';
       bubble.style.transform = `translateX(${offset}px)`;
@@ -758,27 +974,45 @@ function renderRoadmap() {
     }
 
     node.onclick = () => {
-      if (item.status !== 'locked') {
+      if (item.status !== 'locked' || isCompleted) {
         startLesson(item);
       }
     };
 
     wrapper.appendChild(node);
+
+    // 단원별 획득한 별점 표시
+    if (isCompleted) {
+      const starsRow = document.createElement('div');
+      starsRow.className = 'stage-stars-row';
+      starsRow.style.transform = `translateX(${offset}px)`;
+      const stars = APP.unitStars[item.unitId] || 3;
+      starsRow.textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+      wrapper.appendChild(starsRow);
+    }
+
     container.appendChild(wrapper);
   });
 }
 
 /* ── 레슨 시작 ── */
 function startLesson(unit) {
+  if (APP.hearts <= 0) {
+    openHeartModal();
+    return;
+  }
+
   APP.currentUnit = unit;
   APP.currentChallengeIndex = 0;
   APP.wrongCount = 0;
-  APP.state = 'PLAYING';
+  APP.comboCount = 0;
   
   document.getElementById('main-header').style.display = 'none';
+  document.getElementById('daily-goal-wrap').style.display = 'none';
   document.getElementById('view-roadmap').style.display = 'none';
   document.getElementById('view-celebration').style.display = 'none';
   document.getElementById('view-lesson').style.display = 'flex';
+  document.getElementById('combo-badge').style.display = 'none';
   
   updateLessonHearts();
   loadCurrentChallenge();
@@ -797,9 +1031,11 @@ function exitLesson() {
 
 function returnToRoadmap() {
   document.getElementById('main-header').style.display = 'flex';
+  document.getElementById('daily-goal-wrap').style.display = 'flex';
   document.getElementById('view-roadmap').style.display = 'flex';
   document.getElementById('view-lesson').style.display = 'none';
   document.getElementById('view-celebration').style.display = 'none';
+  updateGlobalHeader();
   renderRoadmap();
 }
 
@@ -808,11 +1044,9 @@ function loadCurrentChallenge() {
   const challenges = APP.currentUnit.challenges;
   const challenge = challenges[APP.currentChallengeIndex];
   
-  // 프로그레스 바 갱신
   const pct = (APP.currentChallengeIndex / challenges.length) * 100;
   document.getElementById('lesson-progress-fill').style.width = `${pct}%`;
 
-  // 피드백 서랍 초기화
   const drawer = document.getElementById('bottom-drawer');
   drawer.className = 'bottom-drawer';
   document.getElementById('feedback-header').classList.remove('show');
@@ -825,7 +1059,6 @@ function loadCurrentChallenge() {
   const content = document.getElementById('challenge-content');
   content.innerHTML = `<h2 class="challenge-prompt">${challenge.prompt}</h2>`;
 
-  // 챌린지 타입별 분기
   if (challenge.type === 'translate_tokens') {
     renderTranslateTokens(challenge, content);
   } else if (challenge.type === 'match_pairs') {
@@ -859,7 +1092,6 @@ function renderTranslateTokens(challenge, container) {
 
     bubble.onclick = () => {
       SoundEffects.playTap();
-      // 단어 이동
       bubble.classList.add('placeholder');
       const selectedChip = document.createElement('div');
       selectedChip.className = 'word-bubble';
@@ -917,8 +1149,7 @@ function renderMatchPairs(challenge, container) {
       if (APP.selectedPairCards.length === 2) {
         const [c1, c2] = APP.selectedPairCards;
         if (c1.dataset.key === c2.dataset.key && c1.dataset.type !== c2.dataset.type) {
-          // 정답 매칭
-          SoundEffects.playCorrect();
+          SoundEffects.playCorrect(APP.comboCount);
           c1.classList.add('matched');
           c2.classList.add('matched');
           APP.selectedPairCards = [];
@@ -927,7 +1158,6 @@ function renderMatchPairs(challenge, container) {
             document.getElementById('btn-action').disabled = false;
           }
         } else {
-          // 오답 매칭
           SoundEffects.playWrong();
           c1.classList.add('wrong');
           c2.classList.add('wrong');
@@ -956,7 +1186,6 @@ function renderListenComprehension(challenge, container) {
   };
   container.appendChild(speaker);
 
-  // 화면 진입 시 자동 발음 1회
   setTimeout(() => speakKorean(challenge.spokenText), 300);
 
   const choiceList = document.createElement('div');
@@ -992,8 +1221,33 @@ function renderCharacterTrace(challenge, container) {
   canvas.height = 240;
   canvasWrap.appendChild(canvas);
 
+  // 컨트롤 버튼 행 (획순 보기 / 지우기)
+  const ctrlRow = document.createElement('div');
+  ctrlRow.style.display = 'flex';
+  ctrlRow.style.gap = '10px';
+  ctrlRow.style.marginTop = '12px';
+
+  const btnAnim = document.createElement('button');
+  btnAnim.className = 'btn-3d btn-blue';
+  btnAnim.style.padding = '8px 14px';
+  btnAnim.style.fontSize = '13px';
+  btnAnim.textContent = '✨ 획순 가이드 보기';
+  
+  const btnClear = document.createElement('button');
+  btnClear.className = 'btn-3d';
+  btnClear.style.padding = '8px 14px';
+  btnClear.style.fontSize = '13px';
+  btnClear.style.background = 'var(--gray-200)';
+  btnClear.style.color = 'var(--gray-700)';
+  btnClear.style.boxShadow = '0 3px 0 var(--gray-300)';
+  btnClear.textContent = '🔄 다시 쓰기';
+
+  ctrlRow.appendChild(btnAnim);
+  ctrlRow.appendChild(btnClear);
+  canvasWrap.appendChild(ctrlRow);
+
   const guideText = document.createElement('div');
-  guideText.style.marginTop = '12px';
+  guideText.style.marginTop = '10px';
   guideText.style.fontWeight = '800';
   guideText.style.color = 'var(--gray-700)';
   guideText.textContent = `단어 예시: ${challenge.word} (${challenge.meaning})`;
@@ -1001,17 +1255,43 @@ function renderCharacterTrace(challenge, container) {
 
   container.appendChild(canvasWrap);
 
-  // 캔버스 배경에 희미한 궁서 가이드 글자 렌더
   const ctx = canvas.getContext('2d');
-  ctx.font = 'bold 150px Gungsuh, serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#e5e5e5';
-  ctx.fillText(challenge.character, 120, 120);
+  
+  function drawBaseGuide() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = 'bold 150px Gungsuh, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#e8e8e8';
+    ctx.fillText(challenge.character, 120, 120);
+  }
 
-  // 인터랙티브 브러시 드로잉
+  drawBaseGuide();
+
   let drawing = false;
   let strokeCount = 0;
+
+  btnClear.onclick = () => {
+    SoundEffects.playTap();
+    strokeCount = 0;
+    drawBaseGuide();
+    document.getElementById('btn-action').disabled = true;
+  };
+
+  btnAnim.onclick = () => {
+    SoundEffects.playTap();
+    drawBaseGuide();
+    ctx.save();
+    ctx.font = 'bold 150px Gungsuh, serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(88, 204, 2, 0.45)';
+    ctx.fillText(challenge.character, 120, 120);
+    ctx.restore();
+    SoundEffects.playCorrect(1);
+    strokeCount = 2;
+    document.getElementById('btn-action').disabled = false;
+  };
 
   function getPos(e) {
     const rect = canvas.getBoundingClientRect();
@@ -1080,8 +1360,8 @@ function handleActionClick() {
   const btnAction = document.getElementById('btn-action');
   const feedbackHeader = document.getElementById('feedback-header');
   const feedbackDesc = document.getElementById('feedback-desc');
+  const comboBadge = document.getElementById('combo-badge');
 
-  // 1. 답안 제출 후 확인 모드
   if (btnAction.textContent === '확인') {
     let isCorrect = false;
     let correctAnswerExplanation = '';
@@ -1094,7 +1374,7 @@ function handleActionClick() {
       isCorrect = (assembledClean === targetClean);
       correctAnswerExplanation = `정답: ${challenge.targetText}`;
     } else if (challenge.type === 'match_pairs') {
-      isCorrect = true; // All matched
+      isCorrect = true;
     } else if (challenge.type === 'listen_comprehension' || challenge.type === 'multiple_choice') {
       isCorrect = (APP.selectedAnswer === challenge.correctIndex);
       const correctOpt = challenge.options[challenge.correctIndex];
@@ -1104,12 +1384,22 @@ function handleActionClick() {
     }
 
     if (isCorrect) {
-      SoundEffects.playCorrect();
+      APP.comboCount++;
+      SoundEffects.playCorrect(APP.comboCount);
+
+      // 콤보 배너 노출 (2연속 이상 정답 시)
+      if (APP.comboCount >= 2) {
+        document.getElementById('combo-text').textContent = `${APP.comboCount} COMBO! 연속 정답 🔥`;
+        comboBadge.style.display = 'flex';
+      }
+
       drawer.className = 'bottom-drawer correct';
       feedbackHeader.innerHTML = `<span>✓</span> <span>정답입니다!</span>`;
       feedbackHeader.classList.add('show');
       btnAction.className = 'btn-3d btn-primary';
     } else {
+      APP.comboCount = 0;
+      comboBadge.style.display = 'none';
       SoundEffects.playWrong();
       APP.wrongCount++;
       APP.hearts = Math.max(0, APP.hearts - 1);
@@ -1121,13 +1411,19 @@ function handleActionClick() {
       feedbackDesc.textContent = correctAnswerExplanation;
       feedbackDesc.classList.add('show');
       btnAction.className = 'btn-3d btn-danger';
+
+      // 하트 소진 시 페이월 팝업 즉시 트리거
+      if (APP.hearts === 0) {
+        setTimeout(() => {
+          openHeartModal();
+        }, 500);
+      }
     }
 
     btnAction.textContent = '계속하기';
     return;
   }
 
-  // 2. 피드백 확인 후 다음 챌린지로 이동
   if (btnAction.textContent === '계속하기') {
     APP.currentChallengeIndex++;
     if (APP.currentChallengeIndex >= APP.currentUnit.challenges.length) {
@@ -1143,20 +1439,29 @@ function finishLesson() {
   document.getElementById('view-lesson').style.display = 'none';
   document.getElementById('view-celebration').style.display = 'flex';
 
-  SoundEffects.playCorrect();
+  SoundEffects.playCorrect(5);
 
-  // 상태 업데이트
+  const xpReward = 15 + (APP.comboCount > 2 ? 5 : 0);
   APP.streak += 1;
   APP.gems += 20;
-  document.getElementById('val-streak').textContent = APP.streak;
-  document.getElementById('val-gems').textContent = APP.gems;
+  APP.dailyXp += xpReward;
 
-  // 정확도 계산
+  // 정확도 및 별점 계산
   const total = APP.currentUnit.challenges.length;
   const accuracy = Math.max(0, Math.round(((total - APP.wrongCount) / total) * 100));
-  document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+  
+  let stars = 1;
+  if (accuracy === 100) stars = 3;
+  else if (accuracy >= 80) stars = 2;
 
-  // 현재 스테이지 완료 처리 및 다음 스테이지 잠금 해제
+  APP.unitStars[APP.currentUnit.unitId] = stars;
+  saveAppState();
+
+  document.getElementById('stat-accuracy').textContent = `${accuracy}%`;
+  document.getElementById('stat-xp-gained').textContent = `+${xpReward}`;
+  document.getElementById('stat-streak-val').textContent = `${APP.streak}일`;
+  document.getElementById('celebration-stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+
   APP.currentUnit.status = 'completed';
   const currIdx = APP.course.findIndex(u => u.unitId === APP.currentUnit.unitId);
   if (currIdx !== -1 && currIdx + 1 < APP.course.length) {
@@ -1164,16 +1469,63 @@ function finishLesson() {
   }
 }
 
-function refillHeartsAlert() {
-  if (confirm("하트가 부족하신가요? 보상형 광고를 시청하고 하트를 5개로 충전하시겠습니까? (AdMob 시뮬레이션)")) {
+/* ── 하트 모달 & AdMob 보상형 비디오 시뮬레이션 ── */
+function openHeartModal() {
+  document.getElementById('modal-heart').classList.add('show');
+}
+function closeHeartModal() {
+  document.getElementById('modal-heart').classList.remove('show');
+}
+
+function watchRewardAd() {
+  closeHeartModal();
+  const adOverlay = document.getElementById('ad-sim-overlay');
+  const countdownEl = document.getElementById('ad-countdown');
+  adOverlay.classList.add('show');
+
+  let remaining = 3;
+  countdownEl.textContent = remaining;
+
+  const timer = setInterval(() => {
+    remaining--;
+    if (remaining > 0) {
+      countdownEl.textContent = remaining;
+    } else {
+      clearInterval(timer);
+      adOverlay.classList.remove('show');
+      
+      // 보상 지급
+      APP.hearts = 5;
+      updateLessonHearts();
+      saveAppState();
+      SoundEffects.playAdReward();
+      alert("🎉 보상 획득! 하트 5개가 완충되었습니다!");
+    }
+  }, 1000);
+}
+
+function buyHeartsWithGems() {
+  if (APP.gems >= 100) {
+    APP.gems -= 100;
     APP.hearts = 5;
     updateLessonHearts();
-    alert("❤️ 하트가 5개로 가득 충전되었습니다!");
+    updateGlobalHeader();
+    saveAppState();
+    SoundEffects.playAdReward();
+    closeHeartModal();
+    alert("💎 100 보석으로 하트 5개를 완충했습니다!");
+  } else {
+    alert("보석이 부족합니다! 광고를 시청하여 무료로 충전하세요.");
   }
+}
+
+function openGemsShop() {
+  alert(`현재 보유 보석: 💎 ${APP.gems}개\n레슨을 클리어할 때마다 보석 20개가 지급됩니다!`);
 }
 
 // 초기 로드맵 기동
 window.addEventListener('DOMContentLoaded', () => {
+  updateGlobalHeader();
   renderRoadmap();
 });
 </script>

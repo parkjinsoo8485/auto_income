@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "app_info": {
+    "app_id": "com.langmaster.korean.duolingo",
+    "app_name": "Korean Duolingo Master - TOPIK Vocab",
+    "version_name": "1.0.0",
+    "version_code": 1,
+    "target_language": "ko",
+    "native_language": "en"
+  },
+  "ui_theme": {
+    "primary_color": "#58CC02",
+    "secondary_color": "#1CB0F6",
+    "background_color": "#FBFBFB",
+    "surface_color": "#FFFFFF",
+    "text_color": "#3C3C3C",
+    "font_family": "Nunito",
+    "layout_mode": "duolingo_snake"
+  },
+  "modules": {
+    "snake_roadmap": true,
+    "word_bank_tokens": true,
+    "match_pairs": true,
+    "listening_audio": true,
+    "stroke_tracing": true,
+    "admob_reward_paywall": true,
+    "daily_streak_goals": true
+  },
+  "monetization": {
+    "ad_mode": "test",
+    "admob_app_id": "ca-app-pub-3940256099942544~3347511713",
+    "admob_banner_id": "ca-app-pub-3940256099942544/6300978111",
+    "admob_interstitial_id": "ca-app-pub-3940256099942544/1033173712",
+    "admob_rewarded_id": "ca-app-pub-3940256099942544/5224354917",
+    "remote_config_interstitial_cooldown_seconds": 300
+  },
+  "assets": {
+    "icon_source_path": "assets/korean_icon.png",
+    "tts_engine": "edge-tts",
+    "tts_voice": "ko-KR-SunHiNeural"
+  },
+  "store_metadata": {
+    "title": "Korean Duolingo Master - TOPIK & Hangul",
+    "short_description": "Master Korean effortlessly with Duolingo-style bite-sized lessons, quizzes, and streak challenges!",
+    "full_description": "Learn Korean the fun way with bite-sized, gamified lessons!\n\nWhether you are preparing for EPS-TOPIK, traveling to Seoul, or watching K-Dramas, Korean Duolingo Master gives you:\n- 🐍 Snake Learning Path: Clear, bite-sized lessons unlock as you level up\n- 🧩 Word Bank & Pair Matching: Interactive sentence assembly and vocabulary pairing\n- 🔊 Native Pronunciation: Listen and speak with authentic Korean audio\n- ✍️ Interactive Hangul Tracing: Master Korean character stroke order\n- 🔥 Streaks & Hearts: Stay motivated with daily streaks, hearts, and XP leaderboards!",
+    "keywords": ["learn korean", "duolingo korean", "topik vocab", "hangul stroke", "korean quiz"],
+    "screenshots_headlines": [
+      "Fun Duolingo-Style Learning Path",
+      "Interactive Word Bank & Matching Pairs",
+      "Native Audio & Hangul Stroke Tracing",
+      "5 Hearts System with Daily Streaks",
+      "Master 60 Essential EPS-TOPIK Lessons"
+    ]
+  },
+  "content_data": [
+    {
+      "id": "ko_001",
+      "term": "아이",
+      "meaning": "Child",
+      "pronunciation": "a-i",
+      "example_sentence": "아이가 귀여워요.",
+      "example_meaning": "The child is cute."
+    },
+    {
+      "id": "ko_002",
+      "term": "오이",
+      "meaning": "Cucumber",
+      "pronunciation": "o-i",
+      "example_sentence": "시장에서 오이를 사요.",
+      "example_meaning": "I buy cucumbers at the market."
+    },
+    {
+      "id": "ko_003",
+      "term": "우유",
+      "meaning": "Milk",
+      "pronunciation": "u-yu",
+      "example_sentence": "아침에 우유를 마셔요.",
+      "example_meaning": "I drink milk in the morning."
+    },
+    {
+      "id": "ko_004",
+      "term": "모자",
+      "meaning": "Hat / Cap",
+      "pronunciation": "mo-ja",
+      "example_sentence": "예쁜 모자를 썼어요.",
+      "example_meaning": "I put on a pretty hat."
+    }
+  ]
+}
