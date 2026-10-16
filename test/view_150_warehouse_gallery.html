@@ -48,7 +48,8 @@
     }
     /* 1. 좌측 153개 부품 탐색기 */
     .sidebar {
-      width: 380px;
+      width: 260px;
+      flex-shrink: 0;
       background: #0f172a;
       border-right: 1px solid #1e293b;
       display: flex;
@@ -84,8 +85,8 @@
       overflow-y: auto;
       padding: 8px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(58px, 1fr));
-      gap: 6px;
+      grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+      gap: 5px;
       align-content: start;
     }
     .part-item {
@@ -138,8 +139,9 @@
       gap: 20px;
       padding: 18px 24px;
       overflow-y: auto;
+      overflow-x: auto;
       align-items: flex-start;
-      justify-content: center;
+      justify-content: flex-start;
     }
     .panel {
       background: #1e293b;
@@ -150,12 +152,15 @@
       flex-direction: column;
       align-items: center;
       box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5);
+      flex-shrink: 0;
     }
     .editor-panel {
       width: 480px;
+      flex-shrink: 0;
     }
     .preview-panel {
-      width: 380px;
+      width: 400px;
+      flex-shrink: 0;
     }
     .panel-title {
       font-size: 14px;
@@ -621,6 +626,7 @@
     </h1>
     <div class="header-actions">
       <button class="btn green" onclick="saveAllToDisk()" title="수정된 모든 자소 데이터를 hangul_150_parts_warehouse.json 및 .js 파일에 즉시 영구 저장합니다.">💾 디스크 파일에 영구 동기화</button>
+      <button class="btn" style="background:#0284c7; color:white; font-weight:bold;" onclick="autoOptimizeAllPartsBleeding()" title="153개 전체 자소를 기하학적으로 일괄 분석하여 획이 겹치거나 번지는 것을 100% 자동 최적화하고 파일에 영구 저장합니다.">⚡ 153개 전체 번짐 일괄 자동 최적화</button>
       <button class="btn purple" onclick="resetAllToCalibrated()">🔄 1차 보정값으로 전체 새로고침</button>
       <button class="btn amber" onclick="resetToInitial()">현재 자소 초기화</button>
       <button class="btn gray" onclick="downloadAllCollectedJson()">📥 전체 JSON 다운로드</button>
@@ -646,7 +652,12 @@
       <div class="panel editor-panel">
         <div class="panel-title">
           <span>궁서체 외곽선 + 중심선(Medians) 편집기</span>
-          <span id="current-part-badge" style="font-size:12px; color:#38bdf8; font-family:monospace;">Cho_T1_ㄱ</span>
+          <div style="display:flex; align-items:center; gap:6px;">
+            <button class="pc-btn" onclick="prevPart()" title="이전 자소로 이동 (단축키: [ )">◀ 이전</button>
+            <span id="part-progress-badge" style="font-size:12px; font-weight:bold; color:#f59e0b; font-family:monospace; background:#0f172a; padding:2px 8px; border-radius:6px; border:1px solid #334155;">1 / 153</span>
+            <button class="pc-btn" onclick="nextPart()" title="다음 자소로 이동 (단축키: ] )">다음 ▶</button>
+            <span id="current-part-badge" style="font-size:12px; color:#38bdf8; font-family:monospace;">Cho_T1_ㄱ</span>
+          </div>
           <span id="live-save-badge" class="live-save-badge success">🟢 파일 실시간 동기화 켜짐</span>
         </div>
 
@@ -659,6 +670,8 @@
           <span class="pc-count" id="pc-count-display">-</span>
           <button class="pc-btn add" onclick="addPointToCurrentStroke()" title="현재 활성 획의 끝에 점 추가">＋ 점 추가</button>
           <button class="pc-btn del" onclick="removeLastPointFromCurrentStroke()" title="현재 활성 획의 마지막 점 제거 (최소 2개 유지)">－ 점 제거</button>
+          <button class="pc-btn" style="background:#0284c7; color:white; font-weight:bold;" onclick="sortCurrentStrokePoints()" title="꼬여있는 점들을 획 진행 방향 순서대로 1->2->3->... 순서로 자동 정렬합니다.">📐 획순 점 자동 정렬</button>
+          <button class="pc-btn" style="background:#4338ca; color:white; font-weight:bold;" onclick="sortAllStrokesPoints()" title="이 자소의 모든 획 점들을 획순에 맞게 일괄 정렬합니다.">📐 전체 획순 정렬</button>
           <div class="pc-divider"></div>
           <span class="pc-label">✏️ 획순/방향 교정:</span>
           <button class="pc-btn move-up" onclick="moveCurrentStrokeEarlier()" title="현재 획의 순서를 이전으로 이동 (예: 2획을 1획으로)">⬆️ 획순 앞으로</button>
@@ -739,7 +752,7 @@
           <div class="sp-row" style="margin-top:2px;">
             <span class="sp-label">👁️ <strong>표시 레이어</strong>:</span>
             <label class="sp-toggle-label">
-              <input type="checkbox" id="chk-real-strokes" checked onchange="toggleRealStrokes(this.checked)">
+              <input type="checkbox" id="chk-real-strokes" onchange="toggleRealStrokes(this.checked)">
               <span>중심선 획 채우기 (실시간)</span>
             </label>
             <label class="sp-toggle-label">
@@ -778,8 +791,8 @@
                 </clipPath>
               </defs>
 
-              <!-- 궁서체 원본 외곽선 (Gungsuh.ttf 베지에 패스) -->
-              <path id="gungsuh-outline-path" fill="#1e1b4b" stroke="#818cf8" stroke-width="4" opacity="0.65" />
+              <!-- 궁서체 원본 외곽선 (Gungsuh.ttf 베지에 패스 - 기본 투명 윤곽선만 표시) -->
+              <path id="gungsuh-outline-path" fill="none" stroke="#818cf8" stroke-width="3" opacity="0.8" />
 
               <!-- 중심선 위치 & 길이 & 두께 기반 실제 획 렌더링 레이어 (외곽선 클립 마스크 적용) -->
               <g id="real-strokes-group" clip-path="url(#editor-outline-clip)" pointer-events="none"></g>
@@ -791,8 +804,9 @@
               <g id="medians-handles-group"></g>
             </g>
 
-            <!-- 스크린 좌표계 (상하반전 없는 획순 번호 뱃지 ①..⑥) -->
+            <!-- 스크린 좌표계 (상하반전 없는 획순 번호 뱃지 ①..⑥ 및 점 번호 1..N) -->
             <g id="stroke-badges-group" pointer-events="none"></g>
+            <g id="point-labels-group" pointer-events="none"></g>
           </svg>
         </div>
 
@@ -810,6 +824,7 @@
 
         <div class="btn-row">
           <button class="btn green" onclick="saveCurrentPart()">💾 이 자소 저장</button>
+          <button class="btn" style="background:#0d9488; color:#ffffff; font-weight:bold;" onclick="autoOptimizeCurrentPartBleeding()" title="현재 자소의 접합부 분리, 획별 서브패스 매핑, 안전 두께를 100% 자동 최적화하여 획 번짐을 완벽 차단합니다.">🛡️ 번짐 자동 완화</button>
           <button class="btn purple" onclick="toggleGungsuhFill()">외곽선 채우기 토글</button>
           <button class="btn gray" onclick="addStrokeToCurrent()">+ 새 획 추가</button>
           <button class="btn" style="background:#b91c1c; color:#ffffff;" onclick="separateJunctionsUI()" title="중심선들이 만나는 지점(T자/L자/교차점)에서 다음 획이 그려질 때 겹치지 않도록 선을 안전하게 분리하고 다듬습니다.">✂️ 만나는 지점 선 분리</button>
@@ -824,10 +839,20 @@
         <div class="panel-title">
           <span>HanziWriter 실시간 검증</span>
           <span style="font-size:11px; background:#059669; padding:2px 6px; border-radius:10px;">실시간 연동</span>
+        </div>
         <div class="hanzi-box" id="hanzi-preview-box"></div>
 
-        <div class="btn-row" style="margin-top:14px;">
-          <button class="btn" onclick="playPreviewAnim()">획순 애니메이션 재생</button>
+        <!-- 재생 속도 조절 UI -->
+        <div style="display:flex; align-items:center; justify-content:center; gap:5px; margin-top:10px; width:100%; flex-wrap:wrap;">
+          <span style="font-size:11px; color:#94a3b8;">🐢 드로잉 속도:</span>
+          <button class="sp-preset-btn" id="speed-btn-superslow" onclick="setAnimSpeed(0.15, 1000, this)">초저속(0.15x)</button>
+          <button class="sp-preset-btn" id="speed-btn-slow" style="color:#ef4444; font-weight:bold; background:#2a1215; border-color:#ef4444;" onclick="setAnimSpeed(0.25, 800, this)">아주 느리게(0.25x)</button>
+          <button class="sp-preset-btn" id="speed-btn-normal" onclick="setAnimSpeed(0.5, 500, this)">느리게(0.5x)</button>
+          <button class="sp-preset-btn" id="speed-btn-medium" onclick="setAnimSpeed(1.0, 300, this)">보통(1.0x)</button>
+        </div>
+
+        <div class="btn-row" style="margin-top:10px;">
+          <button class="btn" style="background:#dc2626; color:white; font-weight:bold;" onclick="playPreviewAnim()">▶ 붉은 획 애니메이션 재생</button>
           <button class="btn purple" onclick="toggleShowAllStrokes()">전체 획 표시/숨기기</button>
           <button class="btn green" onclick="startPreviewQuiz()">쓰기 퀴즈 테스트</button>
         </div>
@@ -845,13 +870,20 @@
   <script>
     const originalWarehouse = (window.HANGUL_150_WAREHOUSE && window.HANGUL_150_WAREHOUSE.parts) || {};
     
-    // LocalStorage에서 이전에 수집/편집한 데이터 불러오기
+    // LocalStorage에서 이전에 수집/편집한 데이터 불러오기 (최신 보정 버전 시 자동 동기화)
     let customDb = {};
-    try {
-      const saved = localStorage.getItem('hangul_150_custom_medians');
-      if (saved) customDb = JSON.parse(saved);
-    } catch (e) {
-      console.warn("LocalStorage 로드 실패:", e);
+    const CURRENT_VERSION = (window.HANGUL_150_WAREHOUSE && window.HANGUL_150_WAREHOUSE.meta && window.HANGUL_150_WAREHOUSE.meta.calibrationVersion) || "3.0-perfect-realtime-sync";
+    const lastSavedVer = localStorage.getItem('hangul_warehouse_version');
+    if (lastSavedVer !== CURRENT_VERSION) {
+      localStorage.removeItem('hangul_150_custom_medians');
+      localStorage.setItem('hangul_warehouse_version', CURRENT_VERSION);
+    } else {
+      try {
+        const saved = localStorage.getItem('hangul_150_custom_medians');
+        if (saved) customDb = JSON.parse(saved);
+      } catch (e) {
+        console.warn("LocalStorage 로드 실패:", e);
+      }
     }
 
     const partKeys = Object.keys(originalWarehouse);
@@ -867,12 +899,38 @@
     let currentStrokeWidth = 34; // 기본 획 두께 (px)
     let strokeWidthMode = 'stroke'; // 'stroke' (선택 획만) | 'all' (자소 전체 획 일괄)
     let currentStrokeProgress = 999; // 현재 표시할 획순 단계 (1..N, 999는 전체)
-    let showRealStrokes = true; // 중심선 획 채우기 레이어
+    let showRealStrokes = false; // 중심선 획 채우기 레이어 (기본 꺼짐: 점과 골격선만 깨끗하게 표시)
     let showOutline = true; // 궁서체 원본 외곽선 레이어
     let showSkeleton = true; // 중심선 골격선 및 제어점 레이어
     let showBadges = true; // 획순 번호 뱃지 레이어
     let isProgressAnimating = false;
     let progressAnimTimer = null;
+    let animSpeedMultiplier = 0.25; // 획 드로잉 속도 (기본: 아주 느리게 0.25x - 획 관찰에 최적화)
+    let animStrokeDelay = 800; // 획 간 대기 시간 (800ms)
+
+    function setAnimSpeed(speed, delay, btnEl) {
+      animSpeedMultiplier = speed;
+      animStrokeDelay = delay;
+      document.querySelectorAll('#speed-btn-superslow, #speed-btn-slow, #speed-btn-normal, #speed-btn-medium').forEach(b => {
+        b.style.color = '#94a3b8';
+        b.style.borderColor = '#334155';
+        b.style.background = '#1e293b';
+        b.style.fontWeight = 'normal';
+      });
+      if (btnEl) {
+        btnEl.style.color = '#ef4444';
+        btnEl.style.borderColor = '#ef4444';
+        btnEl.style.background = '#2a1215';
+        btnEl.style.fontWeight = 'bold';
+      }
+      if (previewWriter && previewWriter._options) {
+        previewWriter._options.strokeColor = '#ef4444';
+        previewWriter._options.strokeAnimationSpeed = animSpeedMultiplier;
+        previewWriter._options.delayBetweenStrokes = animStrokeDelay;
+      }
+      showToast(`획 드로잉 속도가 ${speed}x (획간 대기 ${delay}ms)로 설정되었습니다.`, 'info');
+      updateHanziPreview();
+    }
 
     // 겹받침 여부 판별 (받침 2개 글자: ㄳ, ㄵ, ㄶ, ㄺ, ㄻ, ㄼ, ㄽ, ㄾ, ㄿ, ㅀ, ㅄ 등)
     function isDoubleJongsungPart(partData) {
@@ -1078,10 +1136,41 @@
       });
     }
 
+    function getCurrentPartIndex() {
+      return partKeys.indexOf(selectedPartId);
+    }
+
+    function prevPart() {
+      const idx = getCurrentPartIndex();
+      if (idx > 0) {
+        selectPart(partKeys[idx - 1]);
+      } else {
+        showToast("첫 번째 자소입니다.", "info");
+      }
+    }
+
+    function nextPart() {
+      const idx = getCurrentPartIndex();
+      if (idx < partKeys.length - 1) {
+        selectPart(partKeys[idx + 1]);
+      } else {
+        showToast("마지막 자소입니다.", "info");
+      }
+    }
+
+    function updateProgressBadge() {
+      const badge = document.getElementById('part-progress-badge');
+      if (badge) {
+        const idx = getCurrentPartIndex();
+        badge.innerText = `${idx + 1} / ${partKeys.length}`;
+      }
+    }
+
     function selectPart(id) {
       selectedPartId = id;
       currentPartData = getActivePartData(id);
       ensureStrokeWidths(currentPartData);
+      updateProgressBadge();
       activeStrokeIdx = 0;
       activePointIdx = 0;
       updateActivePointUI();
@@ -1374,31 +1463,35 @@
       showToast(`마스크 브러시 여유폭이 ${val}x로 설정되었습니다.`, 'info');
     }
 
-    // HanziWriter 내부 렌더링: 획 번짐 방지 및 궁서체 외곽선 형태 동기화
+    // HanziWriter 내부 렌더링: 획별 최적 충진 두께 적용 및 궁서체 외곽선 완전 밀착
     function syncHanziWriterStrokeWidth() {
       const box = document.getElementById('hanzi-preview-box');
       if (!box || !currentPartData) return;
       const totalStrokes = currentPartData.medians.length;
 
-      const paths = box.querySelectorAll('svg path');
-      paths.forEach((p, pIdx) => {
-        const sw = p.getAttribute('stroke-width');
-        if (sw && parseInt(sw) > 0) {
-          if (totalStrokes === 1) {
-            // 단일 획 자소: 궁서체 외곽선 꺾임/삐침 형태 그대로 100% 꽉 채움
-            if (parseInt(sw) < 180) {
-              p.setAttribute('stroke-width', '200');
-              p.style.strokeWidth = '200px';
-            }
-          } else {
-            // 다획 자소: 획별 외곽선 마스크/클립에 맞춰 인접 획으로 번지지 않게 미세조정 배율 적용
-            const targetW = (currentPartData.strokeWidths && currentPartData.strokeWidths[pIdx]) || currentStrokeWidth || 34;
-            const fullW = Math.max(26, Math.min(Math.round(targetW * maskBrushScale), 130));
-            p.setAttribute('stroke-width', `${fullW}`);
-            p.style.strokeWidth = `${fullW}px`;
-          }
-        }
+      const svg = box.querySelector('svg');
+      if (!svg) return;
+
+      // Voronoi 래퍼 내부의 패스 및 일반 스트로크 드로잉 패스 모두 타겟팅
+      const allPaths = Array.from(svg.querySelectorAll('path'));
+      const strokePaths = allPaths.filter(p => {
+        const cp = p.getAttribute('clip-path') || '';
+        const parent = p.parentNode;
+        const parentHasClip = parent && parent.classList && parent.classList.contains('hw-voronoi-wrapper');
+        return cp.includes('mask-') || parentHasClip;
       });
+
+      if (strokePaths.length > 0) {
+        strokePaths.forEach((p, pIdx) => {
+          const targetW = (currentPartData.strokeWidths && currentPartData.strokeWidths[pIdx]) || currentStrokeWidth || 48;
+          // 외곽선 형태를 100% 빈틈없이 채우기 위한 넉넉한 충진 두께 (128~180px)
+          const fillW = Math.max(128, Math.min(Math.round(targetW * 2.2), 180));
+          p.setAttribute('stroke-width', `${fillW}`);
+          p.style.strokeWidth = `${fillW}px`;
+          p.setAttribute('stroke', '#ef4444');
+          p.style.stroke = '#ef4444';
+        });
+      }
     }
 
     function setStrokeWidth(w) {
@@ -1556,8 +1649,7 @@
           activePath.style.strokeDasharray = `${len + 20} ${len + 50}`;
           activePath.style.strokeDashoffset = `${len + 20}`;
           // 브라우저 렌더링 강제 플러시
-          void activePath.getBoundingClientRect();
-          animDuration = Math.max(320, Math.min(800, Math.round(len * 2.3)));
+          animDuration = Math.max(700, Math.min(2200, Math.round(len * (2.0 / animSpeedMultiplier))));
           activePath.style.transition = `stroke-dashoffset ${animDuration}ms cubic-bezier(0.25, 1, 0.5, 1)`;
           activePath.style.strokeDashoffset = '0';
         }
@@ -1565,7 +1657,7 @@
         progressAnimTimer = setTimeout(() => {
           currentStep++;
           step();
-        }, animDuration + 140);
+        }, animDuration + animStrokeDelay);
       }
 
       progressAnimTimer = setTimeout(step, 100);
@@ -1627,6 +1719,16 @@
         if (e.key === 'Enter') document.activeElement.blur();
         return;
       }
+      if (e.key === '[' || e.key === '{') {
+        prevPart();
+        e.preventDefault();
+        return;
+      }
+      if (e.key === ']' || e.key === '}') {
+        nextPart();
+        e.preventDefault();
+        return;
+      }
       if (!currentPartData || !currentPartData.medians) return;
       const stroke = currentPartData.medians[activeStrokeIdx];
       if (!stroke || !stroke[activePointIdx]) return;
@@ -1656,11 +1758,13 @@
       const pathsGroup = document.getElementById('medians-paths-group');
       const handlesGroup = document.getElementById('medians-handles-group');
       const badgesGroup = document.getElementById('stroke-badges-group');
+      const labelsGroup = document.getElementById('point-labels-group');
 
       if (realGroup) realGroup.innerHTML = '';
       if (pathsGroup) pathsGroup.innerHTML = '';
       if (handlesGroup) handlesGroup.innerHTML = '';
       if (badgesGroup) badgesGroup.innerHTML = '';
+      if (labelsGroup) labelsGroup.innerHTML = '';
 
       // fastMode(마우스 드래그 중)가 아닐 때만 외곽선 마스크 클립패스 및 획별 Voronoi 클립패스 동기화
       if (!fastMode) {
@@ -1701,9 +1805,10 @@
 
           let renderSw;
           if (totalStrokes > 1) {
-            renderSw = useMaskClip ? Math.max(sw, Math.min(sw * 1.3, 75)) : sw;
+            // 다획 자소: 인접 획 침범/번짐을 원천 차단하기 위해 안전 두께(최대 42px)로 정밀 클램핑
+            renderSw = useMaskClip ? Math.min(sw, 42) : sw;
           } else {
-            renderSw = useMaskClip ? Math.max(sw * 2.0, 110) : sw;
+            renderSw = useMaskClip ? Math.max(sw * 1.6, 80) : sw;
           }
 
           realPath.setAttribute('stroke-width', renderSw);
@@ -1799,30 +1904,33 @@
 
             if (handlesGroup) handlesGroup.appendChild(circle);
 
-            // 점 번호 라벨 (현재 선택된 획에 표시)
-            if (isCurrent) {
+            // 점 번호 라벨 (스크린 좌표계로 상하반전 없이 똑바로 렌더링!)
+            if (isCurrent && labelsGroup) {
+              const sx = pt[0];
+              const sy = 900 - pt[1];
               const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-              text.setAttribute('x', pt[0]);
-              text.setAttribute('y', pt[1] - 18);
+              text.setAttribute('x', sx);
+              text.setAttribute('y', sy - 20);
               text.setAttribute('fill', isOutside ? '#f87171' : '#ffffff');
-              text.setAttribute('font-size', '20');
+              text.setAttribute('font-size', '16');
               text.setAttribute('font-weight', 'bold');
               text.setAttribute('text-anchor', 'middle');
               text.setAttribute('pointer-events', 'none');
               text.textContent = (pIdx + 1);
-              if (handlesGroup) handlesGroup.appendChild(text);
+              labelsGroup.appendChild(text);
 
               // 이탈 경고 레이블
               if (isOutside) {
                 const warn = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-                warn.setAttribute('x', pt[0]);
-                warn.setAttribute('y', pt[1] + 32);
+                warn.setAttribute('x', sx);
+                warn.setAttribute('y', sy + 28);
                 warn.setAttribute('fill', '#f87171');
-                warn.setAttribute('font-size', '16');
+                warn.setAttribute('font-size', '13');
+                warn.setAttribute('font-weight', 'bold');
                 warn.setAttribute('text-anchor', 'middle');
                 warn.setAttribute('pointer-events', 'none');
                 warn.textContent = '⚠ 이탈!';
-                if (handlesGroup) handlesGroup.appendChild(warn);
+                labelsGroup.appendChild(warn);
               }
             }
           });
@@ -1950,7 +2058,24 @@
       if (!currentPartData.medians[activeStrokeIdx]) {
         currentPartData.medians[activeStrokeIdx] = [];
       }
-      currentPartData.medians[activeStrokeIdx].push([hanziX, hanziY]);
+      const stroke = currentPartData.medians[activeStrokeIdx];
+      if (stroke.length <= 1) {
+        stroke.push([hanziX, hanziY]);
+        activePointIdx = stroke.length - 1;
+      } else {
+        // 기존 선분들 중 클릭한 점과 가장 가까운 선분(p_i - p_{i+1}) 사이에 삽입하여 획순 꼬임 원천 방지!
+        let bestSegIdx = stroke.length - 1;
+        let minD = Infinity;
+        for (let i = 0; i < stroke.length - 1; i++) {
+          const d = distPointToSegment(hanziX, hanziY, stroke[i][0], stroke[i][1], stroke[i+1][0], stroke[i+1][1]);
+          if (d < minD) {
+            minD = d;
+            bestSegIdx = i;
+          }
+        }
+        stroke.splice(bestSegIdx + 1, 0, [hanziX, hanziY]);
+        activePointIdx = bestSegIdx + 1;
+      }
       renderEditor();
       updateHanziPreview();
       saveCurrentPart(true); // 자동 저장
@@ -2266,6 +2391,133 @@
       saveCurrentPart(true);
 
       showToast(`[${selectedPartId}] 만나는 지점 ${res.modifiedCount}개 분리 조정 완료! 다음 획 겹침/번짐이 차단되었습니다.`, 'success');
+    }
+
+    /**
+     * ★ 자소 획 번짐 방지 자동 최적화 코어 함수 (단일 자소 처리)
+     * 1) 접합부(T자, L자, 교차점) 중심선 분리 (안전 마진 16px)
+     * 2) 다중 서브패스(쌍자음, 겹받침, 복합모음)일 때 각 획별로 외곽선 패스 분리
+     * 3) 인접 획 간 거리에 기반한 안전 두께(Stroke Width) 자동 클램핑
+     */
+    function autoOptimizeBleedingForData(partData) {
+      if (!partData || !partData.medians) return false;
+      let modified = false;
+
+      // 1. 다중 서브패스 분리 (쌍자음, 복합모음, 겹받침 등)
+      const outline = partData.gungsuhOutline || (partData.strokes && partData.strokes[0]);
+      if (outline && partData.medians.length > 1) {
+        const subpaths = outline.match(/M[\s\S]*?(?=M|$)/g);
+        if (subpaths && subpaths.length > 1) {
+          const separated = mapSubpathsToMedians(subpaths, partData.medians, outline);
+          if (separated && separated.length === partData.medians.length) {
+            partData.strokes = separated;
+            modified = true;
+          }
+        }
+      }
+
+      // 2. 다획 자소 접합부(T자/L자) 분리
+      if (partData.medians.length > 1) {
+        const sepRes = separateJunctionMedians(partData.medians, 16);
+        if (sepRes.modifiedCount > 0) {
+          partData.medians = sepRes.medians;
+          modified = true;
+        }
+
+        // 3. 인접 획 최소 거리 기반 안전 두께(strokeWidths) 계산
+        ensureStrokeWidths(partData);
+        const count = partData.medians.length;
+        const isDouble = isDoubleJongsungPart(partData);
+
+        const safeWidths = partData.medians.map((m, sIdx) => {
+          let minDist = Infinity;
+          partData.medians.forEach((otherM, oIdx) => {
+            if (oIdx === sIdx) return;
+            m.forEach(pA => {
+              otherM.forEach(pB => {
+                const d = Math.hypot(pA[0] - pB[0], pA[1] - pB[1]);
+                if (d < minDist) minDist = d;
+              });
+            });
+          });
+
+          // 인접 획과의 거리가 가까울수록 얇게, 멀면 폰트 외곽선 두께 적용
+          let safeW;
+          if (isDouble) {
+            safeW = Math.max(18, Math.min(24, Math.round(minDist * 0.65)));
+          } else {
+            safeW = Math.max(20, Math.min(32, Math.round(minDist * 0.72)));
+          }
+          return safeW;
+        });
+
+        const isDiffW = safeWidths.some((w, idx) => w !== partData.strokeWidths[idx]);
+        if (isDiffW) {
+          partData.strokeWidths = safeWidths;
+          partData.strokeWidth = safeWidths[0];
+          modified = true;
+        }
+      } else {
+        // 단일 획: 단독 자소 맞춤 두께
+        ensureStrokeWidths(partData);
+        if (!partData.strokeWidths || partData.strokeWidths.length !== 1) {
+          partData.strokeWidths = [36];
+          partData.strokeWidth = 36;
+          modified = true;
+        }
+      }
+
+      return modified;
+    }
+
+    /**
+     * UI 버튼: 현재 선택된 자소 번짐 방지 자동 최적화
+     */
+    function autoOptimizeCurrentPartBleeding() {
+      if (!currentPartData) return;
+      autoOptimizeBleedingForData(currentPartData);
+
+      updateEditorDefs();
+      renderStrokeTabs();
+      updateStrokeWidthUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+
+      showToast(`[${selectedPartId}] 획 번짐 방지 자동 최적화 완료! (접합부 분리, 안전 두께, Voronoi 격리 적용됨)`, 'success');
+    }
+
+    /**
+     * UI 버튼: 153개 전체 자소 획 번짐 방지 일괄 자동 최적화
+     */
+    function autoOptimizeAllPartsBleeding() {
+      if (!confirm("153개 전체 자소에 대해 접합부 선 분리 및 획 번짐 방지 안전 두께를 100% 자동 최적화하시겠습니까?\n(완료 후 파일에 즉시 영구 동기화됩니다.)")) {
+        return;
+      }
+
+      let totalOptimized = 0;
+      partKeys.forEach(id => {
+        let pData = getActivePartData(id);
+        if (pData) {
+          const mod = autoOptimizeBleedingForData(pData);
+          if (mod) {
+            customDb[id] = pData;
+            if (originalWarehouse && originalWarehouse[id]) {
+              originalWarehouse[id] = JSON.parse(JSON.stringify(pData));
+            }
+            totalOptimized++;
+          }
+        }
+      });
+
+      localStorage.setItem('hangul_150_custom_medians', JSON.stringify(customDb));
+      renderSidebar();
+      selectPart(selectedPartId);
+
+      // 전체 파일 영구 동기화
+      saveAllToDisk();
+
+      showToast(`153개 자소 중 ${totalOptimized}개 자소의 획 번짐 방지 자동 최적화 완료 및 파일 저장 완료!`, 'success');
     }
 
     /**
@@ -2712,6 +2964,96 @@
       showToast(`[${selectedPartId}] 좌/우 독립 자소 획 서브패스 완벽 분리 적용 완료!`, 'success');
     }
 
+    // HanziWriter의 각 획별 실제 드로잉 패스를 개별 Voronoi 클립패스로 감싸 획 간 번짐 100% 원천 차단
+    function applyHanziChainedVoronoi() {
+      return; // 외곽선(회색 배경) 파편화 방지: HanziWriter 고유 마스크 렌더링 보존
+      if (!box || !currentPartData || !currentPartData.medians) return;
+      const count = currentPartData.medians.length;
+      if (count <= 1) return; // 단일 획은 분할 불필요
+
+      const svg = box.querySelector('svg');
+      if (!svg) return;
+      let defs = svg.querySelector('defs');
+      if (!defs) {
+        defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+        svg.insertBefore(defs, svg.firstChild);
+      }
+
+      // 1. 각 획별 Voronoi 클립패스 생성/갱신
+      for (let sIdx = 0; sIdx < count; sIdx++) {
+        const vPoly = computeStrokeVoronoiPolygon(sIdx, currentPartData.medians);
+        const clipId = `hw-voronoi-clip-${selectedPartId}-${sIdx}`;
+        const ptsStr = vPoly.map(pt => `${pt[0].toFixed(1)},${pt[1].toFixed(1)}`).join(' ');
+        let vClip = document.getElementById(clipId);
+        if (!vClip) {
+          vClip = document.createElementNS('http://www.w3.org/2000/svg', 'clipPath');
+          vClip.id = clipId;
+          const polyEl = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+          polyEl.setAttribute('points', ptsStr);
+          vClip.appendChild(polyEl);
+          defs.appendChild(vClip);
+        } else {
+          const polyEl = vClip.querySelector('polygon');
+          if (polyEl) polyEl.setAttribute('points', ptsStr);
+        }
+      }
+
+      // 2. HanziWriter의 각 획 실제 스트로크 드로잉 패스를 Voronoi 래퍼 그룹으로 감싸기
+      // HanziWriter의 드로잉 패스는 clip-path 속성(mask-xxx)을 직접 보유하고 있음
+      const allPaths = Array.from(svg.querySelectorAll('path'));
+      const strokePaths = allPaths.filter(p => {
+        const cp = p.getAttribute('clip-path') || '';
+        return cp.includes('mask-') || (cp && !cp.includes('hw-voronoi') && !cp.includes('outline'));
+      });
+
+      strokePaths.forEach((pathEl, sIdx) => {
+        if (sIdx >= count) return;
+        const clipId = `hw-voronoi-clip-${selectedPartId}-${sIdx}`;
+        const parent = pathEl.parentNode;
+        if (!parent) return;
+
+        if (parent.classList && parent.classList.contains('hw-voronoi-wrapper')) {
+          parent.setAttribute('clip-path', `url(#${clipId})`);
+        } else {
+          const wrapper = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          wrapper.setAttribute('class', 'hw-voronoi-wrapper');
+          wrapper.setAttribute('clip-path', `url(#${clipId})`);
+          parent.insertBefore(wrapper, pathEl);
+          wrapper.appendChild(pathEl);
+        }
+      });
+    }
+
+    /**
+     * ★ 모든 자소의 실시간 검증 영역에 시작 시점부터 100% 온전한 궁서체 원본 외곽선 표시 보장
+     */
+    function ensureMasterGungsuhOutline() {
+      const box = document.getElementById('hanzi-preview-box');
+      if (!box || !currentPartData) return;
+      const outlineD = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
+      if (!outlineD) return;
+
+      const svg = box.querySelector('svg');
+      if (!svg) return;
+      const mainG = svg.querySelector('g[transform]');
+      if (!mainG) return;
+
+      let masterPath = mainG.querySelector('.hw-master-gungsuh-outline');
+      if (!masterPath) {
+        masterPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        masterPath.setAttribute('class', 'hw-master-gungsuh-outline');
+        masterPath.setAttribute('fill', '#f8fafc');
+        masterPath.setAttribute('stroke', '#64748b');
+        masterPath.setAttribute('stroke-width', '2.5');
+        masterPath.setAttribute('stroke-linejoin', 'round');
+        masterPath.setAttribute('opacity', '0.85');
+        masterPath.setAttribute('pointer-events', 'none');
+        // 최하단(배경)에 삽입하여 애니메이션 스트로크가 그 위로 채워지도록 함
+        mainG.insertBefore(masterPath, mainG.firstChild);
+      }
+      masterPath.setAttribute('d', outlineD);
+    }
+
     // HanziWriter 미리보기 갱신 (서브패스 정밀 분리 및 획 두께 실시간 동기화)
     function updateHanziPreview() {
       const box = document.getElementById('hanzi-preview-box');
@@ -2719,6 +3061,7 @@
 
       ensureStrokeWidths(currentPartData);
 
+      const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
       let strokesPayload = [];
       const hasDistinctStrokes = currentPartData.strokes && 
         currentPartData.strokes.length === currentPartData.medians.length &&
@@ -2727,19 +3070,12 @@
       if (hasDistinctStrokes) {
         strokesPayload = currentPartData.strokes;
       } else {
-        const outline = currentPartData.gungsuhOutline || (currentPartData.strokes && currentPartData.strokes[0]);
-        // subpaths가 획수와 정확히 1:1로 일치할 때만 서브패스 매핑을 시도하고,
-        // 그렇지 않은 경우(구멍이 포함된 ㄼ, ㅂ, ㅇ, ㅎ, ㅁ 등)에는 전체 외곽선을 공유하여 획이 증발하는 현상을 100% 방지!
         const subpaths = outline ? outline.match(/M[\s\S]*?(?=M|$)/g) : null;
-
         if (subpaths && subpaths.length === currentPartData.medians.length) {
           strokesPayload = subpaths.map(s => s.trim());
         } else if (subpaths && subpaths.length > 1) {
-          // 다중 서브패스(독립 자소, 쌍자음, 겹받침 등)를 각 획의 중심선 위치에 맞춰 지능형 매핑!
-          // ㅉ의 경우 1,2,3획 -> 좌측 ㅈ(subpath 0), 4,5,6획 -> 우측 ㅈ(subpath 1)
           strokesPayload = mapSubpathsToMedians(subpaths, currentPartData.medians, outline);
         } else {
-          // 모든 획에 대해 온전한 궁서체 외곽선을 마스크로 제공 (8번째 획 및 하단 획 완벽 렌더링)
           strokesPayload = currentPartData.medians.map((_, i) => {
             return (currentPartData.strokes && currentPartData.strokes[i]) || outline;
           });
@@ -2757,41 +3093,55 @@
         padding: 10,
         showOutline: true,
         showCharacter: false,
-        strokeColor: '#0284c7',
-        outlineColor: '#cbd5e1',
-        strokeAnimationSpeed: 1.2,
-        delayBetweenStrokes: 180,
+        strokeColor: '#ef4444',
+        outlineColor: '#64748b',
+        drawingColor: '#ef4444',
+        highlightColor: '#f87171',
+        strokeAnimationSpeed: animSpeedMultiplier,
+        delayBetweenStrokes: animStrokeDelay,
+        strokeFadeDuration: 0,
         charDataLoader: function(char, onComplete) {
           onComplete(payload);
-          // 렌더링 후 stroke-width 동기화
-          setTimeout(syncHanziWriterStrokeWidth, 50);
+          setTimeout(() => {
+            ensureMasterGungsuhOutline();
+            syncHanziWriterStrokeWidth();
+          }, 30);
         }
       });
 
-      setTimeout(syncHanziWriterStrokeWidth, 100);
+      setTimeout(() => {
+        ensureMasterGungsuhOutline();
+        syncHanziWriterStrokeWidth();
+      }, 80);
+      setTimeout(() => {
+        ensureMasterGungsuhOutline();
+      }, 200);
     }
 
     function playPreviewAnim() {
       if (!previewWriter || !currentPartData) return;
       ensureStrokeWidths(currentPartData);
 
-      // 애니메이션 브러시 두께를 첫 번째 획 굵기로 설정
-      const firstW = currentPartData.strokeWidths[0] || currentStrokeWidth || 22;
-      document.documentElement.style.setProperty('--hanzi-anim-stroke-width', `${firstW}px`);
-
-      // 애니메이션 재생 중 브라우저가 생성하는 마스크 패스의 두께가 200px로 튀지 않도록 실시간 감시
-      const box = document.getElementById('hanzi-preview-box');
-      let observer = null;
-      if (box && window.MutationObserver) {
-        observer = new MutationObserver(() => {
-          syncHanziWriterStrokeWidth();
-        });
-        observer.observe(box, { childList: true, subtree: true, attributes: true, attributeFilter: ['stroke-width'] });
+      // 최신 옵션 주입 (붉은색 획, 초저속/느린 속도, 대기 시간)
+      if (previewWriter._options) {
+        previewWriter._options.strokeColor = '#ef4444';
+        previewWriter._options.strokeAnimationSpeed = animSpeedMultiplier;
+        previewWriter._options.delayBetweenStrokes = animStrokeDelay;
       }
 
+      // 애니메이션 전 온전한 궁서체 외곽선 및 충진 두께 적용
+      ensureMasterGungsuhOutline();
+      syncHanziWriterStrokeWidth();
+
+      // 획순에 맞게 처음(1획)부터 명확하게 그려지도록 현재 표시 상태를 리셋
+      previewWriter.hideCharacter();
+
+      // 순차 획순 애니메이션 시작 (여유롭고 느린 속도로 명확히 관찰)
       previewWriter.animateCharacter({
+        strokeAnimationSpeed: animSpeedMultiplier,
+        delayBetweenStrokes: animStrokeDelay,
         onComplete: function() {
-          if (observer) observer.disconnect();
+          ensureMasterGungsuhOutline();
           syncHanziWriterStrokeWidth();
         }
       });
@@ -3026,10 +3376,11 @@
       showToast("전체 데이터셋 JSON 파일이 다운로드되었습니다.", 'success');
     }
 
-    let isFilled = true;
+    let isFilled = false;
     function toggleGungsuhFill() {
       isFilled = !isFilled;
       document.getElementById('gungsuh-outline-path').setAttribute('fill', isFilled ? '#1e1b4b' : 'none');
+      showToast(isFilled ? "외곽선 내부 채우기 켜짐 (#1e1b4b)" : "외곽선 내부 채우기 꺼짐 (투명)", "info");
     }
 
     function addStrokeToCurrent() {
@@ -3096,6 +3447,76 @@
       updateHanziPreview();
       saveCurrentPart(true);
       showToast(`${activeStrokeIdx + 1}획 마지막 점 제거됨 → 총 ${stroke.length}개 점`, 'info');
+    }
+
+    // ─── 획순 진행 방향에 맞게 현재 획의 점들을 순차 자동 정렬 (꼬임 교정) ──
+    function sortCurrentStrokePoints() {
+      if (!currentPartData || !currentPartData.medians) return;
+      const stroke = currentPartData.medians[activeStrokeIdx];
+      if (!stroke || stroke.length <= 2) {
+        showToast("점이 2개 이하인 획은 이미 정렬되어 있습니다.", "info");
+        return;
+      }
+
+      // 시작점(0번 점) 고정 후 가장 가까운 점 순으로 Chaining 연결
+      const unvisited = stroke.slice(1);
+      const sorted = [stroke[0]];
+
+      while (unvisited.length > 0) {
+        const cur = sorted[sorted.length - 1];
+        let bestIdx = 0;
+        let minD = Infinity;
+        for (let i = 0; i < unvisited.length; i++) {
+          const d = Math.hypot(cur[0] - unvisited[i][0], cur[1] - unvisited[i][1]);
+          if (d < minD) {
+            minD = d;
+            bestIdx = i;
+          }
+        }
+        sorted.push(unvisited.splice(bestIdx, 1)[0]);
+      }
+
+      currentPartData.medians[activeStrokeIdx] = sorted;
+      activePointIdx = 0;
+      updateActivePointUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`${activeStrokeIdx + 1}번째 획의 제어점 ${sorted.length}개가 획순에 맞게 1->${sorted.length} 순서로 완벽 정렬되었습니다!`, "success");
+    }
+
+    // ─── 이 자소의 모든 획 점들을 획순에 맞게 일괄 자동 정렬 ─────────────
+    function sortAllStrokesPoints() {
+      if (!currentPartData || !currentPartData.medians) return;
+      let totalSorted = 0;
+      currentPartData.medians.forEach((stroke, sIdx) => {
+        if (stroke && stroke.length > 2) {
+          const unvisited = stroke.slice(1);
+          const sorted = [stroke[0]];
+          while (unvisited.length > 0) {
+            const cur = sorted[sorted.length - 1];
+            let bestIdx = 0;
+            let minD = Infinity;
+            for (let i = 0; i < unvisited.length; i++) {
+              const d = Math.hypot(cur[0] - unvisited[i][0], cur[1] - unvisited[i][1]);
+              if (d < minD) {
+                minD = d;
+                bestIdx = i;
+              }
+            }
+            sorted.push(unvisited.splice(bestIdx, 1)[0]);
+          }
+          currentPartData.medians[sIdx] = sorted;
+          totalSorted++;
+        }
+      });
+
+      activePointIdx = 0;
+      updateActivePointUI();
+      renderEditor();
+      updateHanziPreview();
+      saveCurrentPart(true);
+      showToast(`이 자소의 모든 획(${totalSorted}개 획) 점들이 획순에 맞게 자동 정렬되었습니다!`, "success");
     }
 
     // ─── 현재 활성 획 전체 삭제 (최소 1획 유지) ─────────────────────────

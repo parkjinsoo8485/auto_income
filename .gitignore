@@ -56,3 +56,9 @@ out/
 Thumbs.db
 .vscode/
 .idea/
+
+# Scratch & Temporary
+scratch/
+*.bak*
+part_list_temp.txt
+
