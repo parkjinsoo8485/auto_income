@@ -1451,7 +1451,7 @@ function getJamoStrokesInBox(jamo, box, partName, fontKey = selectedFontKey, isV
   if (PRIMITIVE_STROKES[jamo]) {
     let list = PRIMITIVE_STROKES[jamo];
     if (jamo === 'ㄱ' && isVert) {
-      list = [{ type: 'lines', pts: [[14, 22], [88, 22], [74, 52], [32, 96]], desc: '가로선을 긋고 아래로 부드럽게 꺾기' }];
+      list = [{ type: 'lines', pts: [[14, 22], [88, 22], [74, 50], [18, 108]], desc: '가로선을 긋고 아래로 부드럽게 꺾기' }];
     }
     list.forEach(s => strokes.push(transformStroke(s, box, partName, fontKey)));
   }
