@@ -3,480 +3,1352 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>한국어 획순 쓰기 전용 테스트 스튜디오 | Hangul Stroke Studio</title>
+<title>한글 획순 쓰기 스튜디오 Pro | Hangul Stroke Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Noto+Sans+KR:wght@500;700;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
-  --green: #58cc02;
-  --green-dark: #58a700;
-  --blue: #1cb0f6;
-  --blue-dark: #1899d6;
-  --gold: #ffc800;
-  --gold-dark: #e5a500;
-  --red: #ff4b4b;
-  --gray-100: #f7f7f7;
-  --gray-200: #e5e5e5;
-  --gray-300: #d0d0d0;
-  --gray-700: #4b4b4b;
-  --gray-800: #3c3c3c;
-  --radius: 16px;
+  --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #edf2f7 50%, #f1f5f9 100%);
+  --surface-card: rgba(255, 255, 255, 0.96);
+  --surface-subtle: #f8fafc;
+  --surface-active: #f1f5f9;
+  
+  --primary: #059669;
+  --primary-hover: #047857;
+  --primary-light: #ecfdf5;
+  --primary-glow: rgba(16, 185, 129, 0.35);
+
+  --accent-blue: #2563eb;
+  --accent-indigo: #6366f1;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+  --accent-cyan: #06b6d4;
+
+  --text-main: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+
+  --border-light: #e2e8f0;
+  --border-focus: #3b82f6;
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 8px 24px -4px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 20px 35px -10px rgba(15, 23, 42, 0.12);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
 }
 
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  user-select: none;
-  font-family: 'Nunito', 'Noto Sans KR', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: #f0f2f5;
-  color: var(--gray-800);
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+  background: var(--bg-gradient);
+  color: var(--text-main);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px 16px;
+  padding: 24px 16px 48px;
+  touch-action: pan-y;
 }
 
-.studio-card {
+/* 상단 앱 바 헤더 */
+.app-header {
   width: 100%;
-  max-width: 460px;
-  background: #fff;
-  border-radius: 24px;
-  box-shadow: 0 12px 36px rgba(0,0,0,0.08);
-  border: 2px solid var(--gray-200);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 24px;
-}
-
-.studio-header {
-  text-align: center;
-  margin-bottom: 20px;
-  width: 100%;
-}
-.studio-title {
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--green-dark);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-.studio-subtitle {
-  font-size: 13px;
-  color: var(--gray-700);
-  margin-top: 4px;
-  font-weight: 600;
-}
-
-/* 글자 입력 & 프리셋 바 */
-.char-input-group {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  margin-bottom: 12px;
-}
-.char-input {
-  flex: 1;
-  padding: 12px 16px;
-  font-size: 18px;
-  font-weight: 900;
-  border: 2px solid var(--gray-300);
-  border-radius: var(--radius);
-  text-align: center;
-  outline: none;
-  background: #fafafa;
-}
-.char-input:focus {
-  border-color: var(--blue);
-  background: #fff;
-}
-
-.preset-chip-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  justify-content: center;
-  margin-bottom: 20px;
-  width: 100%;
-}
-.preset-chip {
-  padding: 6px 12px;
-  background: var(--gray-100);
-  border: 1.5px solid var(--gray-200);
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 2px 0 var(--gray-200);
-  transition: all 0.1s;
-}
-.preset-chip:active {
-  transform: translateY(2px);
-  box-shadow: none;
-}
-.preset-chip.active {
-  background: #e7f7ff;
-  border-color: var(--blue);
-  color: var(--blue-dark);
-}
-
-/* 캔버스 뷰포트 */
-.canvas-wrapper {
-  position: relative;
-  width: 280px;
-  height: 280px;
-  background: #ffffff;
-  border: 3px dashed var(--gray-300);
-  border-radius: 24px;
-  box-shadow: inset 0 2px 8px rgba(0,0,0,0.03);
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-/* 십자 원고지 가이드라인 */
-.canvas-grid-line-h {
-  position: absolute;
-  left: 0; right: 0; top: 50%;
-  height: 1px;
-  border-top: 1px dashed rgba(0,0,0,0.12);
-  pointer-events: none;
-}
-.canvas-grid-line-v {
-  position: absolute;
-  top: 0; bottom: 0; left: 50%;
-  width: 1px;
-  border-left: 1px dashed rgba(0,0,0,0.12);
-  pointer-events: none;
-}
-
-#stroke-canvas {
-  width: 280px;
-  height: 280px;
-  touch-action: none;
-  cursor: crosshair;
-}
-
-/* 3D 컨트롤 버튼 */
-.btn-3d {
-  position: relative;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  border-radius: var(--radius);
-  font-weight: 800;
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  padding: 12px 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: all 0.1s ease;
-}
-.btn-3d:active {
-  transform: translateY(4px);
-}
-
-.btn-primary {
-  background: var(--green);
-  color: #fff;
-  box-shadow: 0 4px 0 var(--green-dark);
-}
-.btn-primary:active { box-shadow: 0 0 0 var(--green-dark); }
-
-.btn-blue {
-  background: var(--blue);
-  color: #fff;
-  box-shadow: 0 4px 0 var(--blue-dark);
-}
-.btn-blue:active { box-shadow: 0 0 0 var(--blue-dark); }
-
-.btn-gray {
-  background: var(--gray-200);
-  color: var(--gray-700);
-  box-shadow: 0 4px 0 var(--gray-300);
-}
-.btn-gray:active { box-shadow: 0 0 0 var(--gray-300); }
-
-.button-row {
-  display: flex;
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-/* 획순 분석 정보 패널 */
-.info-card {
-  width: 100%;
-  background: #f8fafc;
-  border: 1.5px solid var(--gray-200);
-  border-radius: var(--radius);
-  padding: 16px;
-}
-.info-row {
+  max-width: 1100px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
-  border-bottom: 1px solid var(--gray-200);
-  font-size: 14px;
+  margin-bottom: 20px;
+  padding: 0 4px;
 }
-.info-row:last-child {
-  border-bottom: none;
+
+.brand-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
-.info-label {
-  font-weight: 700;
-  color: var(--gray-700);
+
+.brand-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 26px;
+  box-shadow: 0 8px 18px -4px rgba(16, 185, 129, 0.45);
 }
-.info-val {
-  font-weight: 900;
-  color: var(--green-dark);
+
+.brand-title {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
-.stroke-steps-list {
-  margin-top: 10px;
-  font-size: 12.5px;
-  color: var(--gray-700);
+
+.brand-badge {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.brand-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tool-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  font-size: 13px;
   font-weight: 600;
-  line-height: 1.6;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-light);
+  background: #fff;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.tool-toggle-btn:hover {
+  background: var(--surface-subtle);
+  border-color: #cbd5e1;
+  color: var(--text-main);
+}
+
+.tool-toggle-btn.active {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #047857;
+}
+
+/* 2열 메인 레이아웃 */
+.studio-layout {
+  width: 100%;
+  max-width: 1100px;
+  display: grid;
+  grid-template-columns: 480px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 980px) {
+  .studio-layout {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+}
+
+.panel-card {
+  background: var(--surface-card);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 24px;
+}
+
+/* 좌측 캔버스 패널 */
+.canvas-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-section {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.char-input-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.char-input-field {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px 0 44px;
+  font-size: 19px;
+  font-weight: 800;
+  color: var(--text-main);
+  background: #fff;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.char-input-field:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.char-input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.btn-apply {
+  height: 48px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-hover) 100%);
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-apply:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(5, 150, 105, 0.35);
+}
+
+/* 프리셋 탭 & 칩 */
+.preset-section {
+  width: 100%;
+  margin-bottom: 14px;
+}
+
+.preset-tabs {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  overflow-x: auto;
+}
+
+.preset-tab-btn {
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.preset-tab-btn.active {
+  background: var(--surface-active);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.preset-chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.preset-chip {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--text-main);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.preset-chip:hover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.preset-chip.active {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.3);
+}
+
+/* 모드 선택 바 */
+.mode-switcher-row {
+  width: 100%;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.mode-tab-btn {
+  flex: 1;
+  padding: 10px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.mode-tab-btn:hover {
+  color: var(--text-main);
+}
+
+.mode-tab-btn.active {
+  background: #fff;
+  color: var(--accent-blue);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 캔버스 컨테이너 */
+.canvas-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 440px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.04), 0 8px 24px -6px rgba(15, 23, 42, 0.1);
+  border: 2px solid #e2e8f0;
+  overflow: hidden;
+  user-select: none;
+  touch-action: none; /* 드래그 시 화면 스크롤 완전 방지 */
+}
+
+.canvas-grid-box {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.grid-h-center {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.35);
+  border-top: 1px dashed rgba(148, 163, 184, 0.5);
+}
+
+.grid-v-center {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(148, 163, 184, 0.35);
+  border-left: 1px dashed rgba(148, 163, 184, 0.5);
+}
+
+.grid-diag-1, .grid-diag-2 {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.25;
+}
+
+#stroke-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: crosshair;
+}
+
+/* 실시간 판정 상태 메시지 배너 */
+.test-feedback-banner {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 0.25s ease;
+}
+
+.test-feedback-banner.success {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+  color: #047857;
+  animation: pulse-border 1.2s infinite;
+}
+
+.test-feedback-banner.error {
+  background: #fff1f2;
+  border-color: #fca5a5;
+  color: #be123c;
+  animation: shake 0.35s ease;
+}
+
+@keyframes pulse-border {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* 캔버스 미니 툴바 */
+.canvas-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding: 0 4px;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tool-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.color-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.color-dot:hover {
+  transform: scale(1.15);
+}
+
+.color-dot.active {
+  outline: 2px solid var(--accent-blue);
+  outline-offset: 1px;
+}
+
+.mini-slider {
+  width: 80px;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+/* 캔버스 액션 버튼 행 */
+.control-actions-row {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.btn-ctrl {
+  flex: 1;
+  height: 46px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-ctrl-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+}
+
+.btn-ctrl-primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+.btn-ctrl-secondary {
+  background: #f1f5f9;
+  color: var(--text-secondary);
+}
+
+.btn-ctrl-secondary:hover {
+  background: #e2e8f0;
+  color: var(--text-main);
+}
+
+.btn-ctrl-subtle {
+  background: #fff;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+
+.btn-ctrl-subtle:hover {
+  background: #f8fafc;
+  color: var(--text-main);
+}
+
+.btn-ctrl:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* 진행 바 */
+.progress-bar-wrap {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 999px;
+  margin-top: 14px;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);
+  transition: width 0.25s ease;
+}
+
+/* 우측 분석 & 정보 대시보드 */
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.syllable-hero-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-sm);
+}
+
+.syllable-display {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.syllable-char-box {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+  color: #fff;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 42px;
+  font-weight: 900;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.35);
+}
+
+.syllable-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.syllable-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.syllable-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.badge-tag {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: var(--text-secondary);
+}
+
+.badge-tag.accent {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.syllable-sound-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: #fff;
+  font-size: 20px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s;
+}
+
+.syllable-sound-btn:hover {
+  background: var(--surface-subtle);
+  transform: scale(1.08);
+}
+
+/* 3요소 분해 다이어그램 */
+.composition-diagram {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.jamo-slot {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 14px 10px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.jamo-type-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.jamo-glyph {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.jamo-desc {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+/* 타임라인 카드 */
+.timeline-card {
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.timeline-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.total-count-badge {
+  font-size: 12px;
+  font-weight: 800;
+  background: #f1f5f9;
+  padding: 3px 10px;
+  border-radius: 999px;
+  color: var(--text-secondary);
+}
+
+.stroke-steps-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 290px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.stroke-step-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: #f8fafc;
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.stroke-step-item:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+.stroke-step-item.active {
+  background: #eff6ff;
+  border-color: #93c5fd;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+}
+
+.stroke-step-item.completed {
+  background: #ecfdf5;
+  border-color: #6ee7b7;
+}
+
+.step-num-badge {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  color: var(--text-secondary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stroke-step-item.active .step-num-badge {
+  background: var(--accent-blue);
+  color: #fff;
+}
+
+.stroke-step-item.completed .step-num-badge {
+  background: #10b981;
+  color: #fff;
+}
+
+.step-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.step-part-tag {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.step-instruction {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.studio-footer-note {
+  margin-top: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 500;
 }
 </style>
 </head>
 <body>
 
-<div class="studio-card">
-
-  <!-- 헤더 -->
-  <div class="studio-header">
-    <div class="studio-title">✍️ 한국어 획순 쓰기 전용 스튜디오</div>
-    <div class="studio-subtitle">글자를 입력하고 실시간 획순 드로잉 및 따라 쓰기를 검증하세요</div>
+<!-- 상단 앱 바 헤더 -->
+<header class="app-header">
+  <div class="brand-wrapper">
+    <div class="brand-icon">훈</div>
+    <div>
+      <div class="brand-title">
+        한글 획순 쓰기 스튜디오 Pro
+        <span class="brand-badge">Engine 2.0</span>
+      </div>
+      <div class="brand-sub">정규화 벡터 알고리즘 & 오프라인 실시간 획순 판정 엔진</div>
+    </div>
   </div>
 
-  <!-- 글자 입력 및 프리셋 버튼 -->
-  <div class="char-input-group">
-    <input type="text" class="char-input" id="input-char" maxlength="1" value="아" placeholder="한 글자 입력">
-    <button class="btn-3d btn-primary" onclick="applyCharFromInput()">적용</button>
-  </div>
-
-  <div class="preset-chip-row">
-    <button class="preset-chip active" onclick="loadPreset('아')">아</button>
-    <button class="preset-chip" onclick="loadPreset('가')">가</button>
-    <button class="preset-chip" onclick="loadPreset('오')">오</button>
-    <button class="preset-chip" onclick="loadPreset('우')">우</button>
-    <button class="preset-chip" onclick="loadPreset('모')">모</button>
-    <button class="preset-chip" onclick="loadPreset('사')">사</button>
-    <button class="preset-chip" onclick="loadPreset('한')">한</button>
-    <button class="preset-chip" onclick="loadPreset('글')">글</button>
-  </div>
-
-  <!-- 캔버스 (십자 보조선) -->
-  <div class="canvas-wrapper">
-    <div class="canvas-grid-line-h"></div>
-    <div class="canvas-grid-line-v"></div>
-    <canvas id="stroke-canvas" width="280" height="280"></canvas>
-  </div>
-
-  <!-- 액션 버튼 -->
-  <div class="button-row">
-    <button class="btn-3d btn-blue" id="btn-play-anim" style="flex:2;" onclick="startStrokeAnimation()">
-      ✨ 획순 가이드 보기
+  <div class="header-tools">
+    <button class="tool-toggle-btn active" id="btn-toggle-sound" onclick="toggleSound()">
+      <span id="sound-icon">🔊</span> 효과음 ON
     </button>
-    <button class="btn-3d btn-gray" id="btn-clear" style="flex:1;" onclick="clearCanvas()">
-      🔄 다시 쓰기
+    <button class="tool-toggle-btn active" id="btn-toggle-grid" onclick="toggleGrid()">
+      <span>📐</span> 격자 가이드
     </button>
   </div>
+</header>
 
-  <!-- 획순 분석 정보 패널 -->
-  <div class="info-card">
-    <div class="info-row">
-      <span class="info-label">대상 음절:</span>
-      <span class="info-val" id="info-char">아</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">음절 구조:</span>
-      <span class="info-val" id="info-structure">초성 ㅇ + 중성 ㅏ</span>
-    </div>
-    <div class="info-row">
-      <span class="info-label">총 획수:</span>
-      <span class="info-val" id="info-stroke-count">3획</span>
-    </div>
-    <div class="stroke-steps-list" id="info-stroke-steps">
-      ① 1획: 초성 'ㅇ' (시계 반대방향 원)<br>
-      ② 2획: 중성 'ㅏ' (위에서 아래로 긴 세로획)<br>
-      ③ 3획: 중성 'ㅏ' (왼쪽에서 오른쪽 짧은 가로획)
-    </div>
-  </div>
+<!-- 메인 스튜디오 2열 레이아웃 -->
+<main class="studio-layout">
 
+  <!-- 좌측 캔버스 작업대 -->
+  <section class="panel-card canvas-panel">
+
+    <!-- 글자 입력부 -->
+    <div class="input-section">
+      <div class="char-input-wrapper">
+        <span class="char-input-icon">🔍</span>
+        <input type="text" class="char-input-field" id="input-char" maxlength="1" value="아" placeholder="한글 입력 (예: 가, 한, 닭)">
+      </div>
+      <button class="btn-apply" onclick="applyCharFromInput()">
+        <span>확인</span> ➔
+      </button>
+    </div>
+
+    <!-- 프리셋 선택 칩 -->
+    <div class="preset-section">
+      <div class="preset-tabs">
+        <button class="preset-tab-btn active" onclick="switchPresetTab('vowel')">모음·기본</button>
+        <button class="preset-tab-btn" onclick="switchPresetTab('basic')">초급 음절</button>
+        <button class="preset-tab-btn" onclick="switchPresetTab('jong')">받침 결합</button>
+        <button class="preset-tab-btn" onclick="switchPresetTab('complex')">쌍자음·복합</button>
+      </div>
+      <div class="preset-chips-container" id="preset-chips-box"></div>
+    </div>
+
+    <!-- 스튜디오 모드 선택 바 -->
+    <div class="mode-switcher-row">
+      <button class="mode-tab-btn active" id="btn-mode-test" onclick="setStudioMode('test')">
+        <span>✍️</span> 획순 따라쓰기
+      </button>
+      <button class="mode-tab-btn" id="btn-mode-anim" onclick="setStudioMode('anim')">
+        <span>✨</span> 획순 애니메이션
+      </button>
+      <button class="mode-tab-btn" id="btn-mode-free" onclick="setStudioMode('free')">
+        <span>🎨</span> 자유 그리기
+      </button>
+    </div>
+
+    <!-- 캔버스 컨테이너 -->
+    <div class="canvas-container" id="canvas-wrapper">
+      <div class="canvas-grid-box" id="grid-box">
+        <div class="grid-h-center"></div>
+        <div class="grid-v-center"></div>
+        <svg class="grid-diag-1" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="0" y1="0" x2="100" y2="100" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3,3"/>
+        </svg>
+        <svg class="grid-diag-2" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <line x1="100" y1="0" x2="0" y2="100" stroke="#94a3b8" stroke-width="0.8" stroke-dasharray="3,3"/>
+        </svg>
+      </div>
+      <canvas id="stroke-canvas" width="720" height="720"></canvas>
+    </div>
+
+    <!-- 실시간 판정 상태 메시지 배너 -->
+    <div class="test-feedback-banner" id="test-feedback-banner">
+      <span class="feedback-icon" id="feedback-icon">🎯</span>
+      <span class="feedback-text" id="feedback-text">1획: 파란색 번호 배지(①)에서 시작하여 따라 써보세요!</span>
+    </div>
+
+    <!-- 캔버스 미니 툴바 -->
+    <div class="canvas-toolbar">
+      <div class="toolbar-group">
+        <span class="tool-label">색상</span>
+        <div class="color-dot active" style="background:#10b981;" onclick="setBrushColor('#10b981', this)" title="에메랄드"></div>
+        <div class="color-dot" style="background:#2563eb;" onclick="setBrushColor('#2563eb', this)" title="블루"></div>
+        <div class="color-dot" style="background:#6366f1;" onclick="setBrushColor('#6366f1', this)" title="인디고"></div>
+        <div class="color-dot" style="background:#0f172a;" onclick="setBrushColor('#0f172a', this)" title="잉크 블랙"></div>
+      </div>
+      <div class="toolbar-group">
+        <span class="tool-label">가이드</span>
+        <input type="range" class="mini-slider" id="guide-opacity" min="0" max="100" value="30" oninput="onGuideOpacityChange()" title="바탕 글자 투명도">
+      </div>
+      <div class="toolbar-group">
+        <button class="tool-toggle-btn" style="padding:4px 8px; font-size:11px;" onclick="saveCanvasImage()" title="작품 이미지 다운로드">
+          💾 저장
+        </button>
+      </div>
+    </div>
+
+    <!-- 캔버스 주 컨트롤 버튼 행 -->
+    <div class="control-actions-row">
+      <button class="btn-ctrl btn-ctrl-primary" id="btn-play-anim" onclick="startStrokeAnimation()">
+        <span>✨</span> 획순 보기
+      </button>
+      <button class="btn-ctrl btn-ctrl-secondary" id="btn-step-anim" onclick="stepNextStroke()">
+        <span>⏭</span> 1획씩 보기
+      </button>
+      <button class="btn-ctrl btn-ctrl-subtle" id="btn-clear" onclick="clearCanvas()">
+        <span>🔄</span> 지우기
+      </button>
+    </div>
+
+    <!-- 진행 바 -->
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" id="anim-progress-fill"></div>
+    </div>
+
+  </section>
+
+  <!-- 우측 분석 & 획순 정보 대시보드 -->
+  <aside class="info-panel">
+
+    <!-- 음절 헤어로 카드 -->
+    <div class="syllable-hero-card">
+      <div class="syllable-display">
+        <div class="syllable-char-box" id="hero-char-box">아</div>
+        <div class="syllable-meta">
+          <div class="syllable-name" id="hero-char-title">음절 '아'</div>
+          <div class="syllable-tags">
+            <span class="badge-tag accent" id="hero-struct-tag">좌우 분립형</span>
+            <span class="badge-tag" id="hero-batchim-tag">받침 없음</span>
+            <span class="badge-tag" id="hero-strokes-tag">총 3획</span>
+          </div>
+        </div>
+      </div>
+      <button class="syllable-sound-btn" onclick="speakCurrentChar()" title="한국어 표준 발음 듣기">
+        🔊
+      </button>
+    </div>
+
+    <!-- 3요소 (초성·중성·종성) 분해 다이어그램 -->
+    <div class="composition-diagram">
+      <div class="jamo-slot" id="slot-cho">
+        <div class="jamo-type-title">초성 (Initial)</div>
+        <div class="jamo-glyph" id="jamo-cho-val">ㅇ</div>
+        <div class="jamo-desc" id="jamo-cho-desc">이응 (1획)</div>
+      </div>
+      <div class="jamo-slot" id="slot-jung">
+        <div class="jamo-type-title">중성 (Medial)</div>
+        <div class="jamo-glyph" id="jamo-jung-val">ㅏ</div>
+        <div class="jamo-desc" id="jamo-jung-desc">아 (2획)</div>
+      </div>
+      <div class="jamo-slot" id="slot-jong">
+        <div class="jamo-type-title">종성 (Final)</div>
+        <div class="jamo-glyph" id="jamo-jong-val">-</div>
+        <div class="jamo-desc" id="jamo-jong-desc">받침 없음</div>
+      </div>
+    </div>
+
+    <!-- 단계별 획순 타임라인 -->
+    <div class="timeline-card">
+      <div class="timeline-header">
+        <div class="timeline-title">
+          <span>📋</span> 단계별 획순 가이드라인
+        </div>
+        <span class="total-count-badge" id="timeline-count-badge">총 3획</span>
+      </div>
+
+      <div class="stroke-steps-grid" id="timeline-steps-list"></div>
+    </div>
+
+  </aside>
+
+</main>
+
+<div class="studio-footer-note">
+  <span>💡</span>
+  <span>터치나 마우스로 획순에 맞추어 직접 따라 쓰면 오프라인 알고리즘이 실시간 정답을 판정합니다.</span>
 </div>
 
 <script>
-/* ── Web Audio Synth (오프라인 효과음) ── */
+/* ─────────────────────────────────────────────────────────────
+   1. 오디오 합성 엔진 (Web Audio Synth - 100% Offline)
+───────────────────────────────────────────────────────────── */
+let soundEnabled = true;
+
 const Sound = {
   ctx: null,
   init() {
-    if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (!this.ctx) {
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) this.ctx = new AudioCtx();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume();
+    }
   },
   tap(pitch = 1) {
-    this.init();
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(440 * pitch, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(880 * pitch, this.ctx.currentTime + 0.05);
-    gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    osc.start();
-    osc.stop(this.ctx.currentTime + 0.05);
-  },
-  complete() {
-    this.init();
-    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+    if (!soundEnabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
-      osc.type = 'triangle';
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.06);
-      gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.06 + 0.25);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(440 * pitch, this.ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(780 * pitch, this.ctx.currentTime + 0.05);
+      gain.gain.setValueAtTime(0.16, this.ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
       osc.connect(gain);
       gain.connect(this.ctx.destination);
-      osc.start(this.ctx.currentTime + idx * 0.06);
-      osc.stop(this.ctx.currentTime + idx * 0.06 + 0.25);
-    });
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.05);
+    } catch(e) {}
+  },
+  success() {
+    if (!soundEnabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      // 상쾌한 2음 벨 (587.33Hz -> 880Hz)
+      [587.33, 880].forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        const start = this.ctx.currentTime + idx * 0.08;
+        gain.gain.setValueAtTime(0.18, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.22);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.22);
+      });
+    } catch(e) {}
+  },
+  error() {
+    if (!soundEnabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+      osc.frequency.linearRampToValueAtTime(140, this.ctx.currentTime + 0.18);
+      gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start();
+      osc.stop(this.ctx.currentTime + 0.18);
+    } catch(e) {}
+  },
+  fanfare() {
+    if (!soundEnabled) return;
+    try {
+      this.init();
+      if (!this.ctx) return;
+      [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        const start = this.ctx.currentTime + idx * 0.07;
+        gain.gain.setValueAtTime(0.2, start);
+        gain.gain.exponentialRampToValueAtTime(0.001, start + 0.32);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(start);
+        osc.stop(start + 0.32);
+      });
+    } catch(e) {}
   }
 };
 
-/* ── TTS 음성 재생 ── */
-function speak(text) {
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  const btn = document.getElementById('btn-toggle-sound');
+  if (soundEnabled) {
+    btn.classList.add('active');
+    btn.innerHTML = '<span id="sound-icon">🔊</span> 효과음 ON';
+    Sound.tap(1.2);
+  } else {
+    btn.classList.remove('active');
+    btn.innerHTML = '<span id="sound-icon">🔇</span> 효과음 OFF';
+  }
+}
+
+function toggleGrid() {
+  const grid = document.getElementById('grid-box');
+  const btn = document.getElementById('btn-toggle-grid');
+  if (grid.style.display === 'none') {
+    grid.style.display = 'block';
+    btn.classList.add('active');
+  } else {
+    grid.style.display = 'none';
+    btn.classList.remove('active');
+  }
+}
+
+function speakCurrentChar() {
   if ('speechSynthesis' in window) {
     window.speechSynthesis.cancel();
-    const utter = new SpeechSynthesisUtterance(text);
+    const utter = new SpeechSynthesisUtterance(currentChar);
     utter.lang = 'ko-KR';
-    utter.rate = 0.9;
+    utter.rate = 0.85;
     window.speechSynthesis.speak(utter);
   }
 }
 
-/* ── 한글 획순 벡터 데이터베이스 ── */
-const STROKE_DB = {
-  'ㅇ': [{ type: 'circle', cx: 50, cy: 50, r: 35, desc: '시계 반대방향 원' }],
-  'ㄱ': [{ type: 'lines', pts: [[15, 20], [85, 20], [85, 85]], desc: '가로 후 세로 꺾음' }],
-  'ㄴ': [{ type: 'lines', pts: [[18, 15], [18, 85], [85, 85]], desc: '세로 후 가로 꺾음' }],
-  'ㄷ': [
-    { type: 'lines', pts: [[15, 18], [85, 18]], desc: '위 가로선' },
-    { type: 'lines', pts: [[18, 18], [18, 85], [85, 85]], desc: 'ㄴ자 획' }
-  ],
-  'ㄹ': [
-    { type: 'lines', pts: [[15, 18], [85, 18], [85, 50]], desc: 'ㄱ자 획' },
-    { type: 'lines', pts: [[15, 50], [85, 50]], desc: '중간 가로선' },
-    { type: 'lines', pts: [[18, 50], [18, 85], [85, 85]], desc: 'ㄴ자 획' }
-  ],
-  'ㅁ': [
-    { type: 'lines', pts: [[18, 15], [18, 85]], desc: '왼쪽 세로선' },
-    { type: 'lines', pts: [[18, 18], [85, 18], [85, 85]], desc: '위 가로선 후 오른쪽 세로선' },
-    { type: 'lines', pts: [[18, 85], [85, 85]], desc: '아래 닫는 가로선' }
-  ],
-  'ㅂ': [
-    { type: 'lines', pts: [[22, 15], [22, 85]], desc: '왼쪽 세로선' },
-    { type: 'lines', pts: [[78, 15], [78, 85]], desc: '오른쪽 세로선' },
-    { type: 'lines', pts: [[22, 50], [78, 50]], desc: '중간 가로선' },
-    { type: 'lines', pts: [[22, 85], [78, 85]], desc: '아래 닫는 가로선' }
-  ],
-  'ㅅ': [
-    { type: 'lines', pts: [[50, 15], [18, 85]], desc: '왼쪽 빗침' },
-    { type: 'lines', pts: [[42, 50], [82, 85]], desc: '오른쪽 빗침' }
-  ],
-  'ㅈ': [
-    { type: 'lines', pts: [[18, 18], [82, 18]], desc: '위 가로선' },
-    { type: 'lines', pts: [[50, 18], [18, 85]], desc: '왼쪽 빗침' },
-    { type: 'lines', pts: [[42, 52], [82, 85]], desc: '오른쪽 빗침' }
-  ],
-  'ㅊ': [
-    { type: 'lines', pts: [[50, 6], [50, 20]], desc: '상단 꼭지점' },
-    { type: 'lines', pts: [[18, 22], [82, 22]], desc: '가로선' },
-    { type: 'lines', pts: [[50, 22], [18, 85]], desc: '왼쪽 빗침' },
-    { type: 'lines', pts: [[42, 52], [82, 85]], desc: '오른쪽 빗침' }
-  ],
-  'ㅋ': [
-    { type: 'lines', pts: [[15, 18], [85, 18], [85, 85]], desc: 'ㄱ자 획' },
-    { type: 'lines', pts: [[15, 50], [75, 50]], desc: '중간 가로선' }
-  ],
-  'ㅌ': [
-    { type: 'lines', pts: [[18, 18], [82, 18]], desc: '위 가로선' },
-    { type: 'lines', pts: [[18, 50], [82, 50]], desc: '중간 가로선' },
-    { type: 'lines', pts: [[18, 18], [18, 85], [82, 85]], desc: 'ㄴ자 획' }
-  ],
-  'ㅍ': [
-    { type: 'lines', pts: [[18, 18], [82, 18]], desc: '위 가로선' },
-    { type: 'lines', pts: [[36, 18], [36, 85]], desc: '왼쪽 세로선' },
-    { type: 'lines', pts: [[64, 18], [64, 85]], desc: '오른쪽 세로선' },
-    { type: 'lines', pts: [[18, 85], [82, 85]], desc: '아래 가로선' }
-  ],
-  'ㅎ': [
-    { type: 'lines', pts: [[50, 6], [50, 20]], desc: '상단 꼭지점' },
-    { type: 'lines', pts: [[18, 22], [82, 22]], desc: '가로선' },
-    { type: 'circle', cx: 50, cy: 62, r: 24, desc: '아래 원' }
-  ],
-  'ㅏ': [
-    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로선' },
-    { type: 'lines', pts: [[50, 50], [88, 50]], desc: '오른쪽 짧은 곁가지' }
-  ],
-  'ㅑ': [
-    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로선' },
-    { type: 'lines', pts: [[50, 36], [88, 36]], desc: '위쪽 곁가지' },
-    { type: 'lines', pts: [[50, 64], [88, 64]], desc: '아래쪽 곁가지' }
-  ],
-  'ㅓ': [
-    { type: 'lines', pts: [[12, 50], [50, 50]], desc: '왼쪽 짧은 곁가지' },
-    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로선' }
-  ],
-  'ㅕ': [
-    { type: 'lines', pts: [[12, 36], [50, 36]], desc: '위쪽 곁가지' },
-    { type: 'lines', pts: [[12, 64], [50, 64]], desc: '아래쪽 곁가지' },
-    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로선' }
-  ],
-  'ㅗ': [
-    { type: 'lines', pts: [[50, 15], [50, 65]], desc: '위쪽 짧은 기둥' },
-    { type: 'lines', pts: [[12, 65], [88, 65]], desc: '긴 가로선' }
-  ],
-  'ㅛ': [
-    { type: 'lines', pts: [[36, 15], [36, 65]], desc: '왼쪽 기둥' },
-    { type: 'lines', pts: [[64, 15], [64, 65]], desc: '오른쪽 기둥' },
-    { type: 'lines', pts: [[12, 65], [88, 65]], desc: '긴 가로선' }
-  ],
-  'ㅜ': [
-    { type: 'lines', pts: [[12, 35], [88, 35]], desc: '긴 가로선' },
-    { type: 'lines', pts: [[50, 35], [50, 85]], desc: '아래쪽 짧은 기둥' }
-  ],
-  'ㅠ': [
-    { type: 'lines', pts: [[12, 35], [88, 35]], desc: '긴 가로선' },
-    { type: 'lines', pts: [[36, 35], [36, 85]], desc: '왼쪽 기둥' },
-    { type: 'lines', pts: [[64, 35], [64, 85]], desc: '오른쪽 기둥' }
-  ],
-  'ㅡ': [{ type: 'lines', pts: [[12, 50], [88, 50]], desc: '가로선' }],
-  'ㅣ': [{ type: 'lines', pts: [[50, 12], [50, 88]], desc: '세로선' }]
-};
-
+/* ─────────────────────────────────────────────────────────────
+   2. 자모 획순 및 복합 결합 완전 데이터베이스 (Sequential Thinking 기반)
+───────────────────────────────────────────────────────────── */
 const CHOS = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 const JUNGS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
 const JONGS = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
 
-let currentChar = '아';
-const canvas = document.getElementById('stroke-canvas');
-const ctx = canvas.getContext('2d');
-let isAnimating = false;
+const DOUBLE_BATCHIM = {
+  'ㄳ': ['ㄱ', 'ㅅ'],
+  'ㄵ': ['ㄴ', 'ㅈ'],
+  'ㄶ': ['ㄴ', 'ㅎ'],
+  'ㄺ': ['ㄹ', 'ㄱ'],
+  'ㄻ': ['ㄹ', 'ㅁ'],
+  'ㄼ': ['ㄹ', 'ㅂ'],
+  'ㄽ': ['ㄹ', 'ㅅ'],
+  'ㄾ': ['ㄹ', 'ㅌ'],
+  'ㄿ': ['ㄹ', 'ㅍ'],
+  'ㅀ': ['ㄹ', 'ㅎ'],
+  'ㅄ': ['ㅂ', 'ㅅ']
+};
 
+const COMPOUND_VOWELS = {
+  'ㅘ': ['ㅗ', 'ㅏ'],
+  'ㅙ': ['ㅗ', 'ㅐ'],
+  'ㅚ': ['ㅗ', 'ㅣ'],
+  'ㅝ': ['ㅜ', 'ㅓ'],
+  'ㅞ': ['ㅜ', 'ㅔ'],
+  'ㅟ': ['ㅜ', 'ㅣ'],
+  'ㅢ': ['ㅡ', 'ㅣ'],
+  'ㅒ': ['ㅑ', 'ㅣ'],
+  'ㅖ': ['ㅕ', 'ㅣ']
+};
+
+const PRIMITIVE_STROKES = {
+  'ㅇ': [{ type: 'circle', cx: 50, cy: 50, r: 35, desc: '상단 12시에서 반시계 방향으로 원 그리기' }],
+  'ㄱ': [{ type: 'lines', pts: [[16, 22], [84, 22], [84, 84]], desc: '가로선을 긋고 아래로 꺾기' }],
+  'ㄲ': [
+    { type: 'lines', pts: [[12, 22], [48, 22], [48, 84]], desc: '첫 번째 ㄱ' },
+    { type: 'lines', pts: [[54, 22], [88, 22], [88, 84]], desc: '두 번째 ㄱ' }
+  ],
+  'ㄴ': [{ type: 'lines', pts: [[18, 16], [18, 84], [84, 84]], desc: '아래로 내린 후 오른쪽으로 꺾기' }],
+  'ㄷ': [
+    { type: 'lines', pts: [[16, 20], [84, 20]], desc: '상단 가로선' },
+    { type: 'lines', pts: [[18, 20], [18, 84], [84, 84]], desc: '세로 내림 후 오른쪽으로 꺾기' }
+  ],
+  'ㄸ': [
+    { type: 'lines', pts: [[10, 20], [46, 20]], desc: '첫 번째 ㄷ 가로선' },
+    { type: 'lines', pts: [[12, 20], [12, 84], [46, 84]], desc: '첫 번째 ㄷ ㄴ자 획' },
+    { type: 'lines', pts: [[54, 20], [88, 20]], desc: '두 번째 ㄷ 가로선' },
+    { type: 'lines', pts: [[56, 20], [56, 84], [88, 84]], desc: '두 번째 ㄷ ㄴ자 획' }
+  ],
+  'ㄹ': [
+    { type: 'lines', pts: [[16, 20], [84, 20], [84, 50]], desc: '상단 ㄱ자 형태 획' },
+    { type: 'lines', pts: [[16, 50], [84, 50]], desc: '중간 가로선' },
+    { type: 'lines', pts: [[18, 50], [18, 84], [84, 84]], desc: '하단 ㄴ자 형태 획' }
+  ],
+  'ㅁ': [
+    { type: 'lines', pts: [[18, 16], [18, 84]], desc: '왼쪽 세로선' },
+    { type: 'lines', pts: [[18, 18], [84, 18], [84, 84]], desc: '위 가로 후 오른쪽 세로 꺾기' },
+    { type: 'lines', pts: [[18, 84], [84, 84]], desc: '하단 가로선 닫기' }
+  ],
+  'ㅂ': [
+    { type: 'lines', pts: [[22, 16], [22, 84]], desc: '왼쪽 세로 기둥' },
+    { type: 'lines', pts: [[78, 16], [78, 84]], desc: '오른쪽 세로 기둥' },
+    { type: 'lines', pts: [[22, 50], [78, 50]], desc: '중간 가로선' },
+    { type: 'lines', pts: [[22, 84], [78, 84]], desc: '하단 가로선' }
+  ],
+  'ㅃ': [
+    { type: 'lines', pts: [[12, 16], [12, 84]], desc: '첫 번째 ㅂ 좌측 세로' },
+    { type: 'lines', pts: [[46, 16], [46, 84]], desc: '첫 번째 ㅂ 우측 세로' },
+    { type: 'lines', pts: [[12, 50], [46, 50]], desc: '첫 번째 ㅂ 중간선' },
+    { type: 'lines', pts: [[12, 84], [46, 84]], desc: '첫 번째 ㅂ 하단선' },
+    { type: 'lines', pts: [[54, 16], [54, 84]], desc: '두 번째 ㅂ 좌측 세로' },
+    { type: 'lines', pts: [[88, 16], [88, 84]], desc: '두 번째 ㅂ 우측 세로' },
+    { type: 'lines', pts: [[54, 50], [88, 50]], desc: '두 번째 ㅂ 중간선' },
+    { type: 'lines', pts: [[54, 84], [88, 84]], desc: '두 번째 ㅂ 하단선' }
+  ],
+  'ㅅ': [
+    { type: 'lines', pts: [[50, 16], [18, 84]], desc: '중앙에서 왼쪽 아래로 빗겨 긋기' },
+    { type: 'lines', pts: [[42, 50], [82, 84]], desc: '중간에서 오른쪽 아래로 빗겨 긋기' }
+  ],
+  'ㅆ': [
+    { type: 'lines', pts: [[32, 16], [10, 84]], desc: '첫 번째 ㅅ 좌빗침' },
+    { type: 'lines', pts: [[26, 50], [50, 84]], desc: '첫 번째 ㅅ 우빗침' },
+    { type: 'lines', pts: [[70, 16], [50, 84]], desc: '두 번째 ㅅ 좌빗침' },
+    { type: 'lines', pts: [[64, 50], [88, 84]], desc: '두 번째 ㅅ 우빗침' }
+  ],
+  'ㅈ': [
+    { type: 'lines', pts: [[18, 20], [82, 20]], desc: '상단 수평 가로선' },
+    { type: 'lines', pts: [[50, 20], [18, 84]], desc: '가로선 중앙에서 왼쪽 사선' },
+    { type: 'lines', pts: [[42, 52], [82, 84]], desc: '사선 중간에서 오른쪽 사선' }
+  ],
+  'ㅉ': [
+    { type: 'lines', pts: [[12, 20], [48, 20]], desc: '첫 번째 ㅈ 가로선' },
+    { type: 'lines', pts: [[30, 20], [10, 84]], desc: '첫 번째 ㅈ 좌사선' },
+    { type: 'lines', pts: [[24, 52], [48, 84]], desc: '첫 번째 ㅈ 우사선' },
+    { type: 'lines', pts: [[52, 20], [88, 20]], desc: '두 번째 ㅈ 가로선' },
+    { type: 'lines', pts: [[70, 20], [50, 84]], desc: '두 번째 ㅈ 좌사선' },
+    { type: 'lines', pts: [[64, 52], [88, 84]], desc: '두 번째 ㅈ 우사선' }
+  ],
+  'ㅊ': [
+    { type: 'lines', pts: [[50, 8], [50, 20]], desc: '상단 꼭지점 획' },
+    { type: 'lines', pts: [[18, 24], [82, 24]], desc: '상단 가로선' },
+    { type: 'lines', pts: [[50, 24], [18, 84]], desc: '왼쪽 사선 빗침' },
+    { type: 'lines', pts: [[42, 52], [82, 84]], desc: '오른쪽 사선 빗침' }
+  ],
+  'ㅋ': [
+    { type: 'lines', pts: [[16, 20], [84, 20], [84, 84]], desc: '바깥 ㄱ자 획' },
+    { type: 'lines', pts: [[16, 50], [74, 50]], desc: '안쪽 가로선' }
+  ],
+  'ㅌ': [
+    { type: 'lines', pts: [[18, 18], [82, 18]], desc: '상단 가로선' },
+    { type: 'lines', pts: [[18, 50], [82, 50]], desc: '중간 가로선' },
+    { type: 'lines', pts: [[18, 18], [18, 84], [82, 84]], desc: 'ㄴ자 바닥 획' }
+  ],
+  'ㅍ': [
+    { type: 'lines', pts: [[16, 20], [84, 20]], desc: '상단 긴 가로선' },
+    { type: 'lines', pts: [[35, 20], [35, 82]], desc: '왼쪽 세로 기둥' },
+    { type: 'lines', pts: [[65, 20], [65, 82]], desc: '오른쪽 세로 기둥' },
+    { type: 'lines', pts: [[16, 82], [84, 82]], desc: '하단 긴 가로선' }
+  ],
+  'ㅎ': [
+    { type: 'lines', pts: [[50, 8], [50, 22]], desc: '꼭지점 획' },
+    { type: 'lines', pts: [[18, 26], [82, 26]], desc: '중간 가로선' },
+    { type: 'circle', cx: 50, cy: 62, r: 24, desc: '하단 반시계 방향 원' }
+  ],
+  'ㅏ': [
+    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로 기둥' },
+    { type: 'lines', pts: [[50, 50], [88, 50]], desc: '오른쪽 짧은 곁가지' }
+  ],
+  'ㅑ': [
+    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로 기둥' },
+    { type: 'lines', pts: [[50, 36], [88, 36]], desc: '위쪽 짧은 곁가지' },
+    { type: 'lines', pts: [[50, 64], [88, 64]], desc: '아래쪽 짧은 곁가지' }
+  ],
+  'ㅓ': [
+    { type: 'lines', pts: [[12, 50], [50, 50]], desc: '왼쪽 짧은 곁가지' },
+    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로 기둥' }
+  ],
+  'ㅕ': [
+    { type: 'lines', pts: [[12, 36], [50, 36]], desc: '위쪽 짧은 곁가지' },
+    { type: 'lines', pts: [[12, 64], [50, 64]], desc: '아래쪽 짧은 곁가지' },
+    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로 기둥' }
+  ],
+  'ㅗ': [
+    { type: 'lines', pts: [[50, 15], [50, 65]], desc: '짧은 세로 기둥' },
+    { type: 'lines', pts: [[12, 65], [88, 65]], desc: '긴 받침 가로선' }
+  ],
+  'ㅛ': [
+    { type: 'lines', pts: [[36, 15], [36, 65]], desc: '왼쪽 짧은 기둥' },
+    { type: 'lines', pts: [[64, 15], [64, 65]], desc: '오른쪽 짧은 기둥' },
+    { type: 'lines', pts: [[12, 65], [88, 65]], desc: '하단 긴 가로선' }
+  ],
+  'ㅜ': [
+    { type: 'lines', pts: [[12, 35], [88, 35]], desc: '상단 긴 가로선' },
+    { type: 'lines', pts: [[50, 35], [50, 85]], desc: '내리는 짧은 기둥' }
+  ],
+  'ㅠ': [
+    { type: 'lines', pts: [[12, 35], [88, 35]], desc: '상단 긴 가로선' },
+    { type: 'lines', pts: [[36, 35], [36, 85]], desc: '왼쪽 내림 기둥' },
+    { type: 'lines', pts: [[64, 35], [64, 85]], desc: '오른쪽 내림 기둥' }
+  ],
+  'ㅡ': [{ type: 'lines', pts: [[12, 50], [88, 50]], desc: '수평 가로선' }],
+  'ㅣ': [{ type: 'lines', pts: [[50, 12], [50, 88]], desc: '수직 세로선' }],
+  'ㅐ': [
+    { type: 'lines', pts: [[35, 12], [35, 88]], desc: '첫 번째 세로선' },
+    { type: 'lines', pts: [[35, 50], [68, 50]], desc: '가운데 가로 연결선' },
+    { type: 'lines', pts: [[68, 12], [68, 88]], desc: '두 번째 긴 세로선' }
+  ],
+  'ㅔ': [
+    { type: 'lines', pts: [[16, 50], [48, 50]], desc: '왼쪽 짧은 가로선' },
+    { type: 'lines', pts: [[48, 12], [48, 88]], desc: '첫 번째 세로선' },
+    { type: 'lines', pts: [[78, 12], [78, 88]], desc: '두 번째 긴 세로선' }
+  ]
+};
+
+const PRESET_DATA = {
+  vowel: ['ㄱ', 'ㄴ', 'ㄷ', 'ㄹ', 'ㅁ', 'ㅅ', 'ㅇ', 'ㅏ', 'ㅓ', 'ㅗ', 'ㅜ', 'ㅡ', 'ㅣ'],
+  basic: ['아', '가', '나', '다', '라', '마', '바', '사', '오', '우', '모', '호'],
+  jong: ['한', '글', '달', '별', '봄', '밤', '꽃', '빛', '산', '물', '강', '힘'],
+  complex: ['까', '떠', '빠', '싸', '짜', '해', '에', '와', '워', '의', '닭', '값']
+};
+
+/* ─────────────────────────────────────────────────────────────
+   3. 음절 분해 및 정규화 박스 변환 (Hangul Decomposer & Synthesizer)
+───────────────────────────────────────────────────────────── */
 function decompose(char) {
   const code = char.charCodeAt(0) - 0xAC00;
   if (code >= 0 && code <= 11171) {
@@ -495,157 +1367,594 @@ function decompose(char) {
   return { isSyllable: false, char: char };
 }
 
+function transformStroke(stk, box, partName) {
+  if (stk.type === 'circle') {
+    return {
+      type: 'circle',
+      cx: box.x + (stk.cx / 100) * box.w,
+      cy: box.y + (stk.cy / 100) * box.h,
+      r: (stk.r / 100) * Math.min(box.w, box.h),
+      desc: stk.desc,
+      partName: partName
+    };
+  }
+  return {
+    type: 'lines',
+    pts: stk.pts.map(p => [
+      box.x + (p[0] / 100) * box.w,
+      box.y + (p[1] / 100) * box.h
+    ]),
+    desc: stk.desc,
+    partName: partName
+  };
+}
+
+function getJamoStrokesInBox(jamo, box, partName) {
+  let strokes = [];
+  if (DOUBLE_BATCHIM[jamo]) {
+    const [leftJamo, rightJamo] = DOUBLE_BATCHIM[jamo];
+    const leftBox = { x: box.x, y: box.y, w: box.w * 0.48, h: box.h };
+    const rightBox = { x: box.x + box.w * 0.52, y: box.y, w: box.w * 0.48, h: box.h };
+    if (PRIMITIVE_STROKES[leftJamo]) {
+      PRIMITIVE_STROKES[leftJamo].forEach(s => strokes.push(transformStroke(s, leftBox, `${partName} [${leftJamo}]`)));
+    }
+    if (PRIMITIVE_STROKES[rightJamo]) {
+      PRIMITIVE_STROKES[rightJamo].forEach(s => strokes.push(transformStroke(s, rightBox, `${partName} [${rightJamo}]`)));
+    }
+    return strokes;
+  }
+  if (COMPOUND_VOWELS[jamo]) {
+    const [firstJamo, secondJamo] = COMPOUND_VOWELS[jamo];
+    const leftBox = { x: box.x, y: box.y + box.h * 0.15, w: box.w * 0.52, h: box.h * 0.85 };
+    const rightBox = { x: box.x + box.w * 0.45, y: box.y, w: box.w * 0.55, h: box.h };
+    if (PRIMITIVE_STROKES[firstJamo]) {
+      PRIMITIVE_STROKES[firstJamo].forEach(s => strokes.push(transformStroke(s, leftBox, `${partName} [${firstJamo}]`)));
+    }
+    if (PRIMITIVE_STROKES[secondJamo]) {
+      PRIMITIVE_STROKES[secondJamo].forEach(s => strokes.push(transformStroke(s, rightBox, `${partName} [${secondJamo}]`)));
+    }
+    return strokes;
+  }
+  if (PRIMITIVE_STROKES[jamo]) {
+    PRIMITIVE_STROKES[jamo].forEach(s => strokes.push(transformStroke(s, box, partName)));
+  }
+  return strokes;
+}
+
 function getStrokesForChar(char) {
   const dec = decompose(char);
   let strokes = [];
 
-  function transform(stk, box, partName) {
-    if (stk.type === 'circle') {
-      return {
-        type: 'circle',
-        cx: box.x + (stk.cx / 100) * box.w,
-        cy: box.y + (stk.cy / 100) * box.h,
-        r: (stk.r / 100) * Math.min(box.w, box.h),
-        desc: `${partName}: ${stk.desc}`
-      };
-    }
-    return {
-      type: 'lines',
-      pts: stk.pts.map(p => [
-        box.x + (p[0] / 100) * box.w,
-        box.y + (p[1] / 100) * box.h
-      ]),
-      desc: `${partName}: ${stk.desc}`
-    };
-  }
-
   if (dec.isSyllable) {
     const isVert = [0, 1, 2, 3, 4, 5, 6, 7, 20].includes(dec.jungIdx);
+    const isHoriz = [8, 12, 13, 17, 18].includes(dec.jungIdx);
     let choBox, jungBox, jongBox;
 
-    if (isVert && !dec.hasJong) {
-      choBox = { x: 30, y: 40, w: 105, h: 190 };
-      jungBox = { x: 145, y: 30, w: 105, h: 215 };
-    } else if (!isVert && !dec.hasJong) {
-      choBox = { x: 40, y: 30, w: 200, h: 105 };
-      jungBox = { x: 30, y: 140, w: 220, h: 110 };
+    if (!dec.hasJong) {
+      if (isVert) {
+        choBox = { x: 75, y: 100, w: 270, h: 500 };
+        jungBox = { x: 380, y: 75, w: 270, h: 560 };
+      } else if (isHoriz) {
+        choBox = { x: 120, y: 80, w: 480, h: 270 };
+        jungBox = { x: 80, y: 370, w: 560, h: 280 };
+      } else {
+        choBox = { x: 70, y: 80, w: 270, h: 300 };
+        jungBox = { x: 330, y: 70, w: 340, h: 570 };
+      }
     } else {
-      choBox = { x: 30, y: 25, w: 105, h: 110 };
-      jungBox = { x: 145, y: 20, w: 105, h: 120 };
-      jongBox = { x: 50, y: 155, w: 180, h: 100 };
+      if (isVert) {
+        choBox = { x: 75, y: 65, w: 270, h: 290 };
+        jungBox = { x: 380, y: 55, w: 270, h: 320 };
+        jongBox = { x: 130, y: 405, w: 460, h: 255 };
+      } else if (isHoriz) {
+        choBox = { x: 120, y: 65, w: 480, h: 200 };
+        jungBox = { x: 90, y: 270, w: 540, h: 180 };
+        jongBox = { x: 130, y: 455, w: 460, h: 215 };
+      } else {
+        choBox = { x: 80, y: 55, w: 250, h: 240 };
+        jungBox = { x: 320, y: 45, w: 340, h: 350 };
+        jongBox = { x: 130, y: 440, w: 460, h: 230 };
+      }
     }
 
-    if (STROKE_DB[dec.cho]) {
-      STROKE_DB[dec.cho].forEach(s => strokes.push(transform(s, choBox, `초성 '${dec.cho}'`)));
+    strokes.push(...getJamoStrokesInBox(dec.cho, choBox, `초성 '${dec.cho}'`));
+    strokes.push(...getJamoStrokesInBox(dec.jung, jungBox, `중성 '${dec.jung}'`));
+    if (dec.hasJong) {
+      strokes.push(...getJamoStrokesInBox(dec.jong, jongBox, `종성 '${dec.jong}'`));
     }
-    if (STROKE_DB[dec.jung]) {
-      STROKE_DB[dec.jung].forEach(s => strokes.push(transform(s, jungBox, `중성 '${dec.jung}'`)));
-    }
-    if (dec.hasJong && STROKE_DB[dec.jong]) {
-      STROKE_DB[dec.jong].forEach(s => strokes.push(transform(s, jongBox, `종성 '${dec.jong}'`)));
-    }
-  } else if (STROKE_DB[char]) {
-    const box = { x: 40, y: 40, w: 200, h: 200 };
-    STROKE_DB[char].forEach(s => strokes.push(transform(s, box, `자모 '${char}'`)));
+  } else {
+    const box = { x: 110, y: 110, w: 500, h: 500 };
+    strokes.push(...getJamoStrokesInBox(char, box, `자모 '${char}'`));
   }
-
   return strokes;
 }
 
-function updateInfoPanel() {
-  const dec = decompose(currentChar);
-  document.getElementById('info-char').textContent = currentChar;
+/* ─────────────────────────────────────────────────────────────
+   4. 캔버스 렌더링 & Douglas-Peucker 획순 판정 엔진
+───────────────────────────────────────────────────────────── */
+const canvas = document.getElementById('stroke-canvas');
+const ctx = canvas.getContext('2d');
 
-  if (dec.isSyllable) {
-    let str = `초성 ${dec.cho} + 중성 ${dec.jung}`;
-    if (dec.hasJong) str += ` + 종성 ${dec.jong}`;
-    document.getElementById('info-structure').textContent = str;
+let studioMode = 'test'; // 'test' | 'anim' | 'free'
+let currentTab = 'basic';
+let currentChar = '아';
+let currentBrushColor = '#10b981';
+let guideOpacity = 0.30;
+
+let isAnimating = false;
+let currentAnimRafId = null;
+let currentStepIndex = -1; // 1획씩 보기 인덱스
+
+// 쓰기 테스트 상태
+let testCompletedCount = 0; // 맞춘 획수
+let userPoints = [];        // 현재 획 긋는 중인 점들
+let freehandStrokes = [];   // 자유 그리기 궤적들
+let isPointerDown = false;
+
+function setStudioMode(mode) {
+  studioMode = mode;
+  document.getElementById('btn-mode-test').classList.toggle('active', mode === 'test');
+  document.getElementById('btn-mode-anim').classList.toggle('active', mode === 'anim');
+  document.getElementById('btn-mode-free').classList.toggle('active', mode === 'free');
+
+  cancelCurrentAnimation();
+  testCompletedCount = 0;
+  freehandStrokes = [];
+  userPoints = [];
+  currentStepIndex = -1;
+
+  if (mode === 'test') {
+    setFeedback('🎯', `1획: 파란색 배지(①)에서 시작하여 따라 써보세요!`, 'normal');
+  } else if (mode === 'anim') {
+    setFeedback('✨', `[획순 보기] 버튼을 누르면 순서대로 애니메이션이 재생됩니다.`, 'normal');
   } else {
-    document.getElementById('info-structure').textContent = `단일 자모 (${currentChar})`;
+    setFeedback('🎨', `원하는 대로 자유롭게 글씨를 연습해 보세요.`, 'normal');
+  }
+
+  renderScene();
+}
+
+function setFeedback(icon, text, type = 'normal') {
+  const banner = document.getElementById('test-feedback-banner');
+  const iconEl = document.getElementById('feedback-icon');
+  const textEl = document.getElementById('feedback-text');
+  iconEl.textContent = icon;
+  textEl.textContent = text;
+  banner.className = 'test-feedback-banner ' + type;
+}
+
+function cancelCurrentAnimation() {
+  if (currentAnimRafId) {
+    cancelAnimationFrame(currentAnimRafId);
+    currentAnimRafId = null;
+  }
+  isAnimating = false;
+  document.getElementById('btn-play-anim').innerHTML = '<span>✨</span> 획순 보기';
+  document.getElementById('btn-play-anim').disabled = false;
+  document.getElementById('btn-step-anim').disabled = false;
+  document.getElementById('btn-clear').disabled = false;
+}
+
+/* 통합 씬 렌더러 */
+function renderScene(animStrokeIdx = -1, animProgress = 0) {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // 1. 바탕 한글 가이드
+  if (guideOpacity > 0) {
+    ctx.save();
+    ctx.font = 'bold 470px "Noto Serif KR", "Nanum Myeongjo", serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = `rgba(148, 163, 184, ${guideOpacity})`;
+    ctx.fillText(currentChar, canvas.width / 2, canvas.height / 2 + 15);
+    ctx.restore();
   }
 
   const strokes = getStrokesForChar(currentChar);
-  document.getElementById('info-stroke-count').textContent = `${strokes.length}획`;
 
-  const badgeIcons = ['①', '②', '③', '④', '⑤', '⑥', '⑦', '⑧', '⑨', '⑩'];
-  document.getElementById('info-stroke-steps').innerHTML = strokes.map((s, i) => {
-    return `${badgeIcons[i] || (i+1)} ${i+1}획: ${s.desc}`;
-  }).join('<br>');
+  // 2. 모드별 획 그리기
+  if (studioMode === 'free') {
+    // 자유 그리기 궤적들
+    freehandStrokes.forEach(stk => {
+      if (stk.length < 2) return;
+      ctx.save();
+      ctx.strokeStyle = currentBrushColor;
+      ctx.lineWidth = 34;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(stk[0].x, stk[0].y);
+      for (let i = 1; i < stk.length; i++) ctx.lineTo(stk[i].x, stk[i].y);
+      ctx.stroke();
+      ctx.restore();
+    });
+  } else if (studioMode === 'test') {
+    // [따라쓰기 테스트 모드]
+    // (a) 이미 맞춘 획들: 초록색 완료 표시
+    for (let i = 0; i < testCompletedCount; i++) {
+      drawStaticStroke(strokes[i], '#10b981', 34);
+    }
+
+    // (b) 현재 써야 할 획: 부드러운 가이드 대시 라인 + 시작점 펄스 배지
+    if (testCompletedCount < strokes.length) {
+      const activeStroke = strokes[testCompletedCount];
+      drawGuideStroke(activeStroke);
+      drawBadge(testCompletedCount + 1, getStrokeStartPoint(activeStroke), '#2563eb', true);
+    }
+
+    // (c) 사용자가 실시간으로 긋고 있는 궤적
+    if (userPoints.length > 1) {
+      ctx.save();
+      ctx.strokeStyle = currentBrushColor;
+      ctx.lineWidth = 32;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.beginPath();
+      ctx.moveTo(userPoints[0].x, userPoints[0].y);
+      for (let i = 1; i < userPoints.length; i++) ctx.lineTo(userPoints[i].x, userPoints[i].y);
+      ctx.stroke();
+      ctx.restore();
+    }
+  } else if (studioMode === 'anim') {
+    // [애니메이션 모드]
+    if (isAnimating && animStrokeIdx >= 0) {
+      // 이미 재생 완료된 획들
+      for (let i = 0; i < animStrokeIdx; i++) {
+        drawStaticStroke(strokes[i], currentBrushColor, 34);
+        drawBadge(i + 1, getStrokeStartPoint(strokes[i]), '#2563eb');
+      }
+      // 현재 보간 중인 획
+      if (animStrokeIdx < strokes.length) {
+        drawProgressStroke(strokes[animStrokeIdx], animProgress, currentBrushColor);
+        drawBadge(animStrokeIdx + 1, getStrokeStartPoint(strokes[animStrokeIdx]), '#f59e0b', true);
+      }
+    } else if (currentStepIndex >= 0) {
+      // 1획씩 보기 상태
+      for (let i = 0; i <= currentStepIndex && i < strokes.length; i++) {
+        const isCurrent = (i === currentStepIndex);
+        drawStaticStroke(strokes[i], isCurrent ? '#f59e0b' : currentBrushColor, 34);
+        drawBadge(i + 1, getStrokeStartPoint(strokes[i]), isCurrent ? '#f59e0b' : '#2563eb');
+      }
+    }
+  }
 }
 
-function drawBaseGuide() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.font = 'bold 180px "Nanum Myeongjo", Gungsuh, "Noto Serif KR", serif';
+function getStrokeStartPoint(s) {
+  if (s.type === 'circle') {
+    return { x: s.cx, y: s.cy - s.r }; // 12시 방향 꼭대기
+  }
+  return { x: s.pts[0][0], y: s.pts[0][1] };
+}
+
+function drawBadge(num, pos, bgColor = '#2563eb', isPulsing = false) {
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.25)';
+  ctx.shadowBlur = 8;
+  ctx.shadowOffsetY = 2;
+
+  ctx.fillStyle = bgColor;
+  ctx.beginPath();
+  ctx.arc(pos.x, pos.y, 22, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (isPulsing) {
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px "JetBrains Mono", monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillStyle = '#eaeaea';
-  ctx.fillText(currentChar, 140, 140);
+  ctx.fillText(num, pos.x, pos.y + 1);
+  ctx.restore();
+}
+
+function drawStaticStroke(s, color, width = 34) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = width;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  if (s.type === 'circle') {
+    ctx.beginPath();
+    ctx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(s.pts[0][0], s.pts[0][1]);
+    for (let i = 1; i < s.pts.length; i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawGuideStroke(s) {
+  ctx.save();
+  ctx.strokeStyle = 'rgba(59, 130, 246, 0.45)';
+  ctx.lineWidth = 14;
+  ctx.setLineDash([8, 12]);
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  if (s.type === 'circle') {
+    ctx.beginPath();
+    ctx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
+    ctx.stroke();
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(s.pts[0][0], s.pts[0][1]);
+    for (let i = 1; i < s.pts.length; i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawProgressStroke(s, progress, color) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 36;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  if (s.type === 'circle') {
+    // 훈민정음 필순 규칙: 12시 꼭대기에서 '반시계 방향'으로 회전
+    const startAngle = -Math.PI / 2;
+    const currentAngle = startAngle - (Math.PI * 2 * progress);
+    ctx.beginPath();
+    ctx.arc(s.cx, s.cy, s.r, startAngle, currentAngle, true); // true = anticlockwise
+    ctx.stroke();
+
+    const headX = s.cx + s.r * Math.cos(currentAngle);
+    const headY = s.cy + s.r * Math.sin(currentAngle);
+    drawBrushHead(headX, headY);
+  } else {
+    const pts = s.pts;
+    if (pts.length < 2) { ctx.restore(); return; }
+
+    let totalLen = 0;
+    const lens = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const d = Math.hypot(pts[i+1][0] - pts[i][0], pts[i+1][1] - pts[i][1]);
+      lens.push(d);
+      totalLen += d;
+    }
+
+    const targetDist = totalLen * progress;
+    let curDist = 0;
+    ctx.beginPath();
+    ctx.moveTo(pts[0][0], pts[0][1]);
+    let lastX = pts[0][0], lastY = pts[0][1];
+
+    for (let i = 0; i < lens.length; i++) {
+      const segLen = lens[i];
+      if (curDist + segLen <= targetDist) {
+        ctx.lineTo(pts[i+1][0], pts[i+1][1]);
+        curDist += segLen;
+        lastX = pts[i+1][0];
+        lastY = pts[i+1][1];
+      } else {
+        const remain = targetDist - curDist;
+        const frac = remain / (segLen || 1);
+        lastX = pts[i][0] + (pts[i+1][0] - pts[i][0]) * frac;
+        lastY = pts[i][1] + (pts[i+1][1] - pts[i][1]) * frac;
+        ctx.lineTo(lastX, lastY);
+        break;
+      }
+    }
+    ctx.stroke();
+    drawBrushHead(lastX, lastY);
+  }
+  ctx.restore();
 }
 
 function drawBrushHead(x, y) {
   ctx.save();
-  ctx.fillStyle = '#ffc800';
-  ctx.shadowColor = '#ffc800';
-  ctx.shadowBlur = 12;
+  ctx.fillStyle = '#ffedd5';
+  ctx.shadowColor = '#f59e0b';
+  ctx.shadowBlur = 18;
   ctx.beginPath();
-  ctx.arc(x, y, 8, 0, Math.PI * 2);
+  ctx.arc(x, y, 18, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = '#f59e0b';
+  ctx.beginPath();
+  ctx.arc(x, y, 10, 0, Math.PI * 2);
   ctx.fill();
   ctx.restore();
 }
 
-function drawPolylineProgress(pts, progress) {
-  if (pts.length < 2) return;
-  let totalLen = 0;
-  const lens = [];
-  for (let i = 0; i < pts.length - 1; i++) {
-    const dist = Math.hypot(pts[i+1][0] - pts[i][0], pts[i+1][1] - pts[i][1]);
-    lens.push(dist);
-    totalLen += dist;
-  }
-
-  const targetDist = totalLen * progress;
-  let curDist = 0;
-
-  ctx.beginPath();
-  ctx.moveTo(pts[0][0], pts[0][1]);
-  let lastX = pts[0][0], lastY = pts[0][1];
-
-  for (let i = 0; i < lens.length; i++) {
-    const segLen = lens[i];
-    if (curDist + segLen <= targetDist) {
-      ctx.lineTo(pts[i+1][0], pts[i+1][1]);
-      curDist += segLen;
-      lastX = pts[i+1][0];
-      lastY = pts[i+1][1];
-    } else {
-      const remain = targetDist - curDist;
-      const frac = remain / (segLen || 1);
-      lastX = pts[i][0] + (pts[i+1][0] - pts[i][0]) * frac;
-      lastY = pts[i][1] + (pts[i+1][1] - pts[i][1]) * frac;
-      ctx.lineTo(lastX, lastY);
-      break;
-    }
-  }
-  ctx.stroke();
-  drawBrushHead(lastX, lastY);
+/* ─────────────────────────────────────────────────────────────
+   5. 실시간 오프라인 획순 판정 알고리즘 (Stroke Validator)
+───────────────────────────────────────────────────────────── */
+function dist(p1, p2) {
+  return Math.hypot(p1.x - p2.x, p1.y - p2.y);
 }
 
+function validateUserStroke(points, targetStroke) {
+  if (!points || points.length < 2) return { pass: false, reason: '너무 짧은 선입니다.' };
+
+  if (targetStroke.type === 'circle') {
+    if (points.length < 8) return { pass: false, reason: '원을 끝까지 부드럽게 감아주세요.' };
+    const cx = targetStroke.cx;
+    const cy = targetStroke.cy;
+    const r = targetStroke.r;
+    const uStart = points[0];
+    const uEnd = points[points.length - 1];
+
+    // 시작점 (12시 꼭대기 검사)
+    const topPt = { x: cx, y: cy - r };
+    if (dist(uStart, topPt) > r * 0.95) {
+      return { pass: false, reason: '12시(위쪽) 꼭대기에서부터 시작해 주세요.' };
+    }
+
+    // 각도 누적 (반시계 방향 검사)
+    let angleSum = 0;
+    for (let i = 0; i < points.length - 1; i++) {
+      const th1 = Math.atan2(points[i].y - cy, points[i].x - cx);
+      const th2 = Math.atan2(points[i + 1].y - cy, points[i + 1].x - cx);
+      let diff = th2 - th1;
+      while (diff < -Math.PI) diff += Math.PI * 2;
+      while (diff > Math.PI) diff -= Math.PI * 2;
+      angleSum += diff;
+    }
+
+    if (angleSum > 1.4) {
+      return { pass: false, reason: '시계 방향이 아닌 [반시계 방향]으로 회전해 주세요.' };
+    }
+    if (Math.abs(angleSum) < Math.PI * 1.3) {
+      return { pass: false, reason: '원을 한 바퀴 완전히 감아주세요.' };
+    }
+    if (dist(uStart, uEnd) > r * 1.1) {
+      return { pass: false, reason: '원의 시작점과 끝점을 닫아주세요.' };
+    }
+    return { pass: true, reason: '완벽한 획입니다!' };
+  }
+
+  // 선(Lines) 판정
+  const pts = targetStroke.pts;
+  const startPt = { x: pts[0][0], y: pts[0][1] };
+  const endPt = { x: pts[pts.length - 1][0], y: pts[pts.length - 1][1] };
+  const uStart = points[0];
+  const uEnd = points[points.length - 1];
+
+  // 1. 시작점 검사
+  if (dist(uStart, startPt) > 95) {
+    return { pass: false, reason: '시작점에서부터 그어주세요. (파란색 배지 위치)' };
+  }
+
+  // 2. 끝점 검사
+  if (dist(uEnd, endPt) > 105) {
+    return { pass: false, reason: '획의 끝점까지 완전히 그어주세요.' };
+  }
+
+  // 3. 방향성 코사인 유사도
+  const tvx = endPt.x - startPt.x;
+  const tvy = endPt.y - startPt.y;
+  const uvx = uEnd.x - uStart.x;
+  const uvy = uEnd.y - uStart.y;
+  const tLen = Math.hypot(tvx, tvy);
+  const uLen = Math.hypot(uvx, uvy);
+
+  if (tLen > 30 && uLen > 30) {
+    const dot = (tvx * uvx + tvy * uvy) / (tLen * uLen);
+    if (dot < 0.35) {
+      return { pass: false, reason: '올바른 방향(화살표 방향)으로 그어주세요.' };
+    }
+  }
+
+  return { pass: true, reason: '완벽합니다!' };
+}
+
+/* ─────────────────────────────────────────────────────────────
+   6. 터치 및 포인터 이벤트 리스너 (DPI & 스케일 완벽 보정)
+───────────────────────────────────────────────────────────── */
+function getCanvasCoords(e) {
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (e.clientX - rect.left) * scaleX,
+    y: (e.clientY - rect.top) * scaleY
+  };
+}
+
+function handlePointerDown(e) {
+  if (isAnimating) return;
+  isPointerDown = true;
+  canvas.setPointerCapture(e.pointerId);
+
+  const pt = getCanvasCoords(e);
+  userPoints = [pt];
+
+  if (studioMode === 'free') {
+    freehandStrokes.push([pt]);
+    Sound.tap(0.9);
+  }
+}
+
+function handlePointerMove(e) {
+  if (!isPointerDown || isAnimating) return;
+  const pt = getCanvasCoords(e);
+
+  // 최소 샘플링 거리 필터
+  const lastPt = userPoints[userPoints.length - 1];
+  if (lastPt && Math.hypot(pt.x - lastPt.x, pt.y - lastPt.y) < 5) return;
+
+  userPoints.push(pt);
+
+  if (studioMode === 'free') {
+    const cur = freehandStrokes[freehandStrokes.length - 1];
+    if (cur) cur.push(pt);
+  }
+
+  renderScene();
+}
+
+function handlePointerUp(e) {
+  if (!isPointerDown) return;
+  isPointerDown = false;
+  try { canvas.releasePointerCapture(e.pointerId); } catch(err) {}
+
+  if (studioMode === 'test') {
+    const strokes = getStrokesForChar(currentChar);
+    if (testCompletedCount < strokes.length) {
+      const target = strokes[testCompletedCount];
+      const result = validateUserStroke(userPoints, target);
+
+      if (result.pass) {
+        testCompletedCount++;
+        Sound.success();
+        updateTimelineStatus();
+
+        const progressPercent = (testCompletedCount / strokes.length) * 100;
+        document.getElementById('anim-progress-fill').style.width = `${progressPercent}%`;
+
+        if (testCompletedCount >= strokes.length) {
+          Sound.fanfare();
+          setFeedback('🎉', `축하합니다! '${currentChar}' 글자의 모든 획을 완벽하게 썼습니다!`, 'success');
+          speakCurrentChar();
+        } else {
+          setFeedback('✨', `좋아요! [${testCompletedCount + 1}획]을 이어서 써보세요.`, 'success');
+        }
+      } else {
+        Sound.error();
+        setFeedback('⚠️', result.reason, 'error');
+      }
+    }
+  }
+
+  userPoints = [];
+  renderScene();
+}
+
+canvas.addEventListener('pointerdown', handlePointerDown);
+canvas.addEventListener('pointermove', handlePointerMove);
+canvas.addEventListener('pointerup', handlePointerUp);
+canvas.addEventListener('pointercancel', handlePointerUp);
+
+/* ─────────────────────────────────────────────────────────────
+   7. 애니메이션 재생 & 1획씩 보기 컨트롤러
+───────────────────────────────────────────────────────────── */
 function startStrokeAnimation() {
   if (isAnimating) return;
+  setStudioMode('anim');
   isAnimating = true;
 
   const btnAnim = document.getElementById('btn-play-anim');
   const btnClear = document.getElementById('btn-clear');
-  btnAnim.innerHTML = '⏳ 획순 그리는 중...';
+  const btnStep = document.getElementById('btn-step-anim');
+  const progressFill = document.getElementById('anim-progress-fill');
+
+  btnAnim.innerHTML = '<span>⏳</span> 재생 중...';
   btnAnim.disabled = true;
   btnClear.disabled = true;
-
-  drawBaseGuide();
+  btnStep.disabled = true;
 
   const strokes = getStrokesForChar(currentChar);
   if (!strokes.length) {
-    ctx.fillStyle = 'rgba(88, 204, 2, 0.6)';
-    ctx.fillText(currentChar, 140, 140);
     finishAnim();
     return;
   }
@@ -659,86 +1968,215 @@ function startStrokeAnimation() {
       return;
     }
 
-    const currentStroke = strokes[strokeIdx];
-    Sound.tap(1 + strokeIdx * 0.1);
-
-    const badgeNum = strokeIdx + 1;
-    let badgePos = { x: 0, y: 0 };
-    if (currentStroke.type === 'circle') {
-      badgePos = { x: currentStroke.cx, y: currentStroke.cy - currentStroke.r - 12 };
-    } else {
-      badgePos = { x: currentStroke.pts[0][0] - 14, y: currentStroke.pts[0][1] - 14 };
-    }
-
-    // 배지 드로잉
-    ctx.save();
-    ctx.fillStyle = '#1cb0f6';
-    ctx.beginPath();
-    ctx.arc(badgePos.x, badgePos.y, 12, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 13px Nunito, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(badgeNum, badgePos.x, badgePos.y);
-    ctx.restore();
+    highlightTimelineStep(strokeIdx);
+    Sound.tap(1 + strokeIdx * 0.12);
 
     let startTime = null;
-    const duration = 420;
+    const duration = 460;
 
     function step(timestamp) {
       if (!isAnimating) return;
       if (!startTime) startTime = timestamp;
       const progress = Math.min(1.0, (timestamp - startTime) / duration);
 
-      ctx.save();
-      ctx.lineWidth = 16;
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#58cc02';
+      const totalPercent = ((strokeIdx + progress) / strokes.length) * 100;
+      progressFill.style.width = `${totalPercent}%`;
 
-      if (currentStroke.type === 'circle') {
-        const startAngle = -Math.PI / 2;
-        const currentAngle = startAngle + (Math.PI * 2 * progress);
-        ctx.beginPath();
-        ctx.arc(currentStroke.cx, currentStroke.cy, currentStroke.r, startAngle, currentAngle);
-        ctx.stroke();
-
-        const headX = currentStroke.cx + currentStroke.r * Math.cos(currentAngle);
-        const headY = currentStroke.cy + currentStroke.r * Math.sin(currentAngle);
-        drawBrushHead(headX, headY);
-      } else {
-        drawPolylineProgress(currentStroke.pts, progress);
-      }
-      ctx.restore();
+      renderScene(strokeIdx, progress);
 
       if (progress < 1.0) {
-        requestAnimationFrame(step);
+        currentAnimRafId = requestAnimationFrame(step);
       } else {
         strokeIdx++;
         setTimeout(runNextStroke, 180);
       }
     }
 
-    requestAnimationFrame(step);
+    currentAnimRafId = requestAnimationFrame(step);
   }
 
   function finishAnim() {
     isAnimating = false;
-    btnAnim.innerHTML = '✨ 획순 다시 보기';
+    currentAnimRafId = null;
+    btnAnim.innerHTML = '<span>✨</span> 획순 다시 보기';
     btnAnim.disabled = false;
     btnClear.disabled = false;
-    Sound.complete();
-    speak(currentChar);
+    btnStep.disabled = false;
+    progressFill.style.width = '100%';
+    Sound.fanfare();
+    speakCurrentChar();
+    renderScene();
   }
 
   runNextStroke();
 }
 
+function stepNextStroke() {
+  cancelCurrentAnimation();
+  setStudioMode('anim');
+
+  const strokes = getStrokesForChar(currentChar);
+  if (!strokes.length) return;
+
+  currentStepIndex = (currentStepIndex + 1) % (strokes.length + 1);
+  const progressFill = document.getElementById('anim-progress-fill');
+
+  if (currentStepIndex === strokes.length) {
+    Sound.fanfare();
+    progressFill.style.width = '100%';
+    speakCurrentChar();
+    highlightTimelineStep(-1);
+    renderScene();
+    return;
+  }
+
+  progressFill.style.width = `${((currentStepIndex + 1) / strokes.length) * 100}%`;
+  highlightTimelineStep(currentStepIndex);
+  Sound.tap(1 + currentStepIndex * 0.15);
+  renderScene();
+}
+
 function clearCanvas() {
   Sound.tap();
-  isAnimating = false;
-  drawBaseGuide();
+  cancelCurrentAnimation();
+  testCompletedCount = 0;
+  freehandStrokes = [];
+  userPoints = [];
+  currentStepIndex = -1;
+  document.getElementById('anim-progress-fill').style.width = '0%';
+  highlightTimelineStep(-1);
+  if (studioMode === 'test') {
+    setFeedback('🎯', `1획: 파란색 배지(①)에서 시작하여 따라 써보세요!`, 'normal');
+  }
+  renderScene();
+}
+
+function saveCanvasImage() {
+  Sound.tap(1.5);
+  const link = document.createElement('a');
+  link.download = `hangul_stroke_${currentChar}.png`;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function onGuideOpacityChange() {
+  const val = document.getElementById('guide-opacity').value;
+  guideOpacity = parseInt(val) / 100;
+  renderScene();
+}
+
+function setBrushColor(color, element) {
+  currentBrushColor = color;
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  if (element) element.classList.add('active');
+  renderScene();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   8. 대시보드 및 프리셋 관리
+───────────────────────────────────────────────────────────── */
+function updateTimelineStatus() {
+  document.querySelectorAll('.stroke-step-item').forEach((el, i) => {
+    el.classList.toggle('completed', i < testCompletedCount);
+    el.classList.toggle('active', i === testCompletedCount);
+  });
+}
+
+function highlightTimelineStep(idx) {
+  document.querySelectorAll('.stroke-step-item').forEach((el, i) => {
+    el.classList.toggle('active', i === idx);
+    if (i === idx) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+}
+
+function updateInfoDashboard() {
+  const dec = decompose(currentChar);
+  const strokes = getStrokesForChar(currentChar);
+
+  // 헤어로 카드
+  document.getElementById('hero-char-box').textContent = currentChar;
+  document.getElementById('hero-char-title').textContent = dec.isSyllable ? `음절 '${currentChar}'` : `자모 '${currentChar}'`;
+  document.getElementById('hero-strokes-tag').textContent = `총 ${strokes.length}획`;
+
+  const isVert = dec.isSyllable && [0, 1, 2, 3, 4, 5, 6, 7, 20].includes(dec.jungIdx);
+  if (dec.isSyllable) {
+    document.getElementById('hero-struct-tag').textContent = isVert ? '좌우 분립형 (세로모음)' : '상하 결합형 (가로모음)';
+    document.getElementById('hero-batchim-tag').textContent = dec.hasJong ? `받침 있음 (${dec.jong})` : '받침 없음';
+  } else {
+    document.getElementById('hero-struct-tag').textContent = '단일 음소';
+    document.getElementById('hero-batchim-tag').textContent = '기본 자모';
+  }
+
+  // 3분해 슬롯 카드
+  const jongSlot = document.getElementById('slot-jong');
+
+  if (dec.isSyllable) {
+    const choStks = getJamoStrokesInBox(dec.cho, {x:0, y:0, w:100, h:100}, '');
+    const jungStks = getJamoStrokesInBox(dec.jung, {x:0, y:0, w:100, h:100}, '');
+    document.getElementById('jamo-cho-val').textContent = dec.cho;
+    document.getElementById('jamo-cho-desc').textContent = `${choStks.length}획`;
+    document.getElementById('jamo-jung-val').textContent = dec.jung;
+    document.getElementById('jamo-jung-desc').textContent = `${jungStks.length}획`;
+    
+    if (dec.hasJong) {
+      const jongStks = getJamoStrokesInBox(dec.jong, {x:0, y:0, w:100, h:100}, '');
+      document.getElementById('jamo-jong-val').textContent = dec.jong;
+      document.getElementById('jamo-jong-desc').textContent = `${jongStks.length}획`;
+      jongSlot.style.opacity = '1';
+    } else {
+      document.getElementById('jamo-jong-val').textContent = '—';
+      document.getElementById('jamo-jong-desc').textContent = '받침 없음';
+      jongSlot.style.opacity = '0.5';
+    }
+  } else {
+    document.getElementById('jamo-cho-val').textContent = currentChar;
+    document.getElementById('jamo-cho-desc').textContent = `${strokes.length}획`;
+    document.getElementById('jamo-jung-val').textContent = '—';
+    document.getElementById('jamo-jung-desc').textContent = '단일 글자';
+    document.getElementById('jamo-jong-val').textContent = '—';
+    document.getElementById('jamo-jong-desc').textContent = '해당 없음';
+    jongSlot.style.opacity = '0.4';
+  }
+
+  // 타임라인 리스트 생성
+  document.getElementById('timeline-count-badge').textContent = `총 ${strokes.length}획`;
+  const listEl = document.getElementById('timeline-steps-list');
+
+  listEl.innerHTML = strokes.map((s, idx) => `
+    <div class="stroke-step-item" id="step-card-${idx}" onclick="selectStrokeFromTimeline(${idx})">
+      <div class="step-num-badge">${idx + 1}</div>
+      <div class="step-info-col">
+        <div class="step-part-tag">${s.partName}</div>
+        <div class="step-instruction">${s.desc}</div>
+      </div>
+    </div>
+  `).join('');
+
+  updateTimelineStatus();
+}
+
+function selectStrokeFromTimeline(idx) {
+  cancelCurrentAnimation();
+  setStudioMode('anim');
+  currentStepIndex = idx;
+  highlightTimelineStep(idx);
+  renderScene();
+  Sound.tap(1.2);
+}
+
+function switchPresetTab(tabKey) {
+  currentTab = tabKey;
+  document.querySelectorAll('.preset-tab-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('onclick').includes(tabKey));
+  });
+
+  const box = document.getElementById('preset-chips-box');
+  const items = PRESET_DATA[tabKey] || [];
+  box.innerHTML = items.map(c => `
+    <button class="preset-chip ${c === currentChar ? 'active' : ''}" onclick="loadPreset('${c}')">
+      ${c}
+    </button>
+  `).join('');
 }
 
 function applyCharFromInput() {
@@ -751,52 +2189,34 @@ function applyCharFromInput() {
 function loadPreset(char) {
   currentChar = char;
   document.getElementById('input-char').value = char;
+
   document.querySelectorAll('.preset-chip').forEach(c => {
-    c.classList.toggle('active', c.textContent === char);
+    c.classList.toggle('active', c.textContent.trim() === char);
   });
-  updateInfoPanel();
-  clearCanvas();
-  speak(char);
+
+  cancelCurrentAnimation();
+  testCompletedCount = 0;
+  freehandStrokes = [];
+  userPoints = [];
+  currentStepIndex = -1;
+
+  updateInfoDashboard();
+  if (studioMode === 'test') {
+    setFeedback('🎯', `1획: 파란색 배지(①)에서 시작하여 따라 써보세요!`, 'normal');
+  }
+  renderScene();
+  speakCurrentChar();
 }
 
-// 직접 터치/마우스 드로잉
-let drawing = false;
+document.getElementById('input-char').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') applyCharFromInput();
+});
 
-function getPos(e) {
-  const rect = canvas.getBoundingClientRect();
-  const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-  return { x: clientX - rect.left, y: clientY - rect.top };
-}
-
-function startDraw(e) {
-  if (isAnimating) return;
-  drawing = true;
-  const pos = getPos(e);
-  ctx.beginPath();
-  ctx.moveTo(pos.x, pos.y);
-  ctx.lineWidth = 16;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-  ctx.strokeStyle = '#58cc02';
-}
-function moveDraw(e) {
-  if (!drawing || isAnimating) return;
-  const pos = getPos(e);
-  ctx.lineTo(pos.x, pos.y);
-  ctx.stroke();
-}
-function endDraw() { drawing = false; }
-
-canvas.addEventListener('mousedown', startDraw);
-canvas.addEventListener('mousemove', moveDraw);
-canvas.addEventListener('mouseup', endDraw);
-canvas.addEventListener('touchstart', startDraw);
-canvas.addEventListener('touchmove', moveDraw);
-canvas.addEventListener('touchend', endDraw);
-
+// 시작 초기화
 window.addEventListener('DOMContentLoaded', () => {
+  switchPresetTab('basic');
   loadPreset('아');
+  setStudioMode('test');
 });
 </script>
 

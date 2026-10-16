@@ -1478,64 +1478,114 @@ function renderCharacterTrace(challenge, container) {
 
   drawBaseGuide();
 
-  // ── 정밀 획순 벡터 DB & 음절 분해 ──
-  const STROKE_DB = {
+  // ── 정밀 획순 벡터 DB & 음절 분해 (Sequential Thinking 2.0) ──
+  const CHOS = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+  const JUNGS = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+  const JONGS = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+
+  const DOUBLE_BATCHIM = {
+    'ㄳ': ['ㄱ', 'ㅅ'], 'ㄵ': ['ㄴ', 'ㅈ'], 'ㄶ': ['ㄴ', 'ㅎ'], 'ㄺ': ['ㄹ', 'ㄱ'],
+    'ㄻ': ['ㄹ', 'ㅁ'], 'ㄼ': ['ㄹ', 'ㅂ'], 'ㄽ': ['ㄹ', 'ㅅ'], 'ㄾ': ['ㄹ', 'ㅌ'],
+    'ㄿ': ['ㄹ', 'ㅍ'], 'ㅀ': ['ㄹ', 'ㅎ'], 'ㅄ': ['ㅂ', 'ㅅ']
+  };
+
+  const COMPOUND_VOWELS = {
+    'ㅘ': ['ㅗ', 'ㅏ'], 'ㅙ': ['ㅗ', 'ㅐ'], 'ㅚ': ['ㅗ', 'ㅣ'],
+    'ㅝ': ['ㅜ', 'ㅓ'], 'ㅞ': ['ㅜ', 'ㅔ'], 'ㅟ': ['ㅜ', 'ㅣ'],
+    'ㅢ': ['ㅡ', 'ㅣ'], 'ㅒ': ['ㅑ', 'ㅣ'], 'ㅖ': ['ㅕ', 'ㅣ']
+  };
+
+  const PRIMITIVE_STROKES = {
     'ㅇ': [{ type: 'circle', cx: 50, cy: 50, r: 35 }],
-    'ㄱ': [{ type: 'lines', pts: [[15, 20], [85, 20], [85, 85]] }],
-    'ㄴ': [{ type: 'lines', pts: [[18, 15], [18, 85], [85, 85]] }],
+    'ㄱ': [{ type: 'lines', pts: [[16, 22], [84, 22], [84, 84]] }],
+    'ㄲ': [
+      { type: 'lines', pts: [[12, 22], [48, 22], [48, 84]] },
+      { type: 'lines', pts: [[54, 22], [88, 22], [88, 84]] }
+    ],
+    'ㄴ': [{ type: 'lines', pts: [[18, 16], [18, 84], [84, 84]] }],
     'ㄷ': [
-      { type: 'lines', pts: [[15, 18], [85, 18]] },
-      { type: 'lines', pts: [[18, 18], [18, 85], [85, 85]] }
+      { type: 'lines', pts: [[16, 20], [84, 20]] },
+      { type: 'lines', pts: [[18, 20], [18, 84], [84, 84]] }
+    ],
+    'ㄸ': [
+      { type: 'lines', pts: [[10, 20], [46, 20]] },
+      { type: 'lines', pts: [[12, 20], [12, 84], [46, 84]] },
+      { type: 'lines', pts: [[54, 20], [88, 20]] },
+      { type: 'lines', pts: [[56, 20], [56, 84], [88, 84]] }
     ],
     'ㄹ': [
-      { type: 'lines', pts: [[15, 18], [85, 18], [85, 50]] },
-      { type: 'lines', pts: [[15, 50], [85, 50]] },
-      { type: 'lines', pts: [[18, 50], [18, 85], [85, 85]] }
+      { type: 'lines', pts: [[16, 20], [84, 20], [84, 50]] },
+      { type: 'lines', pts: [[16, 50], [84, 50]] },
+      { type: 'lines', pts: [[18, 50], [18, 84], [84, 84]] }
     ],
     'ㅁ': [
-      { type: 'lines', pts: [[18, 15], [18, 85]] },
-      { type: 'lines', pts: [[18, 18], [85, 18], [85, 85]] },
-      { type: 'lines', pts: [[18, 85], [85, 85]] }
+      { type: 'lines', pts: [[18, 16], [18, 84]] },
+      { type: 'lines', pts: [[18, 18], [84, 18], [84, 84]] },
+      { type: 'lines', pts: [[18, 84], [84, 84]] }
     ],
     'ㅂ': [
-      { type: 'lines', pts: [[22, 15], [22, 85]] },
-      { type: 'lines', pts: [[78, 15], [78, 85]] },
+      { type: 'lines', pts: [[22, 16], [22, 84]] },
+      { type: 'lines', pts: [[78, 16], [78, 84]] },
       { type: 'lines', pts: [[22, 50], [78, 50]] },
-      { type: 'lines', pts: [[22, 85], [78, 85]] }
+      { type: 'lines', pts: [[22, 84], [78, 84]] }
+    ],
+    'ㅃ': [
+      { type: 'lines', pts: [[12, 16], [12, 84]] },
+      { type: 'lines', pts: [[46, 16], [46, 84]] },
+      { type: 'lines', pts: [[12, 50], [46, 50]] },
+      { type: 'lines', pts: [[12, 84], [46, 84]] },
+      { type: 'lines', pts: [[54, 16], [54, 84]] },
+      { type: 'lines', pts: [[88, 16], [88, 84]] },
+      { type: 'lines', pts: [[54, 50], [88, 50]] },
+      { type: 'lines', pts: [[54, 84], [88, 84]] }
     ],
     'ㅅ': [
-      { type: 'lines', pts: [[50, 15], [18, 85]] },
-      { type: 'lines', pts: [[42, 50], [82, 85]] }
+      { type: 'lines', pts: [[50, 16], [18, 84]] },
+      { type: 'lines', pts: [[42, 50], [82, 84]] }
+    ],
+    'ㅆ': [
+      { type: 'lines', pts: [[32, 16], [10, 84]] },
+      { type: 'lines', pts: [[26, 50], [50, 84]] },
+      { type: 'lines', pts: [[70, 16], [50, 84]] },
+      { type: 'lines', pts: [[64, 50], [88, 84]] }
     ],
     'ㅈ': [
-      { type: 'lines', pts: [[18, 18], [82, 18]] },
-      { type: 'lines', pts: [[50, 18], [18, 85]] },
-      { type: 'lines', pts: [[42, 52], [82, 85]] }
+      { type: 'lines', pts: [[18, 20], [82, 20]] },
+      { type: 'lines', pts: [[50, 20], [18, 84]] },
+      { type: 'lines', pts: [[42, 52], [82, 84]] }
+    ],
+    'ㅉ': [
+      { type: 'lines', pts: [[12, 20], [48, 20]] },
+      { type: 'lines', pts: [[30, 20], [10, 84]] },
+      { type: 'lines', pts: [[24, 52], [48, 84]] },
+      { type: 'lines', pts: [[52, 20], [88, 20]] },
+      { type: 'lines', pts: [[70, 20], [50, 84]] },
+      { type: 'lines', pts: [[64, 52], [88, 84]] }
     ],
     'ㅊ': [
-      { type: 'lines', pts: [[50, 6], [50, 20]] },
-      { type: 'lines', pts: [[18, 22], [82, 22]] },
-      { type: 'lines', pts: [[50, 22], [18, 85]] },
-      { type: 'lines', pts: [[42, 52], [82, 85]] }
+      { type: 'lines', pts: [[50, 8], [50, 20]] },
+      { type: 'lines', pts: [[18, 24], [82, 24]] },
+      { type: 'lines', pts: [[50, 24], [18, 84]] },
+      { type: 'lines', pts: [[42, 52], [82, 84]] }
     ],
     'ㅋ': [
-      { type: 'lines', pts: [[15, 18], [85, 18], [85, 85]] },
-      { type: 'lines', pts: [[15, 50], [75, 50]] }
+      { type: 'lines', pts: [[16, 20], [84, 20], [84, 84]] },
+      { type: 'lines', pts: [[16, 50], [74, 50]] }
     ],
     'ㅌ': [
       { type: 'lines', pts: [[18, 18], [82, 18]] },
       { type: 'lines', pts: [[18, 50], [82, 50]] },
-      { type: 'lines', pts: [[18, 18], [18, 85], [82, 85]] }
+      { type: 'lines', pts: [[18, 18], [18, 84], [82, 84]] }
     ],
     'ㅍ': [
-      { type: 'lines', pts: [[18, 18], [82, 18]] },
-      { type: 'lines', pts: [[36, 18], [36, 85]] },
-      { type: 'lines', pts: [[64, 18], [64, 85]] },
-      { type: 'lines', pts: [[18, 85], [82, 85]] }
+      { type: 'lines', pts: [[16, 20], [84, 20]] },
+      { type: 'lines', pts: [[35, 20], [35, 82]] },
+      { type: 'lines', pts: [[65, 20], [65, 82]] },
+      { type: 'lines', pts: [[16, 82], [84, 82]] }
     ],
     'ㅎ': [
-      { type: 'lines', pts: [[50, 6], [50, 20]] },
-      { type: 'lines', pts: [[18, 22], [82, 22]] },
+      { type: 'lines', pts: [[50, 8], [50, 22]] },
+      { type: 'lines', pts: [[18, 26], [82, 26]] },
       { type: 'circle', cx: 50, cy: 62, r: 24 }
     ],
     'ㅏ': [
@@ -1575,71 +1625,111 @@ function renderCharacterTrace(challenge, container) {
       { type: 'lines', pts: [[64, 35], [64, 85]] }
     ],
     'ㅡ': [{ type: 'lines', pts: [[12, 50], [88, 50]] }],
-    'ㅣ': [{ type: 'lines', pts: [[50, 12], [50, 88]] }]
+    'ㅣ': [{ type: 'lines', pts: [[50, 12], [50, 88]] }],
+    'ㅐ': [
+      { type: 'lines', pts: [[35, 12], [35, 88]] },
+      { type: 'lines', pts: [[35, 50], [68, 50]] },
+      { type: 'lines', pts: [[68, 12], [68, 88]] }
+    ],
+    'ㅔ': [
+      { type: 'lines', pts: [[16, 50], [48, 50]] },
+      { type: 'lines', pts: [[48, 12], [48, 88]] },
+      { type: 'lines', pts: [[78, 12], [78, 88]] }
+    ]
   };
+
+  function transform(stk, box) {
+    if (stk.type === 'circle') {
+      return {
+        type: 'circle',
+        cx: box.x + (stk.cx / 100) * box.w,
+        cy: box.y + (stk.cy / 100) * box.h,
+        r: (stk.r / 100) * Math.min(box.w, box.h)
+      };
+    }
+    return {
+      type: 'lines',
+      pts: stk.pts.map(p => [
+        box.x + (p[0] / 100) * box.w,
+        box.y + (p[1] / 100) * box.h
+      ])
+    };
+  }
+
+  function getJamoStrokesInBox(jamo, box) {
+    let strokes = [];
+    if (DOUBLE_BATCHIM[jamo]) {
+      const [l, r] = DOUBLE_BATCHIM[jamo];
+      const lBox = { x: box.x, y: box.y, w: box.w * 0.48, h: box.h };
+      const rBox = { x: box.x + box.w * 0.52, y: box.y, w: box.w * 0.48, h: box.h };
+      if (PRIMITIVE_STROKES[l]) PRIMITIVE_STROKES[l].forEach(s => strokes.push(transform(s, lBox)));
+      if (PRIMITIVE_STROKES[r]) PRIMITIVE_STROKES[r].forEach(s => strokes.push(transform(s, rBox)));
+      return strokes;
+    }
+    if (COMPOUND_VOWELS[jamo]) {
+      const [f, sc] = COMPOUND_VOWELS[jamo];
+      const lBox = { x: box.x, y: box.y + box.h * 0.15, w: box.w * 0.52, h: box.h * 0.85 };
+      const rBox = { x: box.x + box.w * 0.45, y: box.y, w: box.w * 0.55, h: box.h };
+      if (PRIMITIVE_STROKES[f]) PRIMITIVE_STROKES[f].forEach(s => strokes.push(transform(s, lBox)));
+      if (PRIMITIVE_STROKES[sc]) PRIMITIVE_STROKES[sc].forEach(s => strokes.push(transform(s, rBox)));
+      return strokes;
+    }
+    if (PRIMITIVE_STROKES[jamo]) {
+      PRIMITIVE_STROKES[jamo].forEach(s => strokes.push(transform(s, box)));
+    }
+    return strokes;
+  }
 
   function getCharacterStrokes(char) {
     const code = char.charCodeAt(0) - 0xAC00;
-    const chos = ['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-    const jungs = ['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
-    const jongs = ['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
-
     let strokes = [];
-
-    function transform(stk, box) {
-      if (stk.type === 'circle') {
-        return {
-          type: 'circle',
-          cx: box.x + (stk.cx / 100) * box.w,
-          cy: box.y + (stk.cy / 100) * box.h,
-          r: (stk.r / 100) * Math.min(box.w, box.h)
-        };
-      }
-      return {
-        type: 'lines',
-        pts: stk.pts.map(p => [
-          box.x + (p[0] / 100) * box.w,
-          box.y + (p[1] / 100) * box.h
-        ])
-      };
-    }
 
     if (code >= 0 && code <= 11171) {
       const jong = code % 28;
       const jung = Math.floor((code - jong) / 28) % 21;
       const cho = Math.floor((code - jong) / 28 / 21);
-      const choChar = chos[cho];
-      const jungChar = jungs[jung];
-      const jongChar = jongs[jong];
+      const choChar = CHOS[cho];
+      const jungChar = JUNGS[jung];
+      const jongChar = JONGS[jong];
 
       const isVert = [0, 1, 2, 3, 4, 5, 6, 7, 20].includes(jung);
+      const isHoriz = [8, 12, 13, 17, 18].includes(jung);
       const hasJong = jong > 0;
 
       let choBox, jungBox, jongBox;
-      if (isVert && !hasJong) {
-        choBox = { x: 26, y: 35, w: 92, h: 165 };
-        jungBox = { x: 122, y: 25, w: 92, h: 185 };
-      } else if (!isVert && !hasJong) {
-        choBox = { x: 35, y: 25, w: 170, h: 90 };
-        jungBox = { x: 25, y: 120, w: 190, h: 95 };
+      if (!hasJong) {
+        if (isVert) {
+          choBox = { x: 26, y: 35, w: 90, h: 165 };
+          jungBox = { x: 124, y: 25, w: 90, h: 185 };
+        } else if (isHoriz) {
+          choBox = { x: 38, y: 25, w: 164, h: 90 };
+          jungBox = { x: 25, y: 120, w: 190, h: 95 };
+        } else {
+          choBox = { x: 24, y: 25, w: 90, h: 100 };
+          jungBox = { x: 110, y: 20, w: 110, h: 190 };
+        }
       } else {
-        choBox = { x: 25, y: 20, w: 92, h: 95 };
-        jungBox = { x: 122, y: 15, w: 92, h: 105 };
-        jongBox = { x: 45, y: 130, w: 150, h: 85 };
+        if (isVert) {
+          choBox = { x: 26, y: 20, w: 90, h: 95 };
+          jungBox = { x: 124, y: 15, w: 90, h: 105 };
+          jongBox = { x: 42, y: 130, w: 156, h: 85 };
+        } else if (isHoriz) {
+          choBox = { x: 38, y: 20, w: 164, h: 70 };
+          jungBox = { x: 28, y: 92, w: 184, h: 60 };
+          jongBox = { x: 42, y: 155, w: 156, h: 72 };
+        } else {
+          choBox = { x: 25, y: 18, w: 85, h: 80 };
+          jungBox = { x: 110, y: 15, w: 110, h: 115 };
+          jongBox = { x: 42, y: 140, w: 156, h: 80 };
+        }
       }
 
-      if (STROKE_DB[choChar]) {
-        STROKE_DB[choChar].forEach(s => strokes.push(transform(s, choBox)));
-      }
-      if (STROKE_DB[jungChar]) {
-        STROKE_DB[jungChar].forEach(s => strokes.push(transform(s, jungBox)));
-      }
-      if (jongChar && STROKE_DB[jongChar]) {
-        STROKE_DB[jongChar].forEach(s => strokes.push(transform(s, jongBox)));
-      }
-    } else if (STROKE_DB[char]) {
+      strokes.push(...getJamoStrokesInBox(choChar, choBox));
+      strokes.push(...getJamoStrokesInBox(jungChar, jungBox));
+      if (hasJong) strokes.push(...getJamoStrokesInBox(jongChar, jongBox));
+    } else {
       const fullBox = { x: 35, y: 35, w: 170, h: 170 };
-      STROKE_DB[char].forEach(s => strokes.push(transform(s, fullBox)));
+      strokes.push(...getJamoStrokesInBox(char, fullBox));
     }
     return strokes;
   }
@@ -1667,7 +1757,6 @@ function renderCharacterTrace(challenge, container) {
 
     const targetDist = totalLen * progress;
     let curDist = 0;
-
     ctx.beginPath();
     ctx.moveTo(pts[0][0], pts[0][1]);
     let lastX = pts[0][0], lastY = pts[0][1];
@@ -1693,9 +1782,11 @@ function renderCharacterTrace(challenge, container) {
   }
 
   let isAnimating = false;
+  let activeRafId = null;
 
   btnClear.onclick = () => {
     SoundEffects.playTap();
+    if (activeRafId) cancelAnimationFrame(activeRafId);
     isAnimating = false;
     drawBaseGuide();
     document.getElementById('btn-action').disabled = true;
@@ -1714,9 +1805,6 @@ function renderCharacterTrace(challenge, container) {
 
     const strokes = getCharacterStrokes(challenge.character);
     if (!strokes.length) {
-      // Fallback
-      ctx.fillStyle = 'rgba(88, 204, 2, 0.6)';
-      ctx.fillText(challenge.character, 120, 120);
       finishAnim();
       return;
     }
@@ -1734,14 +1822,10 @@ function renderCharacterTrace(challenge, container) {
       SoundEffects.playTap();
 
       const badgeNum = strokeIdx + 1;
-      let badgePos = { x: 0, y: 0 };
-      if (currentStroke.type === 'circle') {
-        badgePos = { x: currentStroke.cx, y: currentStroke.cy - currentStroke.r - 10 };
-      } else {
-        badgePos = { x: currentStroke.pts[0][0] - 12, y: currentStroke.pts[0][1] - 12 };
-      }
+      let badgePos = (currentStroke.type === 'circle')
+        ? { x: currentStroke.cx, y: currentStroke.cy - currentStroke.r - 10 }
+        : { x: currentStroke.pts[0][0] - 12, y: currentStroke.pts[0][1] - 12 };
 
-      // Draw badge
       ctx.save();
       ctx.fillStyle = '#1cb0f6';
       ctx.beginPath();
@@ -1751,11 +1835,11 @@ function renderCharacterTrace(challenge, container) {
       ctx.font = 'bold 12px Nunito, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
-      ctx.fillText(badgeNum, badgePos.x, badgePos.y);
+      ctx.fillText(badgeNum, badgePos.x, badgePos.y + 1);
       ctx.restore();
 
       let startTime = null;
-      const duration = 400; // ms
+      const duration = 400;
 
       function step(timestamp) {
         if (!isAnimating) return;
@@ -1769,10 +1853,11 @@ function renderCharacterTrace(challenge, container) {
         ctx.strokeStyle = '#58cc02';
 
         if (currentStroke.type === 'circle') {
+          // 훈민정음 필순 규칙: 12시에서 반시계 방향 회전
           const startAngle = -Math.PI / 2;
-          const currentAngle = startAngle + (Math.PI * 2 * progress);
+          const currentAngle = startAngle - (Math.PI * 2 * progress);
           ctx.beginPath();
-          ctx.arc(currentStroke.cx, currentStroke.cy, currentStroke.r, startAngle, currentAngle);
+          ctx.arc(currentStroke.cx, currentStroke.cy, currentStroke.r, startAngle, currentAngle, true);
           ctx.stroke();
 
           const headX = currentStroke.cx + currentStroke.r * Math.cos(currentAngle);
@@ -1784,18 +1869,19 @@ function renderCharacterTrace(challenge, container) {
         ctx.restore();
 
         if (progress < 1.0) {
-          requestAnimationFrame(step);
+          activeRafId = requestAnimationFrame(step);
         } else {
           strokeIdx++;
           setTimeout(runNextStroke, 180);
         }
       }
 
-      requestAnimationFrame(step);
+      activeRafId = requestAnimationFrame(step);
     }
 
     function finishAnim() {
       isAnimating = false;
+      activeRafId = null;
       btnAnim.innerHTML = '✨ 획순 다시 보기';
       btnAnim.disabled = false;
       btnClear.disabled = false;
@@ -1806,14 +1892,19 @@ function renderCharacterTrace(challenge, container) {
     runNextStroke();
   };
 
-  // 터치 & 마우스 수동 드로잉 인터랙션
+  // 터치 & 마우스 수동 드로잉 인터랙션 (DPI 스케일 완벽 보정)
   let drawing = false;
 
   function getPos(e) {
     const rect = canvas.getBoundingClientRect();
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    return { x: clientX - rect.left, y: clientY - rect.top };
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    return {
+      x: (clientX - rect.left) * scaleX,
+      y: (clientY - rect.top) * scaleY
+    };
   }
 
   function startDraw(e) {
@@ -1839,9 +1930,9 @@ function renderCharacterTrace(challenge, container) {
   canvas.addEventListener('mousedown', startDraw);
   canvas.addEventListener('mousemove', moveDraw);
   canvas.addEventListener('mouseup', endDraw);
-  canvas.addEventListener('touchstart', startDraw);
-  canvas.addEventListener('touchmove', moveDraw);
-  canvas.addEventListener('touchend', endDraw);
+  canvas.addEventListener('touchstart', (e) => { e.preventDefault(); startDraw(e); }, { passive: false });
+  canvas.addEventListener('touchmove', (e) => { e.preventDefault(); moveDraw(e); }, { passive: false });
+  canvas.addEventListener('touchend', (e) => { e.preventDefault(); endDraw(); }, { passive: false });
 }
 
 /* ── 5. Multiple Choice 렌더러 ── */
