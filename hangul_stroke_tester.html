@@ -1015,6 +1015,7 @@ body {
             <span class="badge-tag accent" id="hero-struct-tag">좌우 분립형</span>
             <span class="badge-tag" id="hero-batchim-tag">받침 없음</span>
             <span class="badge-tag" id="hero-strokes-tag">총 3획</span>
+            <span class="badge-tag" id="hero-font-tag">서체: 정밀 따라쓰기 (36px)</span>
           </div>
         </div>
       </div>
@@ -1452,7 +1453,101 @@ function getJamoStrokesInBox(jamo, box, partName) {
   return strokes;
 }
 
-function getStrokesForChar(char) {
+/* ── 폰트별 정밀 타이포그래피 프로필 매트릭스 (Font-Adaptive Typography Matrix) ── */
+const FONT_PROFILES = {
+  tracing: {
+    name: '정밀 따라쓰기체',
+    family: null,
+    strokeWidth: 36,
+    guideWidth: 52,
+    vert: { cho: { x: 95, y: 120, w: 270, h: 480 }, jung: { x: 385, y: 95, w: 240, h: 530 } },
+    horiz: { cho: { x: 135, y: 90, w: 450, h: 260 }, jung: { x: 85, y: 360, w: 550, h: 270 } },
+    compound: { cho: { x: 85, y: 90, w: 260, h: 290 }, jung: { x: 325, y: 80, w: 330, h: 560 } },
+    vertJong: { cho: { x: 95, y: 65, w: 270, h: 290 }, jung: { x: 385, y: 55, w: 240, h: 320 }, jong: { x: 135, y: 400, w: 450, h: 260 } },
+    horizJong: { cho: { x: 135, y: 60, w: 450, h: 200 }, jung: { x: 85, y: 265, w: 550, h: 175 }, jong: { x: 135, y: 445, w: 450, h: 220 } },
+    compoundJong: { cho: { x: 85, y: 55, w: 250, h: 240 }, jung: { x: 325, y: 45, w: 330, h: 350 }, jong: { x: 135, y: 435, w: 450, h: 230 } },
+    single: { x: 130, y: 130, w: 460, h: 460 }
+  },
+  batang: {
+    name: '고운 바탕체',
+    family: '"Gowun Batang", serif',
+    size: 450,
+    offsetY: 12,
+    strokeWidth: 32,
+    guideWidth: 46,
+    vert: { cho: { x: 105, y: 120, w: 260, h: 470 }, jung: { x: 380, y: 100, w: 235, h: 515 } },
+    horiz: { cho: { x: 145, y: 95, w: 430, h: 250 }, jung: { x: 95, y: 355, w: 530, h: 260 } },
+    compound: { cho: { x: 95, y: 95, w: 250, h: 285 }, jung: { x: 330, y: 85, w: 320, h: 545 } },
+    vertJong: { cho: { x: 105, y: 70, w: 260, h: 280 }, jung: { x: 380, y: 60, w: 235, h: 310 }, jong: { x: 140, y: 400, w: 440, h: 250 } },
+    horizJong: { cho: { x: 145, y: 65, w: 430, h: 195 }, jung: { x: 95, y: 265, w: 530, h: 170 }, jong: { x: 140, y: 445, w: 440, h: 215 } },
+    compoundJong: { cho: { x: 95, y: 60, w: 240, h: 230 }, jung: { x: 330, y: 50, w: 320, h: 340 }, jong: { x: 140, y: 435, w: 440, h: 220 } },
+    single: { x: 135, y: 135, w: 450, h: 450 }
+  },
+  dodum: {
+    name: '고운 돋움체',
+    family: '"Gowun Dodum", sans-serif',
+    size: 450,
+    offsetY: 14,
+    strokeWidth: 36,
+    guideWidth: 50,
+    vert: { cho: { x: 100, y: 115, w: 275, h: 485 }, jung: { x: 380, y: 95, w: 240, h: 525 } },
+    horiz: { cho: { x: 135, y: 85, w: 450, h: 265 }, jung: { x: 85, y: 355, w: 550, h: 270 } },
+    compound: { cho: { x: 85, y: 85, w: 265, h: 295 }, jung: { x: 320, y: 75, w: 335, h: 565 } },
+    vertJong: { cho: { x: 100, y: 65, w: 270, h: 295 }, jung: { x: 380, y: 55, w: 240, h: 325 }, jong: { x: 135, y: 395, w: 450, h: 265 } },
+    horizJong: { cho: { x: 135, y: 60, w: 450, h: 205 }, jung: { x: 85, y: 260, w: 550, h: 175 }, jong: { x: 135, y: 440, w: 450, h: 225 } },
+    compoundJong: { cho: { x: 85, y: 55, w: 255, h: 245 }, jung: { x: 320, y: 45, w: 335, h: 355 }, jong: { x: 135, y: 430, w: 450, h: 235 } },
+    single: { x: 130, y: 130, w: 460, h: 460 }
+  },
+  serif: {
+    name: '전통 명조체',
+    family: '"Noto Serif KR", serif',
+    size: 440,
+    offsetY: 10,
+    strokeWidth: 30,
+    guideWidth: 44,
+    vert: { cho: { x: 112, y: 125, w: 250, h: 465 }, jung: { x: 372, y: 95, w: 235, h: 525 } },
+    horiz: { cho: { x: 145, y: 90, w: 430, h: 255 }, jung: { x: 95, y: 355, w: 530, h: 265 } },
+    compound: { cho: { x: 95, y: 90, w: 245, h: 285 }, jung: { x: 325, y: 80, w: 325, h: 550 } },
+    vertJong: { cho: { x: 105, y: 70, w: 255, h: 280 }, jung: { x: 372, y: 55, w: 235, h: 315 }, jong: { x: 135, y: 395, w: 440, h: 255 } },
+    horizJong: { cho: { x: 145, y: 65, w: 430, h: 195 }, jung: { x: 95, y: 260, w: 530, h: 170 }, jong: { x: 135, y: 440, w: 440, h: 220 } },
+    compoundJong: { cho: { x: 95, y: 55, w: 240, h: 235 }, jung: { x: 325, y: 45, w: 325, h: 345 }, jong: { x: 135, y: 430, w: 440, h: 225 } },
+    single: { x: 135, y: 135, w: 450, h: 450 }
+  },
+  hand: {
+    name: '나눔 손글씨체',
+    family: '"Nanum Pen Script", cursive',
+    size: 540,
+    offsetY: 0,
+    strokeWidth: 24,
+    guideWidth: 38,
+    vert: { cho: { x: 135, y: 140, w: 230, h: 440 }, jung: { x: 365, y: 80, w: 220, h: 550 } },
+    horiz: { cho: { x: 160, y: 105, w: 400, h: 240 }, jung: { x: 110, y: 350, w: 500, h: 255 } },
+    compound: { cho: { x: 110, y: 100, w: 230, h: 275 }, jung: { x: 320, y: 75, w: 310, h: 540 } },
+    vertJong: { cho: { x: 125, y: 80, w: 235, h: 270 }, jung: { x: 365, y: 50, w: 220, h: 320 }, jong: { x: 155, y: 405, w: 410, h: 245 } },
+    horizJong: { cho: { x: 160, y: 70, w: 400, h: 190 }, jung: { x: 110, y: 265, w: 500, h: 165 }, jong: { x: 155, y: 445, w: 410, h: 215 } },
+    compoundJong: { cho: { x: 110, y: 65, w: 225, h: 225 }, jung: { x: 320, y: 45, w: 310, h: 335 }, jong: { x: 155, y: 435, w: 410, h: 220 } },
+    single: { x: 145, y: 145, w: 430, h: 430 }
+  },
+  sans: {
+    name: '모던 고딕체',
+    family: '"Noto Sans KR", sans-serif',
+    size: 440,
+    offsetY: 12,
+    strokeWidth: 38,
+    guideWidth: 54,
+    vert: { cho: { x: 90, y: 115, w: 280, h: 480 }, jung: { x: 380, y: 95, w: 250, h: 525 } },
+    horiz: { cho: { x: 130, y: 85, w: 460, h: 265 }, jung: { x: 80, y: 355, w: 560, h: 270 } },
+    compound: { cho: { x: 80, y: 85, w: 270, h: 295 }, jung: { x: 320, y: 75, w: 340, h: 565 } },
+    vertJong: { cho: { x: 90, y: 65, w: 275, h: 295 }, jung: { x: 380, y: 55, w: 245, h: 325 }, jong: { x: 130, y: 395, w: 460, h: 265 } },
+    horizJong: { cho: { x: 130, y: 60, w: 460, h: 205 }, jung: { x: 80, y: 260, w: 560, h: 175 }, jong: { x: 130, y: 440, w: 460, h: 225 } },
+    compoundJong: { cho: { x: 80, y: 55, w: 260, h: 245 }, jung: { x: 320, y: 45, w: 340, h: 355 }, jong: { x: 130, y: 430, w: 460, h: 235 } },
+    single: { x: 125, y: 125, w: 470, h: 470 }
+  }
+};
+
+/* ── 폰트 맞춤형 획 생성기 (Font-Adaptive Stroke Generator) ── */
+function getStrokesForChar(char, fontKey = selectedFontKey) {
+  const profile = FONT_PROFILES[fontKey] || FONT_PROFILES.tracing;
   const dec = decompose(char);
   let strokes = [];
 
@@ -1463,34 +1558,28 @@ function getStrokesForChar(char) {
 
     if (!dec.hasJong) {
       if (isVert) {
-        // 좌우 분립 세로모음형 (예: '아', '가', '나')
-        choBox = { x: 95, y: 120, w: 270, h: 480 };
-        jungBox = { x: 385, y: 95, w: 240, h: 530 };
+        choBox = profile.vert.cho;
+        jungBox = profile.vert.jung;
       } else if (isHoriz) {
-        // 상하 결합 가로모음형 (예: '오', '고', '우')
-        choBox = { x: 135, y: 90, w: 450, h: 260 };
-        jungBox = { x: 85, y: 360, w: 550, h: 270 };
+        choBox = profile.horiz.cho;
+        jungBox = profile.horiz.jung;
       } else {
-        // 복합 모음 결합형 (예: '와', '왜', '의')
-        choBox = { x: 85, y: 90, w: 260, h: 290 };
-        jungBox = { x: 325, y: 80, w: 330, h: 560 };
+        choBox = profile.compound.cho;
+        jungBox = profile.compound.jung;
       }
     } else {
       if (isVert) {
-        // 세로모음 + 받침형 (예: '한', '달', '닭', '값')
-        choBox = { x: 95, y: 65, w: 270, h: 290 };
-        jungBox = { x: 385, y: 55, w: 240, h: 320 };
-        jongBox = { x: 135, y: 400, w: 450, h: 260 };
+        choBox = profile.vertJong.cho;
+        jungBox = profile.vertJong.jung;
+        jongBox = profile.vertJong.jong;
       } else if (isHoriz) {
-        // 가로모음 + 받침형 (예: '글', '봄', '꿈', '흙')
-        choBox = { x: 135, y: 60, w: 450, h: 200 };
-        jungBox = { x: 85, y: 265, w: 550, h: 175 };
-        jongBox = { x: 135, y: 445, w: 450, h: 220 };
+        choBox = profile.horizJong.cho;
+        jungBox = profile.horizJong.jung;
+        jongBox = profile.horizJong.jong;
       } else {
-        // 복합모음 + 받침형 (예: '꿩', '괜', '원')
-        choBox = { x: 85, y: 55, w: 250, h: 240 };
-        jungBox = { x: 325, y: 45, w: 330, h: 350 };
-        jongBox = { x: 135, y: 435, w: 450, h: 230 };
+        choBox = profile.compoundJong.cho;
+        jungBox = profile.compoundJong.jung;
+        jongBox = profile.compoundJong.jong;
       }
     }
 
@@ -1500,9 +1589,8 @@ function getStrokesForChar(char) {
       strokes.push(...getJamoStrokesInBox(dec.jong, jongBox, `종성 '${dec.jong}'`));
     }
   } else {
-    // 단일 자모 (예: 'ㄱ', 'ㅏ')
-    const box = { x: 130, y: 130, w: 460, h: 460 };
-    strokes.push(...getJamoStrokesInBox(char, box, `자모 '${char}'`));
+    // 단일 자모
+    strokes.push(...getJamoStrokesInBox(char, profile.single, `자모 '${char}'`));
   }
   return strokes;
 }
@@ -1526,18 +1614,20 @@ let animCompleted = false;
 let currentAnimRafId = null;
 let currentStepIndex = -1; // 1획씩 보기 인덱스
 
-const FONT_MAP = {
-  batang: { name: '고운 바탕체', family: '"Gowun Batang", serif', size: 450, offsetY: 12 },
-  dodum: { name: '고운 돋움체', family: '"Gowun Dodum", sans-serif', size: 450, offsetY: 14 },
-  serif: { name: '전통 명조체', family: '"Noto Serif KR", serif', size: 440, offsetY: 10 },
-  hand: { name: '나눔 손글씨체', family: '"Nanum Pen Script", cursive', size: 540, offsetY: 0 },
-  sans: { name: '모던 고딕체', family: '"Noto Sans KR", sans-serif', size: 440, offsetY: 12 }
-};
+// 쓰기 테스트 및 궤적 상태
+let testCompletedCount = 0; // 맞춘 획수
+let userPoints = [];        // 현재 획 긋는 중인 점들
+let freehandStrokes = [];   // 자유 그리기 궤적들
+let isPointerDown = false;
+
+const FONT_MAP = FONT_PROFILES;
 
 function onFontFamilyChange(val) {
   selectedFontKey = val;
   const selectEl = document.getElementById('select-font-family');
   if (selectEl) selectEl.value = val;
+
+  const profile = FONT_PROFILES[val] || FONT_PROFILES.tracing;
 
   if (val === 'tracing') {
     fontGuideMode = 'tracing';
@@ -1545,10 +1635,12 @@ function onFontFamilyChange(val) {
     setFeedback('🔤', '바탕 모드: 획과 1:1 완벽 일치하는 정밀 따라쓰기 폰트가 선택되었습니다.');
   } else {
     fontGuideMode = 'font';
-    const f = FONT_MAP[val];
-    document.getElementById('btn-toggle-fontmode').innerHTML = `<span id="fontmode-icon">🖋️</span> ${f ? f.name : '폰트'}`;
-    setFeedback('🔤', `바탕 모드: [${f ? f.name : val}] 서체가 캔버스에 적용되었습니다.`);
+    document.getElementById('btn-toggle-fontmode').innerHTML = `<span id="fontmode-icon">🖋️</span> ${profile.name}`;
+    setFeedback('🔤', `바탕 모드: [${profile.name}] 서체에 맞추어 따라쓰기 획(두께 ${profile.strokeWidth}px)과 위치가 자동 최적화되었습니다.`);
   }
+
+  // 폰트 변경 시 대시보드 카드 갱신 및 재렌더링
+  updateInfoDashboard();
   renderScene();
   Sound.tap(1.2);
 }
@@ -1608,6 +1700,8 @@ function cancelCurrentAnimation() {
 function drawBackgroundGuide(strokes) {
   if (guideOpacity <= 0) return;
 
+  const profile = FONT_PROFILES[selectedFontKey] || FONT_PROFILES.tracing;
+
   ctx.save();
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
@@ -1615,7 +1709,7 @@ function drawBackgroundGuide(strokes) {
   // [옵션 1] 정밀 벡터 따라쓰기 폰트 (1:1 일치 펜 글씨)
   if (selectedFontKey === 'tracing') {
     // 1단계: 외곽 부드러운 글자 바디 (회색 폰트 몸통)
-    ctx.lineWidth = 52;
+    ctx.lineWidth = profile.guideWidth;
     ctx.strokeStyle = `rgba(203, 213, 225, ${Math.min(1.0, guideOpacity * 1.5)})`;
     strokes.forEach(s => {
       if (s.type === 'circle') {
@@ -1631,7 +1725,7 @@ function drawBackgroundGuide(strokes) {
     });
 
     // 2단계: 내부 밝은 안감 (홈 형태)
-    ctx.lineWidth = 42;
+    ctx.lineWidth = Math.max(12, profile.guideWidth - 10);
     ctx.strokeStyle = `rgba(241, 245, 249, ${Math.min(1.0, guideOpacity * 1.8)})`;
     strokes.forEach(s => {
       if (s.type === 'circle') {
@@ -1664,14 +1758,12 @@ function drawBackgroundGuide(strokes) {
     });
   } else {
     // [옵션 2] 실제 한글 웹폰트 렌더링 (바탕체, 돋움체, 명조체, 손글씨체, 고딕체)
-    const fontInfo = FONT_MAP[selectedFontKey] || FONT_MAP.batang;
-
     // (A) 실제 한글 폰트 렌더링
-    ctx.font = `bold ${fontInfo.size}px ${fontInfo.family}`;
+    ctx.font = `bold ${profile.size}px ${profile.family}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillStyle = `rgba(148, 163, 184, ${guideOpacity * 1.2})`;
-    ctx.fillText(currentChar, canvas.width / 2, canvas.height / 2 + fontInfo.offsetY);
+    ctx.fillText(currentChar, canvas.width / 2, canvas.height / 2 + profile.offsetY);
 
     // (B) 폰트 위에 은은한 중심 점선 가이드도 함께 표시하여 획순을 정확히 따라쓸 수 있도록 보조
     ctx.lineWidth = 2;
@@ -1698,7 +1790,9 @@ function drawBackgroundGuide(strokes) {
 function renderScene(animStrokeIdx = -1, animProgress = 0) {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  const strokes = getStrokesForChar(currentChar);
+  const profile = FONT_PROFILES[selectedFontKey] || FONT_PROFILES.tracing;
+  const strokes = getStrokesForChar(currentChar, selectedFontKey);
+  const currentStrokeWidth = profile.strokeWidth;
 
   // 1. 바탕에 따라쓰기 한글 폰트 렌더링 (오차 0% 완벽 일치)
   drawBackgroundGuide(strokes);
@@ -1710,7 +1804,7 @@ function renderScene(animStrokeIdx = -1, animProgress = 0) {
       if (stk.length < 2) return;
       ctx.save();
       ctx.strokeStyle = currentBrushColor;
-      ctx.lineWidth = 34;
+      ctx.lineWidth = currentStrokeWidth;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.beginPath();
@@ -1723,7 +1817,7 @@ function renderScene(animStrokeIdx = -1, animProgress = 0) {
     // [따라쓰기 테스트 모드]
     // (a) 이미 맞춘 획들: 초록색 완료 표시 (바탕 홈을 꽉 채움)
     for (let i = 0; i < testCompletedCount; i++) {
-      drawStaticStroke(strokes[i], '#10b981', 36);
+      drawStaticStroke(strokes[i], '#10b981', currentStrokeWidth);
       drawBadge(i + 1, getStrokeStartPoint(strokes[i]), '#10b981');
     }
 
@@ -1737,7 +1831,7 @@ function renderScene(animStrokeIdx = -1, animProgress = 0) {
     if (userPoints.length > 1) {
       ctx.save();
       ctx.strokeStyle = currentBrushColor;
-      ctx.lineWidth = 34;
+      ctx.lineWidth = currentStrokeWidth;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.beginPath();
@@ -1751,25 +1845,25 @@ function renderScene(animStrokeIdx = -1, animProgress = 0) {
     if (isAnimating && animStrokeIdx >= 0) {
       // 이미 재생 완료된 획들
       for (let i = 0; i < animStrokeIdx; i++) {
-        drawStaticStroke(strokes[i], currentBrushColor, 36);
+        drawStaticStroke(strokes[i], currentBrushColor, currentStrokeWidth);
         drawBadge(i + 1, getStrokeStartPoint(strokes[i]), '#2563eb');
       }
       // 현재 보간 중인 획
       if (animStrokeIdx < strokes.length) {
-        drawProgressStroke(strokes[animStrokeIdx], animProgress, currentBrushColor);
+        drawProgressStroke(strokes[animStrokeIdx], animProgress, currentBrushColor, currentStrokeWidth);
         drawBadge(animStrokeIdx + 1, getStrokeStartPoint(strokes[animStrokeIdx]), '#f59e0b', true);
       }
     } else if (animCompleted) {
       // 재생 완료 상태: 모든 획을 완벽하게 채워진 완성 상태로 영구 표시!
       for (let i = 0; i < strokes.length; i++) {
-        drawStaticStroke(strokes[i], currentBrushColor, 36);
+        drawStaticStroke(strokes[i], currentBrushColor, currentStrokeWidth);
         drawBadge(i + 1, getStrokeStartPoint(strokes[i]), '#10b981');
       }
     } else if (currentStepIndex >= 0) {
       // 1획씩 보기 상태
       for (let i = 0; i <= currentStepIndex && i < strokes.length; i++) {
         const isCurrent = (i === currentStepIndex);
-        drawStaticStroke(strokes[i], isCurrent ? '#f59e0b' : currentBrushColor, 36);
+        drawStaticStroke(strokes[i], isCurrent ? '#f59e0b' : currentBrushColor, currentStrokeWidth);
         drawBadge(i + 1, getStrokeStartPoint(strokes[i]), isCurrent ? '#f59e0b' : '#2563eb');
       }
     }
@@ -1849,10 +1943,10 @@ function drawGuideStroke(s) {
   ctx.restore();
 }
 
-function drawProgressStroke(s, progress, color) {
+function drawProgressStroke(s, progress, color, strokeWidth = 36) {
   ctx.save();
   ctx.strokeStyle = color;
-  ctx.lineWidth = 36;
+  ctx.lineWidth = strokeWidth;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
@@ -2253,12 +2347,17 @@ function highlightTimelineStep(idx) {
 
 function updateInfoDashboard() {
   const dec = decompose(currentChar);
-  const strokes = getStrokesForChar(currentChar);
+  const profile = FONT_PROFILES[selectedFontKey] || FONT_PROFILES.tracing;
+  const strokes = getStrokesForChar(currentChar, selectedFontKey);
 
   // 헤어로 카드
   document.getElementById('hero-char-box').textContent = currentChar;
   document.getElementById('hero-char-title').textContent = dec.isSyllable ? `음절 '${currentChar}'` : `자모 '${currentChar}'`;
   document.getElementById('hero-strokes-tag').textContent = `총 ${strokes.length}획`;
+  const fontTagEl = document.getElementById('hero-font-tag');
+  if (fontTagEl) {
+    fontTagEl.textContent = `서체: ${profile.name} (${profile.strokeWidth}px)`;
+  }
 
   const isVert = dec.isSyllable && [0, 1, 2, 3, 4, 5, 6, 7, 20].includes(dec.jungIdx);
   if (dec.isSyllable) {
