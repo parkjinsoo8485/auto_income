@@ -1469,11 +1469,45 @@ function renderCharacterTrace(challenge, container) {
   
   function drawBaseGuide() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.font = 'bold 150px Gungsuh, serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillStyle = '#e8e8e8';
-    ctx.fillText(challenge.character, 120, 120);
+    const stks = getCharacterStrokes(challenge.character);
+    ctx.save();
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    
+    // 1. 부드러운 바탕 따라쓰기 글자 바디
+    ctx.lineWidth = 22;
+    ctx.strokeStyle = '#e5e7eb';
+    stks.forEach(s => {
+      if (s.type === 'circle') {
+        ctx.beginPath();
+        ctx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(s.pts[0][0], s.pts[0][1]);
+        for (let i = 1; i < s.pts.length; i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
+        ctx.stroke();
+      }
+    });
+
+    // 2. 중심 점선 가이드
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 4]);
+    ctx.strokeStyle = '#9ca3af';
+    stks.forEach(s => {
+      if (s.type === 'circle') {
+        ctx.beginPath();
+        ctx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(s.pts[0][0], s.pts[0][1]);
+        for (let i = 1; i < s.pts.length; i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
+        ctx.stroke();
+      }
+    });
+
+    ctx.restore();
   }
 
   drawBaseGuide();
