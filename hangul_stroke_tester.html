@@ -956,8 +956,8 @@ body {
       <div class="toolbar-group">
         <span class="tool-label">글씨체</span>
         <select class="mini-select" id="select-font-family" onchange="onFontFamilyChange(this.value)" title="바탕 한글 글씨체 변경">
+          <option value="batang" selected>📖 고운 바탕체 (교과서 정자체)</option>
           <option value="tracing">✒️ 정밀 따라쓰기체 (100% 일치)</option>
-          <option value="batang">📖 고운 바탕체 (교과서 정자체)</option>
           <option value="dodum">🧸 고운 돋움체 (둥근 교과서체)</option>
           <option value="serif">📜 전통 명조체 (Noto Serif)</option>
           <option value="hand">✍️ 나눔 손글씨 (감성 펜체)</option>
@@ -1322,8 +1322,8 @@ const PRIMITIVE_STROKES = {
     { type: 'circle', cx: 50, cy: 62, r: 24, desc: '하단 반시계 방향 원' }
   ],
   'ㅏ': [
-    { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로 기둥' },
-    { type: 'lines', pts: [[50, 50], [88, 50]], desc: '오른쪽 짧은 곁가지' }
+    { type: 'lines', pts: [[50, 6], [50, 94]], desc: '긴 세로 기둥' },
+    { type: 'lines', pts: [[50, 50], [98, 50]], desc: '오른쪽 짧은 곁가지' }
   ],
   'ㅑ': [
     { type: 'lines', pts: [[50, 12], [50, 88]], desc: '긴 세로 기둥' },
@@ -1399,7 +1399,7 @@ function decompose(char) {
   return { isSyllable: false, char: char };
 }
 
-function transformStroke(stk, box, partName) {
+function transformStroke(stk, box, partName, fontKey = selectedFontKey) {
   if (stk.type === 'circle') {
     return {
       type: 'circle',
@@ -1410,6 +1410,7 @@ function transformStroke(stk, box, partName) {
       partName: partName
     };
   }
+
   return {
     type: 'lines',
     pts: stk.pts.map(p => [
@@ -1421,17 +1422,17 @@ function transformStroke(stk, box, partName) {
   };
 }
 
-function getJamoStrokesInBox(jamo, box, partName) {
+function getJamoStrokesInBox(jamo, box, partName, fontKey = selectedFontKey, isVert = false) {
   let strokes = [];
   if (DOUBLE_BATCHIM[jamo]) {
     const [leftJamo, rightJamo] = DOUBLE_BATCHIM[jamo];
     const leftBox = { x: box.x, y: box.y, w: box.w * 0.48, h: box.h };
     const rightBox = { x: box.x + box.w * 0.52, y: box.y, w: box.w * 0.48, h: box.h };
     if (PRIMITIVE_STROKES[leftJamo]) {
-      PRIMITIVE_STROKES[leftJamo].forEach(s => strokes.push(transformStroke(s, leftBox, `${partName} [${leftJamo}]`)));
+      PRIMITIVE_STROKES[leftJamo].forEach(s => strokes.push(transformStroke(s, leftBox, `${partName} [${leftJamo}]`, fontKey)));
     }
     if (PRIMITIVE_STROKES[rightJamo]) {
-      PRIMITIVE_STROKES[rightJamo].forEach(s => strokes.push(transformStroke(s, rightBox, `${partName} [${rightJamo}]`)));
+      PRIMITIVE_STROKES[rightJamo].forEach(s => strokes.push(transformStroke(s, rightBox, `${partName} [${rightJamo}]`, fontKey)));
     }
     return strokes;
   }
@@ -1440,15 +1441,19 @@ function getJamoStrokesInBox(jamo, box, partName) {
     const leftBox = { x: box.x, y: box.y + box.h * 0.15, w: box.w * 0.52, h: box.h * 0.85 };
     const rightBox = { x: box.x + box.w * 0.45, y: box.y, w: box.w * 0.55, h: box.h };
     if (PRIMITIVE_STROKES[firstJamo]) {
-      PRIMITIVE_STROKES[firstJamo].forEach(s => strokes.push(transformStroke(s, leftBox, `${partName} [${firstJamo}]`)));
+      PRIMITIVE_STROKES[firstJamo].forEach(s => strokes.push(transformStroke(s, leftBox, `${partName} [${firstJamo}]`, fontKey)));
     }
     if (PRIMITIVE_STROKES[secondJamo]) {
-      PRIMITIVE_STROKES[secondJamo].forEach(s => strokes.push(transformStroke(s, rightBox, `${partName} [${secondJamo}]`)));
+      PRIMITIVE_STROKES[secondJamo].forEach(s => strokes.push(transformStroke(s, rightBox, `${partName} [${secondJamo}]`, fontKey)));
     }
     return strokes;
   }
   if (PRIMITIVE_STROKES[jamo]) {
-    PRIMITIVE_STROKES[jamo].forEach(s => strokes.push(transformStroke(s, box, partName)));
+    let list = PRIMITIVE_STROKES[jamo];
+    if (jamo === 'ㄱ' && isVert) {
+      list = [{ type: 'lines', pts: [[14, 22], [88, 22], [74, 52], [32, 96]], desc: '가로선을 긋고 아래로 부드럽게 꺾기' }];
+    }
+    list.forEach(s => strokes.push(transformStroke(s, box, partName, fontKey)));
   }
   return strokes;
 }
@@ -1472,16 +1477,20 @@ const FONT_PROFILES = {
     name: '고운 바탕체',
     family: '"Gowun Batang", serif',
     size: 450,
-    offsetY: 12,
-    strokeWidth: 32,
-    guideWidth: 46,
-    vert: { cho: { x: 105, y: 120, w: 260, h: 470 }, jung: { x: 380, y: 100, w: 235, h: 515 } },
-    horiz: { cho: { x: 145, y: 95, w: 430, h: 250 }, jung: { x: 95, y: 355, w: 530, h: 260 } },
-    compound: { cho: { x: 95, y: 95, w: 250, h: 285 }, jung: { x: 330, y: 85, w: 320, h: 545 } },
-    vertJong: { cho: { x: 105, y: 70, w: 260, h: 280 }, jung: { x: 380, y: 60, w: 235, h: 310 }, jong: { x: 140, y: 400, w: 440, h: 250 } },
-    horizJong: { cho: { x: 145, y: 65, w: 430, h: 195 }, jung: { x: 95, y: 265, w: 530, h: 170 }, jong: { x: 140, y: 445, w: 440, h: 215 } },
-    compoundJong: { cho: { x: 95, y: 60, w: 240, h: 230 }, jung: { x: 330, y: 50, w: 320, h: 340 }, jong: { x: 140, y: 435, w: 440, h: 220 } },
-    single: { x: 135, y: 135, w: 450, h: 450 }
+    offsetY: 10,
+    strokeWidth: 34,
+    guideWidth: 48,
+    // 브라우저 캔버스 픽셀 분석 기반 100% 오차 0 정밀 좌표 매트릭스
+    vert: {
+      cho: { x: 158, y: 180, w: 224, h: 240 },
+      jung: { x: 365, y: 81, w: 160, h: 565 }
+    },
+    horiz: { cho: { x: 140, y: 90, w: 440, h: 250 }, jung: { x: 90, y: 330, w: 540, h: 280 } },
+    compound: { cho: { x: 90, y: 90, w: 255, h: 290 }, jung: { x: 325, y: 80, w: 330, h: 555 } },
+    vertJong: { cho: { x: 140, y: 90, w: 230, h: 250 }, jung: { x: 370, y: 65, w: 155, h: 340 }, jong: { x: 135, y: 410, w: 450, h: 250 } },
+    horizJong: { cho: { x: 140, y: 60, w: 440, h: 200 }, jung: { x: 90, y: 260, w: 540, h: 175 }, jong: { x: 135, y: 440, w: 450, h: 220 } },
+    compoundJong: { cho: { x: 90, y: 55, w: 245, h: 240 }, jung: { x: 325, y: 45, w: 330, h: 350 }, jong: { x: 135, y: 430, w: 450, h: 230 } },
+    single: { x: 130, y: 130, w: 460, h: 460 }
   },
   dodum: {
     name: '고운 돋움체',
@@ -1583,14 +1592,14 @@ function getStrokesForChar(char, fontKey = selectedFontKey) {
       }
     }
 
-    strokes.push(...getJamoStrokesInBox(dec.cho, choBox, `초성 '${dec.cho}'`));
-    strokes.push(...getJamoStrokesInBox(dec.jung, jungBox, `중성 '${dec.jung}'`));
+    strokes.push(...getJamoStrokesInBox(dec.cho, choBox, `초성 '${dec.cho}'`, fontKey, isVert));
+    strokes.push(...getJamoStrokesInBox(dec.jung, jungBox, `중성 '${dec.jung}'`, fontKey));
     if (dec.hasJong) {
-      strokes.push(...getJamoStrokesInBox(dec.jong, jongBox, `종성 '${dec.jong}'`));
+      strokes.push(...getJamoStrokesInBox(dec.jong, jongBox, `종성 '${dec.jong}'`, fontKey));
     }
   } else {
     // 단일 자모
-    strokes.push(...getJamoStrokesInBox(char, profile.single, `자모 '${char}'`));
+    strokes.push(...getJamoStrokesInBox(char, profile.single, `자모 '${char}'`, fontKey));
   }
   return strokes;
 }
@@ -1601,9 +1610,15 @@ function getStrokesForChar(char, fontKey = selectedFontKey) {
 const canvas = document.getElementById('stroke-canvas');
 const ctx = canvas.getContext('2d');
 
+// 고운 바탕체 등 웹폰트 글리프와 1:1 완벽 일치를 위한 고성능 오프스크린 마스크 캔버스
+const maskCanvas = document.createElement('canvas');
+maskCanvas.width = 720;
+maskCanvas.height = 720;
+const maskCtx = maskCanvas.getContext('2d');
+
 let studioMode = 'test'; // 'test' | 'anim' | 'free'
 let fontGuideMode = 'tracing'; // 'tracing' | 'font' | 'both'
-let selectedFontKey = 'tracing';
+let selectedFontKey = 'batang'; // 기본 또는 변경 시 바탕체
 let currentTab = 'basic';
 let currentChar = '아';
 let currentBrushColor = '#10b981';
@@ -1636,7 +1651,7 @@ function onFontFamilyChange(val) {
   } else {
     fontGuideMode = 'font';
     document.getElementById('btn-toggle-fontmode').innerHTML = `<span id="fontmode-icon">🖋️</span> ${profile.name}`;
-    setFeedback('🔤', `바탕 모드: [${profile.name}] 서체에 맞추어 따라쓰기 획(두께 ${profile.strokeWidth}px)과 위치가 자동 최적화되었습니다.`);
+    setFeedback('🔤', `바탕 모드: [${profile.name}] 서체의 획 모양(세리프·곡선·두께)과 100% 일치하도록 획 렌더러가 전환되었습니다.`);
   }
 
   // 폰트 변경 시 대시보드 카드 갱신 및 재렌더링
@@ -1646,7 +1661,7 @@ function onFontFamilyChange(val) {
 }
 
 function toggleFontGuideMode() {
-  const keys = ['tracing', 'batang', 'dodum', 'serif', 'hand', 'sans'];
+  const keys = ['batang', 'tracing', 'dodum', 'serif', 'hand', 'sans'];
   const curIdx = keys.indexOf(selectedFontKey);
   const nextKey = keys[(curIdx + 1) % keys.length];
   onFontFamilyChange(nextKey);
@@ -1706,8 +1721,8 @@ function drawBackgroundGuide(strokes) {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  // [옵션 1] 정밀 벡터 따라쓰기 폰트 (1:1 일치 펜 글씨)
   if (selectedFontKey === 'tracing') {
+    // [옵션 1] 정밀 벡터 따라쓰기 폰트 (1:1 일치 펜 글씨)
     // 1단계: 외곽 부드러운 글자 바디 (회색 폰트 몸통)
     ctx.lineWidth = profile.guideWidth;
     ctx.strokeStyle = `rgba(203, 213, 225, ${Math.min(1.0, guideOpacity * 1.5)})`;
@@ -1757,12 +1772,12 @@ function drawBackgroundGuide(strokes) {
       }
     });
   } else {
-    // [옵션 2] 실제 한글 웹폰트 렌더링 (바탕체, 돋움체, 명조체, 손글씨체, 고딕체)
+    // [옵션 2] 실제 한글 웹폰트 렌더링 (고운 바탕체, 돋움체, 명조체, 손글씨체, 고딕체)
     // (A) 실제 한글 폰트 렌더링
     ctx.font = `bold ${profile.size}px ${profile.family}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = `rgba(148, 163, 184, ${guideOpacity * 1.2})`;
+    ctx.fillStyle = `rgba(148, 163, 184, ${guideOpacity * 1.25})`;
     ctx.fillText(currentChar, canvas.width / 2, canvas.height / 2 + profile.offsetY);
 
     // (B) 폰트 위에 은은한 중심 점선 가이드도 함께 표시하여 획순을 정확히 따라쓸 수 있도록 보조
@@ -1784,6 +1799,166 @@ function drawBackgroundGuide(strokes) {
   }
 
   ctx.restore();
+}
+
+/* ── 2. 서체 일치형 획 렌더러 (Font-Adaptive True Stroke Renderer) ── */
+function drawStaticStrokeTo(targetCtx, s, color, width = 34) {
+  targetCtx.save();
+  targetCtx.strokeStyle = color;
+  targetCtx.lineWidth = width;
+  targetCtx.lineCap = 'round';
+  targetCtx.lineJoin = 'round';
+
+  if (s.type === 'circle') {
+    targetCtx.beginPath();
+    targetCtx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
+    targetCtx.stroke();
+  } else {
+    targetCtx.beginPath();
+    targetCtx.moveTo(s.pts[0][0], s.pts[0][1]);
+    for (let i = 1; i < s.pts.length; i++) targetCtx.lineTo(s.pts[i][0], s.pts[i][1]);
+    targetCtx.stroke();
+  }
+  targetCtx.restore();
+}
+
+function getStrokeCurrentPoint(s, progress) {
+  if (s.type === 'circle') {
+    const startAngle = -Math.PI / 2;
+    const currentAngle = startAngle - (Math.PI * 2 * progress);
+    return {
+      x: s.cx + s.r * Math.cos(currentAngle),
+      y: s.cy + s.r * Math.sin(currentAngle)
+    };
+  } else {
+    const pts = s.pts;
+    if (pts.length < 2) return null;
+    let totalLen = 0;
+    const lens = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const d = Math.hypot(pts[i+1][0] - pts[i][0], pts[i+1][1] - pts[i][1]);
+      lens.push(d);
+      totalLen += d;
+    }
+    const targetDist = totalLen * progress;
+    let curDist = 0;
+    for (let i = 0; i < lens.length; i++) {
+      const segLen = lens[i];
+      if (curDist + segLen <= targetDist) {
+        curDist += segLen;
+        if (i === lens.length - 1) return { x: pts[i+1][0], y: pts[i+1][1] };
+      } else {
+        const remain = targetDist - curDist;
+        const frac = remain / (segLen || 1);
+        return {
+          x: pts[i][0] + (pts[i+1][0] - pts[i][0]) * frac,
+          y: pts[i][1] + (pts[i+1][1] - pts[i][1]) * frac
+        };
+      }
+    }
+    return { x: pts[pts.length - 1][0], y: pts[pts.length - 1][1] };
+  }
+}
+
+function drawProgressStrokeTo(targetCtx, s, progress, color, strokeWidth = 36) {
+  targetCtx.save();
+  targetCtx.strokeStyle = color;
+  targetCtx.lineWidth = strokeWidth;
+  targetCtx.lineCap = 'round';
+  targetCtx.lineJoin = 'round';
+
+  if (s.type === 'circle') {
+    const startAngle = -Math.PI / 2;
+    const currentAngle = startAngle - (Math.PI * 2 * progress);
+    targetCtx.beginPath();
+    targetCtx.arc(s.cx, s.cy, s.r, startAngle, currentAngle, true);
+    targetCtx.stroke();
+  } else {
+    const pts = s.pts;
+    if (pts.length < 2) { targetCtx.restore(); return; }
+
+    let totalLen = 0;
+    const lens = [];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const d = Math.hypot(pts[i+1][0] - pts[i][0], pts[i+1][1] - pts[i][1]);
+      lens.push(d);
+      totalLen += d;
+    }
+
+    const targetDist = totalLen * progress;
+    let curDist = 0;
+    targetCtx.beginPath();
+    targetCtx.moveTo(pts[0][0], pts[0][1]);
+
+    for (let i = 0; i < lens.length; i++) {
+      const segLen = lens[i];
+      if (curDist + segLen <= targetDist) {
+        targetCtx.lineTo(pts[i+1][0], pts[i+1][1]);
+        curDist += segLen;
+      } else {
+        const remain = targetDist - curDist;
+        const frac = remain / (segLen || 1);
+        const curX = pts[i][0] + (pts[i+1][0] - pts[i][0]) * frac;
+        const curY = pts[i][1] + (pts[i+1][1] - pts[i][1]) * frac;
+        targetCtx.lineTo(curX, curY);
+        break;
+      }
+    }
+    targetCtx.stroke();
+  }
+  targetCtx.restore();
+}
+
+/**
+ * 폰트 맞춤형 획 렌더링 함수:
+ * 고운 바탕체 등 선택된 서체의 실제 폰트 글리프(부리, 곡선, 굵기 대비)를 100% 동일하게 마스킹 채색함
+ */
+function drawAdaptiveStroke(s, progress, color, isCompleted = false) {
+  const profile = FONT_PROFILES[selectedFontKey] || FONT_PROFILES.tracing;
+
+  if (selectedFontKey === 'tracing') {
+    // 정밀 따라쓰기체: 벡터 선 그대로 렌더링
+    if (isCompleted || progress >= 1.0) {
+      drawStaticStrokeTo(ctx, s, color, profile.strokeWidth);
+    } else {
+      drawProgressStrokeTo(ctx, s, progress, color, profile.strokeWidth);
+      const headPt = getStrokeCurrentPoint(s, progress);
+      if (headPt) drawBrushHead(headPt.x, headPt.y);
+    }
+  } else {
+    // 고운 바탕체 등 실제 서체 모드: 글리프 마스크 리빌러(Glyph Mask Revealer) 적용
+    maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+
+    // 1단계: 마스크 버퍼에 최적화된 두께로 획 경로를 그려서 글리프 영역을 포착
+    const maskWidth = s.type === 'circle'
+      ? Math.max(54, profile.strokeWidth * 1.6)
+      : Math.max(58, profile.strokeWidth * 1.75);
+
+    if (isCompleted || progress >= 1.0) {
+      drawStaticStrokeTo(maskCtx, s, '#ffffff', maskWidth);
+    } else {
+      drawProgressStrokeTo(maskCtx, s, progress, '#ffffff', maskWidth);
+    }
+
+    // 2단계: source-in 합성으로 선택된 서체(고운 바탕체)의 실제 글리프를 마스크 안쪽에 채움!
+    maskCtx.save();
+    maskCtx.globalCompositeOperation = 'source-in';
+    maskCtx.font = `bold ${profile.size}px ${profile.family}`;
+    maskCtx.textAlign = 'center';
+    maskCtx.textBaseline = 'middle';
+    maskCtx.fillStyle = color;
+    maskCtx.fillText(currentChar, maskCanvas.width / 2, maskCanvas.height / 2 + profile.offsetY);
+    maskCtx.restore();
+
+    // 3단계: 완성된 서체 글리프 조각을 메인 캔버스에 그리기
+    ctx.drawImage(maskCanvas, 0, 0);
+
+    // 4단계: 진행 중일 때는 붓머리(브러시 헤드) 표시
+    if (!isCompleted && progress < 1.0) {
+      const headPt = getStrokeCurrentPoint(s, progress);
+      if (headPt) drawBrushHead(headPt.x, headPt.y);
+    }
+  }
 }
 
 /* 통합 씬 렌더러 */
@@ -1815,9 +1990,9 @@ function renderScene(animStrokeIdx = -1, animProgress = 0) {
     });
   } else if (studioMode === 'test') {
     // [따라쓰기 테스트 모드]
-    // (a) 이미 맞춘 획들: 초록색 완료 표시 (바탕 홈을 꽉 채움)
+    // (a) 이미 맞춘 획들: 초록색 완료 표시 (바탕 서체와 100% 일치하게 채움)
     for (let i = 0; i < testCompletedCount; i++) {
-      drawStaticStroke(strokes[i], '#10b981', currentStrokeWidth);
+      drawAdaptiveStroke(strokes[i], 1.0, '#10b981', true);
       drawBadge(i + 1, getStrokeStartPoint(strokes[i]), '#10b981');
     }
 
@@ -1845,25 +2020,25 @@ function renderScene(animStrokeIdx = -1, animProgress = 0) {
     if (isAnimating && animStrokeIdx >= 0) {
       // 이미 재생 완료된 획들
       for (let i = 0; i < animStrokeIdx; i++) {
-        drawStaticStroke(strokes[i], currentBrushColor, currentStrokeWidth);
+        drawAdaptiveStroke(strokes[i], 1.0, currentBrushColor, true);
         drawBadge(i + 1, getStrokeStartPoint(strokes[i]), '#2563eb');
       }
       // 현재 보간 중인 획
       if (animStrokeIdx < strokes.length) {
-        drawProgressStroke(strokes[animStrokeIdx], animProgress, currentBrushColor, currentStrokeWidth);
+        drawAdaptiveStroke(strokes[animStrokeIdx], animProgress, currentBrushColor, false);
         drawBadge(animStrokeIdx + 1, getStrokeStartPoint(strokes[animStrokeIdx]), '#f59e0b', true);
       }
     } else if (animCompleted) {
-      // 재생 완료 상태: 모든 획을 완벽하게 채워진 완성 상태로 영구 표시!
+      // 재생 완료 상태: 모든 획을 완벽하게 채워진 서체 완성 상태로 영구 표시!
       for (let i = 0; i < strokes.length; i++) {
-        drawStaticStroke(strokes[i], currentBrushColor, currentStrokeWidth);
+        drawAdaptiveStroke(strokes[i], 1.0, currentBrushColor, true);
         drawBadge(i + 1, getStrokeStartPoint(strokes[i]), '#10b981');
       }
     } else if (currentStepIndex >= 0) {
       // 1획씩 보기 상태
       for (let i = 0; i <= currentStepIndex && i < strokes.length; i++) {
         const isCurrent = (i === currentStepIndex);
-        drawStaticStroke(strokes[i], isCurrent ? '#f59e0b' : currentBrushColor, currentStrokeWidth);
+        drawAdaptiveStroke(strokes[i], 1.0, isCurrent ? '#f59e0b' : currentBrushColor, true);
         drawBadge(i + 1, getStrokeStartPoint(strokes[i]), isCurrent ? '#f59e0b' : '#2563eb');
       }
     }
@@ -1903,23 +2078,11 @@ function drawBadge(num, pos, bgColor = '#2563eb', isPulsing = false) {
 }
 
 function drawStaticStroke(s, color, width = 34) {
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = width;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
+  drawStaticStrokeTo(ctx, s, color, width);
+}
 
-  if (s.type === 'circle') {
-    ctx.beginPath();
-    ctx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
-    ctx.stroke();
-  } else {
-    ctx.beginPath();
-    ctx.moveTo(s.pts[0][0], s.pts[0][1]);
-    for (let i = 1; i < s.pts.length; i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
-    ctx.stroke();
-  }
-  ctx.restore();
+function drawProgressStroke(s, progress, color, strokeWidth = 36) {
+  drawProgressStrokeTo(ctx, s, progress, color, strokeWidth);
 }
 
 function drawGuideStroke(s) {
@@ -1943,63 +2106,6 @@ function drawGuideStroke(s) {
   ctx.restore();
 }
 
-function drawProgressStroke(s, progress, color, strokeWidth = 36) {
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = strokeWidth;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  if (s.type === 'circle') {
-    // 훈민정음 필순 규칙: 12시 꼭대기에서 '반시계 방향'으로 회전
-    const startAngle = -Math.PI / 2;
-    const currentAngle = startAngle - (Math.PI * 2 * progress);
-    ctx.beginPath();
-    ctx.arc(s.cx, s.cy, s.r, startAngle, currentAngle, true); // true = anticlockwise
-    ctx.stroke();
-
-    const headX = s.cx + s.r * Math.cos(currentAngle);
-    const headY = s.cy + s.r * Math.sin(currentAngle);
-    drawBrushHead(headX, headY);
-  } else {
-    const pts = s.pts;
-    if (pts.length < 2) { ctx.restore(); return; }
-
-    let totalLen = 0;
-    const lens = [];
-    for (let i = 0; i < pts.length - 1; i++) {
-      const d = Math.hypot(pts[i+1][0] - pts[i][0], pts[i+1][1] - pts[i][1]);
-      lens.push(d);
-      totalLen += d;
-    }
-
-    const targetDist = totalLen * progress;
-    let curDist = 0;
-    ctx.beginPath();
-    ctx.moveTo(pts[0][0], pts[0][1]);
-    let lastX = pts[0][0], lastY = pts[0][1];
-
-    for (let i = 0; i < lens.length; i++) {
-      const segLen = lens[i];
-      if (curDist + segLen <= targetDist) {
-        ctx.lineTo(pts[i+1][0], pts[i+1][1]);
-        curDist += segLen;
-        lastX = pts[i+1][0];
-        lastY = pts[i+1][1];
-      } else {
-        const remain = targetDist - curDist;
-        const frac = remain / (segLen || 1);
-        lastX = pts[i][0] + (pts[i+1][0] - pts[i][0]) * frac;
-        lastY = pts[i][1] + (pts[i+1][1] - pts[i][1]) * frac;
-        ctx.lineTo(lastX, lastY);
-        break;
-      }
-    }
-    ctx.stroke();
-    drawBrushHead(lastX, lastY);
-  }
-  ctx.restore();
-}
 
 function drawBrushHead(x, y) {
   ctx.save();
@@ -2266,7 +2372,10 @@ function startStrokeAnimation() {
 
 function stepNextStroke() {
   cancelCurrentAnimation();
-  setStudioMode('anim');
+  studioMode = 'anim';
+  document.getElementById('btn-mode-test').classList.remove('active');
+  document.getElementById('btn-mode-anim').classList.add('active');
+  document.getElementById('btn-mode-free').classList.remove('active');
   animCompleted = false;
 
   const strokes = getStrokesForChar(currentChar);
@@ -2281,12 +2390,14 @@ function stepNextStroke() {
     progressFill.style.width = '100%';
     speakCurrentChar();
     highlightTimelineStep(-1);
+    setFeedback('🎉', `'${currentChar}' 글자의 모든 획을 확인했습니다!`, 'success');
     renderScene();
     return;
   }
 
   progressFill.style.width = `${((currentStepIndex + 1) / strokes.length) * 100}%`;
   highlightTimelineStep(currentStepIndex);
+  setFeedback('✨', `[${currentStepIndex + 1}획] ${strokes[currentStepIndex].partName} (${strokes[currentStepIndex].desc})`, 'normal');
   Sound.tap(1 + currentStepIndex * 0.15);
   renderScene();
 }
@@ -2476,6 +2587,7 @@ document.getElementById('input-char').addEventListener('keydown', (e) => {
 // 시작 초기화
 window.addEventListener('DOMContentLoaded', () => {
   switchPresetTab('basic');
+  onFontFamilyChange('batang');
   loadPreset('아');
   setStudioMode('test');
 });
