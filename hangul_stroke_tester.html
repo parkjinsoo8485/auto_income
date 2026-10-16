@@ -6,7 +6,7 @@
 <title>한글 획순 쓰기 스튜디오 Pro | Hangul Stroke Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700;800;900&family=Noto+Serif+KR:wght@600;900&family=Noto+Sans+KR:wght@700;900&family=Gowun+Batang:wght@400;700&family=Gowun+Dodum&family=Nanum+Pen+Script&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
 :root {
   --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #edf2f7 50%, #f1f5f9 100%);
@@ -505,9 +505,26 @@ body {
 }
 
 .mini-slider {
-  width: 80px;
+  width: 70px;
   accent-color: var(--primary);
   cursor: pointer;
+}
+
+.mini-select {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-light);
+  background: #fff;
+  color: var(--text-secondary);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s;
+}
+
+.mini-select:focus {
+  border-color: var(--primary);
 }
 
 /* 캔버스 액션 버튼 행 */
@@ -937,6 +954,17 @@ body {
     <!-- 캔버스 미니 툴바 -->
     <div class="canvas-toolbar">
       <div class="toolbar-group">
+        <span class="tool-label">글씨체</span>
+        <select class="mini-select" id="select-font-family" onchange="onFontFamilyChange(this.value)" title="바탕 한글 글씨체 변경">
+          <option value="tracing">✒️ 정밀 따라쓰기체 (100% 일치)</option>
+          <option value="batang">📖 고운 바탕체 (교과서 정자체)</option>
+          <option value="dodum">🧸 고운 돋움체 (둥근 교과서체)</option>
+          <option value="serif">📜 전통 명조체 (Noto Serif)</option>
+          <option value="hand">✍️ 나눔 손글씨 (감성 펜체)</option>
+          <option value="sans">⬛ 모던 고딕체 (Noto Sans)</option>
+        </select>
+      </div>
+      <div class="toolbar-group">
         <span class="tool-label">색상</span>
         <div class="color-dot active" style="background:#10b981;" onclick="setBrushColor('#10b981', this)" title="에메랄드"></div>
         <div class="color-dot" style="background:#2563eb;" onclick="setBrushColor('#2563eb', this)" title="블루"></div>
@@ -945,7 +973,7 @@ body {
       </div>
       <div class="toolbar-group">
         <span class="tool-label">가이드</span>
-        <input type="range" class="mini-slider" id="guide-opacity" min="0" max="100" value="30" oninput="onGuideOpacityChange()" title="바탕 글자 투명도">
+        <input type="range" class="mini-slider" id="guide-opacity" min="0" max="100" value="40" oninput="onGuideOpacityChange()" title="바탕 글자 투명도">
       </div>
       <div class="toolbar-group">
         <button class="tool-toggle-btn" style="padding:4px 8px; font-size:11px;" onclick="saveCanvasImage()" title="작품 이미지 다운로드">
@@ -1486,7 +1514,8 @@ const canvas = document.getElementById('stroke-canvas');
 const ctx = canvas.getContext('2d');
 
 let studioMode = 'test'; // 'test' | 'anim' | 'free'
-let fontGuideMode = 'tracing'; // 'tracing' (100% 일치 따라쓰기 폰트) | 'system' (시스템 명조) | 'both'
+let fontGuideMode = 'tracing'; // 'tracing' | 'font' | 'both'
+let selectedFontKey = 'tracing';
 let currentTab = 'basic';
 let currentChar = '아';
 let currentBrushColor = '#10b981';
@@ -1497,29 +1526,38 @@ let animCompleted = false;
 let currentAnimRafId = null;
 let currentStepIndex = -1; // 1획씩 보기 인덱스
 
-// 쓰기 테스트 상태
-let testCompletedCount = 0; // 맞춘 획수
-let userPoints = [];        // 현재 획 긋는 중인 점들
-let freehandStrokes = [];   // 자유 그리기 궤적들
-let isPointerDown = false;
+const FONT_MAP = {
+  batang: { name: '고운 바탕체', family: '"Gowun Batang", serif', size: 450, offsetY: 12 },
+  dodum: { name: '고운 돋움체', family: '"Gowun Dodum", sans-serif', size: 450, offsetY: 14 },
+  serif: { name: '전통 명조체', family: '"Noto Serif KR", serif', size: 440, offsetY: 10 },
+  hand: { name: '나눔 손글씨체', family: '"Nanum Pen Script", cursive', size: 540, offsetY: 0 },
+  sans: { name: '모던 고딕체', family: '"Noto Sans KR", sans-serif', size: 440, offsetY: 12 }
+};
 
-function toggleFontGuideMode() {
-  const btn = document.getElementById('btn-toggle-fontmode');
-  if (fontGuideMode === 'tracing') {
-    fontGuideMode = 'system';
-    btn.innerHTML = '<span id="fontmode-icon">🖋️</span> 시스템 폰트';
-    setFeedback('🔤', '바탕 모드: 시스템 명조 폰트 가이드가 활성화되었습니다.');
-  } else if (fontGuideMode === 'system') {
-    fontGuideMode = 'both';
-    btn.innerHTML = '<span id="fontmode-icon">✨</span> 듀얼 가이드';
-    setFeedback('🔤', '바탕 모드: 따라쓰기 폰트 + 시스템 명조가 함께 표시됩니다.');
-  } else {
+function onFontFamilyChange(val) {
+  selectedFontKey = val;
+  const selectEl = document.getElementById('select-font-family');
+  if (selectEl) selectEl.value = val;
+
+  if (val === 'tracing') {
     fontGuideMode = 'tracing';
-    btn.innerHTML = '<span id="fontmode-icon">🔤</span> 따라쓰기 폰트';
-    setFeedback('🔤', '바탕 모드: 획과 1:1 완벽 일치하는 정밀 따라쓰기 폰트가 활성화되었습니다.');
+    document.getElementById('btn-toggle-fontmode').innerHTML = '<span id="fontmode-icon">🔤</span> 따라쓰기 폰트';
+    setFeedback('🔤', '바탕 모드: 획과 1:1 완벽 일치하는 정밀 따라쓰기 폰트가 선택되었습니다.');
+  } else {
+    fontGuideMode = 'font';
+    const f = FONT_MAP[val];
+    document.getElementById('btn-toggle-fontmode').innerHTML = `<span id="fontmode-icon">🖋️</span> ${f ? f.name : '폰트'}`;
+    setFeedback('🔤', `바탕 모드: [${f ? f.name : val}] 서체가 캔버스에 적용되었습니다.`);
   }
   renderScene();
   Sound.tap(1.2);
+}
+
+function toggleFontGuideMode() {
+  const keys = ['tracing', 'batang', 'dodum', 'serif', 'hand', 'sans'];
+  const curIdx = keys.indexOf(selectedFontKey);
+  const nextKey = keys[(curIdx + 1) % keys.length];
+  onFontFamilyChange(nextKey);
 }
 
 function setStudioMode(mode) {
@@ -1566,7 +1604,7 @@ function cancelCurrentAnimation() {
   document.getElementById('btn-clear').disabled = false;
 }
 
-/* ── 1. 바탕 따라쓰기 한글 폰트 렌더러 (오차 0.0% 완벽 일치) ── */
+/* ── 1. 다중 폰트 지원 바탕 따라쓰기 렌더러 ── */
 function drawBackgroundGuide(strokes) {
   if (guideOpacity <= 0) return;
 
@@ -1574,11 +1612,11 @@ function drawBackgroundGuide(strokes) {
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  // [Mode A] 따라쓰기 폰트 (획과 1:1 일치하는 두꺼운 펜 획 바탕 글자)
-  if (fontGuideMode === 'tracing' || fontGuideMode === 'both') {
+  // [옵션 1] 정밀 벡터 따라쓰기 폰트 (1:1 일치 펜 글씨)
+  if (selectedFontKey === 'tracing') {
     // 1단계: 외곽 부드러운 글자 바디 (회색 폰트 몸통)
     ctx.lineWidth = 52;
-    ctx.strokeStyle = `rgba(203, 213, 225, ${Math.min(1.0, guideOpacity * 1.5)})`; // slate-300
+    ctx.strokeStyle = `rgba(203, 213, 225, ${Math.min(1.0, guideOpacity * 1.5)})`;
     strokes.forEach(s => {
       if (s.type === 'circle') {
         ctx.beginPath();
@@ -1592,9 +1630,9 @@ function drawBackgroundGuide(strokes) {
       }
     });
 
-    // 2단계: 내부 밝은 안감 (색칠공부 홈 형태)
+    // 2단계: 내부 밝은 안감 (홈 형태)
     ctx.lineWidth = 42;
-    ctx.strokeStyle = `rgba(241, 245, 249, ${Math.min(1.0, guideOpacity * 1.8)})`; // slate-100
+    ctx.strokeStyle = `rgba(241, 245, 249, ${Math.min(1.0, guideOpacity * 1.8)})`;
     strokes.forEach(s => {
       if (s.type === 'circle') {
         ctx.beginPath();
@@ -1624,16 +1662,33 @@ function drawBackgroundGuide(strokes) {
         ctx.stroke();
       }
     });
-  }
+  } else {
+    // [옵션 2] 실제 한글 웹폰트 렌더링 (바탕체, 돋움체, 명조체, 손글씨체, 고딕체)
+    const fontInfo = FONT_MAP[selectedFontKey] || FONT_MAP.batang;
 
-  // [Mode B] 시스템 명조 폰트 오버레이 (보조 옵션)
-  if (fontGuideMode === 'system' || fontGuideMode === 'both') {
-    ctx.setLineDash([]);
-    ctx.font = 'bold 440px "Noto Serif KR", "Nanum Myeongjo", serif';
+    // (A) 실제 한글 폰트 렌더링
+    ctx.font = `bold ${fontInfo.size}px ${fontInfo.family}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillStyle = `rgba(148, 163, 184, ${fontGuideMode === 'both' ? guideOpacity * 0.35 : guideOpacity})`;
-    ctx.fillText(currentChar, canvas.width / 2 + 5, canvas.height / 2 + 10);
+    ctx.fillStyle = `rgba(148, 163, 184, ${guideOpacity * 1.2})`;
+    ctx.fillText(currentChar, canvas.width / 2, canvas.height / 2 + fontInfo.offsetY);
+
+    // (B) 폰트 위에 은은한 중심 점선 가이드도 함께 표시하여 획순을 정확히 따라쓸 수 있도록 보조
+    ctx.lineWidth = 2;
+    ctx.setLineDash([6, 8]);
+    ctx.strokeStyle = `rgba(100, 116, 139, ${guideOpacity * 0.75})`;
+    strokes.forEach(s => {
+      if (s.type === 'circle') {
+        ctx.beginPath();
+        ctx.arc(s.cx, s.cy, s.r, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.moveTo(s.pts[0][0], s.pts[0][1]);
+        for (let i = 1; i < s.pts.length; i++) ctx.lineTo(s.pts[i][0], s.pts[i][1]);
+        ctx.stroke();
+      }
+    });
   }
 
   ctx.restore();
