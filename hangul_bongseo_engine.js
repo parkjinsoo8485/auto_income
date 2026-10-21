@@ -223,13 +223,25 @@ const COMPOUND_VOWEL = {
     'ㅝ': ['ㅜ','ㅓ'], 'ㅞ': ['ㅜ','ㅔ'], 'ㅟ': ['ㅜ','ㅣ'], 'ㅢ': ['ㅡ','ㅣ']
 };
 
-function getJamoStrokes(jamo) {
+// ────────────────────────────────────────────────────────────────────────────
+// 종성 전용 정규화(0.0 ~ 1.0) 모필 스켈레톤 데이터베이스 (정통 궁서/봉서체 받침 조형)
+// - 상단의 무게를 단단하고 균형있게 떠받치는 주춧돌 조형 확립
+// ────────────────────────────────────────────────────────────────────────────
+const JAMO_JONG_DB = {
+    // [종성 'ㄱ']: 가로획이 상단 밖으로 길게 삐져나가지 않고, 꺾인 내림획이 안쪽으로 단단하게 서며 중심을 안정되게 마감
+    'ㄱ': [ [[0.16,0.22,1.15], [0.46,0.18,0.85], [0.74,0.16,1.25], [0.71,0.52,0.92], [0.66,0.86,0.22]] ]
+};
+
+function getJamoStrokes(jamo, part = 'cho') {
+    if (part === 'jong' && JAMO_JONG_DB[jamo]) return JAMO_JONG_DB[jamo];
     if (JAMO_DB[jamo]) return JAMO_DB[jamo];
     if (DOUBLE_JAMO[jamo]) {
         const [a, b] = DOUBLE_JAMO[jamo];
+        const stA = (part === 'jong' && JAMO_JONG_DB[a]) ? JAMO_JONG_DB[a] : (JAMO_DB[a] || JAMO_DB['ㅇ']);
+        const stB = (part === 'jong' && JAMO_JONG_DB[b]) ? JAMO_JONG_DB[b] : (JAMO_DB[b] || JAMO_DB['ㅇ']);
         return [
-            ...mapSubBox(JAMO_DB[a], 0.0, 0.0, 0.48, 1.0, 0.85),
-            ...mapSubBox(JAMO_DB[b], 0.52, 0.0, 0.48, 1.0, 0.85)
+            ...mapSubBox(stA, 0.0, 0.0, 0.48, 1.0, 0.85),
+            ...mapSubBox(stB, 0.52, 0.0, 0.48, 1.0, 0.85)
         ];
     }
     if (COMPOUND_VOWEL[jamo]) {
@@ -268,21 +280,35 @@ function decomposeHangul(ch) {
     return null;
 }
 
-function getLayoutBoxes(vType, hasJong, jongChar = '') {
+function getLayoutBoxes(vType, hasJong, jongChar = '', jungChar = '') {
     if (!hasJong) {
-        // [Type 1] 받침 없는 세로 모음 ('하', '가', '다') - 좌우 간격 긴밀 밀착
-        if (vType === 'V') return { cho: [14, 14, 38, 62], jung: [48, 12, 32, 76] };
+        // [Type 1] 받침 없는 세로 모음 ('하', '가', '다', '시') - 우측 기둥 X≈71~73 정렬
+        if (vType === 'V') {
+            const jBox = (jungChar === 'ㅣ') ? [56, 12, 30, 76] :
+                         (jungChar === 'ㅓ' || jungChar === 'ㅕ') ? [42, 12, 44, 76] :
+                         (jungChar === 'ㅐ' || jungChar === 'ㅔ' || jungChar === 'ㅒ' || jungChar === 'ㅖ') ? [44, 12, 44, 76] :
+                         [46, 12, 40, 76];
+            return { cho: [16, 14, 38, 62], jung: jBox };
+        }
         // [Type 2] 받침 없는 가로 모음 ('호', '고', '도') - 상하 간격 긴밀 밀착
         if (vType === 'H') return { cho: [22, 13, 56, 36], jung: [14, 46, 72, 34] };
         // [Type 3] 받침 없는 복합 모음 ('귀', '화', '과') - 3방향 단단한 일체화
-        return { cho: [14, 12, 36, 32], jung: [14, 12, 72, 76] };
+        return { cho: [16, 12, 40, 31], jung: [14, 12, 72, 76] };
     } else {
-        // [Type 4] 삼분할 결합 구조 ('한', '간', '산', '성', '달') - 상단과 하단 여백 밀착
-        if (vType === 'V') return { cho: [14, 12, 38, 42], jung: [48, 11, 32, 48], jong: [20, 60, 60, 26] };
+        // [Type 4] 삼분할 결합 구조 ('한', '간', '산', '실', '달', '말', '객', '성')
+        // - 상단 세로모음 우측 기둥 X≈71~73 정렬
+        // - 종성(받침) 박스를 X: 22 ~ 72 (폭 50px)로 정돈하여 종성이 오른쪽으로 삐져나오는 현상 완전 제거!
+        if (vType === 'V') {
+            const jBox = (jungChar === 'ㅣ') ? [56, 11, 30, 46] :
+                         (jungChar === 'ㅓ' || jungChar === 'ㅕ') ? [42, 11, 44, 46] :
+                         (jungChar === 'ㅐ' || jungChar === 'ㅔ' || jungChar === 'ㅒ' || jungChar === 'ㅖ') ? [44, 11, 44, 46] :
+                         [46, 11, 40, 46];
+            return { cho: [16, 12, 36, 42], jung: jBox, jong: [22, 60, 50, 26] };
+        }
         // [Type 5] 삼단 상중하 결합 구조 ('글', '문', '국', '물') - 3단 층간 간격 긴밀화
-        if (vType === 'H') return { cho: [22, 11, 56, 26], jung: [14, 40, 72, 16], jong: [22, 59, 56, 26] };
+        if (vType === 'H') return { cho: [22, 11, 56, 26], jung: [14, 39, 72, 16], jong: [22, 58, 56, 26] };
         // [Type 6] 받침 있는 복합 모음 ('환', '광', '권')
-        return { cho: [14, 11, 36, 26], jung: [14, 11, 72, 46], jong: [20, 60, 60, 26] };
+        return { cho: [16, 11, 38, 25], jung: [14, 11, 72, 46], jong: [22, 60, 50, 26] };
     }
 }
 
@@ -1171,7 +1197,7 @@ function buildBrushPolygonPath(densePts, styleParams) {
         const vType = VOWEL_TYPE[info.jung] || 'V';
         const hasJong = !!info.jong;
         const jongChar = info.jong || '';
-        const boxes = getLayoutBoxes(vType, hasJong, jongChar);
+        const boxes = getLayoutBoxes(vType, hasJong, jongChar, info.jung);
 
         if (COMPOUND_VOWEL[info.jung]) {
           const [h, v] = COMPOUND_VOWEL[info.jung];
@@ -1199,7 +1225,7 @@ function buildBrushPolygonPath(densePts, styleParams) {
           jamoEntries.push({ ci: charIdx, jamoChar: info.jung, norm: getJamoStrokes(info.jung), box: [...boxes.jung], pScale: 1.0, part: 'jung', subPart: 'jung', vType, hasJong, jongChar });
         }
         if (hasJong) {
-          jamoEntries.push({ ci: charIdx, jamoChar: info.jong, norm: getJamoStrokes(info.jong), box: [...boxes.jong], pScale: 0.92, part: 'jong', subPart: 'jong', vType, hasJong, jongChar });
+          jamoEntries.push({ ci: charIdx, jamoChar: info.jong, norm: getJamoStrokes(info.jong, 'jong'), box: [...boxes.jong], pScale: 0.92, part: 'jong', subPart: 'jong', vType, hasJong, jongChar });
         }
       }
     });
@@ -1238,14 +1264,13 @@ function buildBrushPolygonPath(densePts, styleParams) {
 
       if (!e.hasJong) {
         if (e.vType === 'V') {
-          // [Type 1] 받침 없는 세로 모음 ('하', '가', '다', '서'): 초성-중성 긴밀 밀착
-          let jungBox = [49, 12, 30, 76];
-          if (isSlantedCho && isLeftJung) {
-            jungBox = [43, 12, 36, 76];
-          } else if (isSlantedCho) {
-            jungBox = [47, 12, 32, 76];
-          }
-          e.pbox = (e.part === 'cho') ? [14, 14, 38, 62] : jungBox;
+          // [Type 1] 받침 없는 세로 모음 ('하', '가', '다', '시', '서'): 우측 기둥 X≈71~73 정렬
+          let jungBox = (sJung === 'ㅣ') ? [56, 12, 30, 76] :
+                        (isSlantedCho && isLeftJung) ? [42, 12, 40, 76] :
+                        (isLeftJung) ? [42, 12, 44, 76] :
+                        (sJung === 'ㅐ' || sJung === 'ㅔ' || sJung === 'ㅒ' || sJung === 'ㅖ') ? [44, 12, 44, 76] :
+                        [46, 12, 40, 76];
+          e.pbox = (e.part === 'cho') ? [16, 14, 38, 62] : jungBox;
           e.rScale = thick ? (nSt >= 3 ? 0.86 : 0.92) : 1.0;
         } else if (e.vType === 'H') {
           // [Type 2] 받침 없는 가로 모음 ('호', '고', '도'): 초성-가로모음 상하 밀착
@@ -1263,22 +1288,23 @@ function buildBrushPolygonPath(densePts, styleParams) {
         }
       } else {
         if (e.vType === 'V') {
-          // [Type 4] 삼분할 결합 구조 ('한', '간', '산', '성', '달'): 상하단 빈틈없이 밀착
-          let jungBox = [49, 11, 30, 48];
-          if (isSlantedCho && isLeftJung) {
-            jungBox = [43, 11, 36, 48];
-          } else if (isSlantedCho) {
-            jungBox = [47, 11, 32, 48];
-          }
-          if (e.part === 'cho') e.pbox = [14, 12, 38, 42];
+          // [Type 4] 삼분할 결합 구조 ('한', '간', '산', '실', '달', '말', '객', '성'):
+          // - 우측 기둥 X≈71~73 수호
+          // - 종성을 X: 22 ~ 72 (폭 50px)로 안착시켜 우측 삐져나옴 완전 제거!
+          let jungBox = (sJung === 'ㅣ') ? [56, 11, 30, 46] :
+                        (isSlantedCho && isLeftJung) ? [42, 11, 38, 46] :
+                        (isLeftJung) ? [42, 11, 44, 46] :
+                        (sJung === 'ㅐ' || sJung === 'ㅔ' || sJung === 'ㅒ' || sJung === 'ㅖ') ? [44, 11, 44, 46] :
+                        [46, 11, 40, 46];
+          if (e.part === 'cho') e.pbox = [16, 12, 36, 42];
           else if (e.part === 'jung') e.pbox = jungBox;
-          else e.pbox = [20, 60, 60, 26];
+          else e.pbox = [22, 60, 50, 26];
           e.rScale = thick ? (nSt >= 3 ? 0.78 : 0.85) : 0.95;
         } else if (e.vType === 'H') {
           // [Type 5] 삼단 상중하 결합 구조 ('글', '문', '국', '물'): 3단 층간 간격 긴밀화
           if (e.part === 'cho') e.pbox = [22, 11, 56, 26];
           else if (e.part === 'jung') e.pbox = [14, 39, 72, 16];
-          else e.pbox = [22, 59, 56, 26];
+          else e.pbox = [22, 58, 56, 26];
           e.rScale = thick ? (nSt >= 3 ? 0.75 : 0.82) : 0.92;
         } else {
           // [Type 6] 받침 있는 복합 모음 ('환', '광', '권')
@@ -1287,7 +1313,7 @@ function buildBrushPolygonPath(densePts, styleParams) {
           if (e.subPart === 'cho') e.pbox = [16, 11, 38, 25];
           else if (e.subPart === 'jung_h') e.pbox = hBox;
           else if (e.subPart === 'jung_v') e.pbox = vBox;
-          else e.pbox = [20, 60, 60, 26];
+          else e.pbox = [22, 60, 50, 26];
           e.rScale = thick ? (nSt >= 3 ? 0.70 : 0.78) : 0.90;
         }
       }
@@ -1388,18 +1414,21 @@ function buildBrushPolygonPath(densePts, styleParams) {
           const isRoundCho = ['ㅇ', 'ㅎ'].includes(choChar);
           const isOpenCho = ['ㄱ', 'ㅋ'].includes(choChar);
 
-          // 기본 세로모음 좌우 간격 긴밀 밀착 (3.8)
+          // 기본 세로모음 좌우 간격 긴밀 밀착 (우측 기둥 X≈71~73 수호)
           let targetGapX = 3.8;
-          let jungShiftRatio = 0.5;
+          let jungShiftRatio = 0.25;
           if (isSlantedCho && isLeftJung) {
             targetGapX = -6.2;       // '서', '세': 'ㅓ'의 가로점이 'ㅅ' 우측 꼬리 안쪽으로 파고듦
-            jungShiftRatio = 0.90;
+            jungShiftRatio = 0.85;
           } else if (isSlantedCho) {
-            targetGapX = 3.2;
-            jungShiftRatio = 0.75;
+            targetGapX = (jungChar === 'ㅣ') ? 3.8 : 3.0;
+            jungShiftRatio = 0.15;   // '시', '사': 'ㅣ'는 우측 벽에 고정하고 초성이 이동!
           } else if ((isOpenCho || isRoundCho) && isLeftJung) {
             targetGapX = 1.6;
             jungShiftRatio = 0.70;
+          } else if (jungChar === 'ㅣ') {
+            targetGapX = 3.8;
+            jungShiftRatio = 0.15;
           }
 
           const curGapX = jung.minX - cho.maxX;
@@ -1418,28 +1447,44 @@ function buildBrushPolygonPath(densePts, styleParams) {
           const isRoundCho = ['ㅇ', 'ㅎ'].includes(choChar);
           const isOpenCho = ['ㄱ', 'ㅋ'].includes(choChar);
 
-          // 받침 있는 글자 ('성', '한', '산', '정', '달' 등)
-          let targetGapX = 3.4;
-          let jungShiftRatio = 0.5;
+          // 받침 있는 글자 ('실', '객', '한', '산', '성', '정', '달' 등)
+          // 1. 우측 기둥 수호: 세로모음이 왼쪽으로 빨려 들어가지 않도록 제한
+          let targetGapX = 3.6;
+          let jungShiftRatio = 0.20;
           if (isSlantedCho && isLeftJung) {
             targetGapX = -6.8;       // '성', '정': 'ㅓ'의 가로점이 'ㅅ' 안쪽으로 깊숙이 침투
-            jungShiftRatio = 0.90;
+            jungShiftRatio = 0.85;
           } else if (isSlantedCho) {
-            targetGapX = 2.8;
-            jungShiftRatio = 0.75;
+            targetGapX = (jungChar === 'ㅣ') ? 3.8 : 3.0;
+            jungShiftRatio = 0.15;   // '실', '산': 'ㅣ'가 왼쪽으로 들어가지 않고 우측 벽 수호!
           } else if ((isOpenCho || isRoundCho) && isLeftJung) {
             targetGapX = 1.4;
             jungShiftRatio = 0.70;
+          } else if (jungChar === 'ㅣ') {
+            targetGapX = 3.8;
+            jungShiftRatio = 0.15;
           }
 
-          const targetGapY = 3.2;    // 상단과 종성의 수직 여백을 단단하게 축소
           const curGapX = jung.minX - cho.maxX;
           const diffX = curGapX - targetGapX;
           shiftPart(cho, diffX * (1 - jungShiftRatio), 0);
           shiftPart(jung, -diffX * jungShiftRatio, 0);
+
+          // 2. 상단 블록과 종성의 수평 중심축 일치 (종성이 오른쪽으로 삐져나오는 현상 완전 제거)
+          const upperMidX = (cho.minX + jung.maxX) * 0.5;
+          const jongMidX = (jong.minX + jong.maxX) * 0.5;
+          shiftPart(jong, (upperMidX - jongMidX) * 0.75, 0);
+
+          // 가드: 종성의 우측 끝이 상단 우측 벽(jung.maxX)을 넘지 않도록
+          if (jong.maxX > jung.maxX + 0.5) {
+            shiftPart(jong, -(jong.maxX - jung.maxX), 0);
+          }
+
+          // 3. 수직 정렬
           const targetChoMaxY = jung.maxY - 1.2;
           shiftPart(cho, 0, targetChoMaxY - cho.maxY);
           const upperMaxY = Math.max(cho.maxY, jung.maxY);
+          const targetGapY = 3.2;    // 상단과 종성의 수직 여백을 단단하게 축소
           const curGapY = jong.minY - upperMaxY;
           const diffY = curGapY - targetGapY;
           shiftPart(cho, 0, diffY * 0.45);
@@ -1703,6 +1748,7 @@ function buildBrushPolygonPath(densePts, styleParams) {
     const bgFill = options.style === 'bongseo' ? '#ebe4d6' : '#e2e8f0';
     const bgStroke = options.style === 'bongseo' ? '#c8bfa9' : '#94a3b8';
 
+    const uid = 'bs_' + Math.random().toString(36).substring(2, 8);
     const strokeDur = 0.42 / Math.max(0.2, options.speed);
     const gapDur = 0.12 / Math.max(0.2, options.speed);
 
@@ -1722,7 +1768,7 @@ function buildBrushPolygonPath(densePts, styleParams) {
 
       // 클리핑 마스크 정의
       defsHtml += `
-        <clipPath id="bongseo_clip_${idx}">
+        <clipPath id="${uid}_clip_${idx}">
           <path d="${plan.envelopeD}" />
         </clipPath>
       `;
@@ -1747,26 +1793,26 @@ function buildBrushPolygonPath(densePts, styleParams) {
       if (isVisible) {
         if (options.animated && options.activeStroke === -1) {
           animCss += `
-            @keyframes bongseoDraw_${idx} {
+            @keyframes ${uid}_draw_${idx} {
               0%   { stroke-dashoffset: ${strokeLen}; opacity: 0; }
               8%   { opacity: 1; }
               100% { stroke-dashoffset: 0; opacity: 1; }
             }
-            .bongseo-active-ink-${idx} {
+            .${uid}-active-ink-${idx} {
               stroke-dasharray: ${strokeLen};
               stroke-dashoffset: ${strokeLen};
-              animation: bongseoDraw_${idx} ${strokeDur}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+              animation: ${uid}_draw_${idx} ${strokeDur}s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
               animation-delay: ${startTime}s;
             }
-            @keyframes bongseoBadgePop_${idx} {
+            @keyframes ${uid}_badgePop_${idx} {
               0%   { opacity: 0; transform: scale(0.3); }
               70%  { transform: scale(1.15); }
               100% { opacity: 1; transform: scale(1); }
             }
-            .bongseo-badge-pop-${idx} {
+            .${uid}-badge-pop-${idx} {
               opacity: 0;
               transform-origin: ${plan.badge.bx}px ${plan.badge.by}px;
-              animation: bongseoBadgePop_${idx} 0.28s ease-out forwards;
+              animation: ${uid}_badgePop_${idx} 0.28s ease-out forwards;
               animation-delay: ${startTime}s;
             }
           `;
@@ -1774,10 +1820,10 @@ function buildBrushPolygonPath(densePts, styleParams) {
 
         // 스윕용 두꺼운 브러시 굵기 (봉서체는 16~20px으로 마스크 내부 100% 채움)
         const sweepThick = comp.styleParams.baseRadius * 5.4;
-        const inkAnimClass = (options.animated && options.activeStroke === -1) ? `bongseo-active-ink-${idx}` : '';
+        const inkAnimClass = (options.animated && options.activeStroke === -1) ? `${uid}-active-ink-${idx}` : '';
 
         activeHtml += `
-          <g clip-path="url(#bongseo_clip_${idx})">
+          <g clip-path="url(#${uid}_clip_${idx})">
             <path class="${inkAnimClass}" d="${plan.centerlineD}"
                   fill="none" stroke="${ink}" stroke-width="${sweepThick.toFixed(1)}"
                   stroke-linecap="round" stroke-linejoin="round" />
@@ -1788,12 +1834,12 @@ function buildBrushPolygonPath(densePts, styleParams) {
       // 4. 번호 배지
       if (options.showNumbers) {
         const b = plan.badge;
-        const badgePopClass = (options.animated && options.activeStroke === -1) ? `bongseo-badge-pop-${idx}` : '';
+        const badgePopClass = (options.animated && options.activeStroke === -1) ? `${uid}-badge-pop-${idx}` : '';
         const badgeDisplay = isVisible ? '' : 'display:none;';
         const hasLeader = Math.hypot(b.bx - b.sx, b.by - b.sy) > 1.2;
 
         badgeHtml += `
-          <g class="${badgePopClass}" id="bongseo_badge_${idx}" style="${badgeDisplay}">
+          <g class="${badgePopClass}" id="${uid}_badge_${idx}" style="${badgeDisplay}">
             ${hasLeader ? `<line x1="${b.sx.toFixed(1)}" y1="${b.sy.toFixed(1)}" x2="${b.bx.toFixed(1)}" y2="${b.by.toFixed(1)}" stroke="#059669" stroke-width="0.75" opacity="0.85"/>` : ''}
             <circle cx="${b.bx.toFixed(1)}" cy="${b.by.toFixed(1)}" r="3.2" fill="#0f172a" stroke="#10b981" stroke-width="0.7" />
             <text x="${b.bx.toFixed(1)}" y="${(b.by + 1.15).toFixed(1)}" text-anchor="middle" font-size="3.2" font-weight="900" fill="#ffffff" font-family="'Inter', -apple-system, sans-serif">${idx + 1}</text>

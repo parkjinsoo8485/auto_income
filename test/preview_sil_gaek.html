@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body { background: #0a0f1e; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; gap: 20px; }
+.box { width: 320px; height: 320px; background: #faf6ee; border-radius: 24px; padding: 12px; display: flex; justify-content: center; align-items: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+svg { width: 280px; height: 280px; }
+</style>
+<script src="../hangul_variant_dispatcher.js?v=20261021_gold_v2"></script>
+<script src="../hangul_variant_data.js?v=20261021_gold_v2"></script>
+<script src="../hangul_bongseo_engine.js?v=20261021_gold_v2"></script>
+</head>
+<body>
+<div class="box" id="box1"></div>
+<div class="box" id="box2"></div>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('box1').innerHTML = HangulBongseoEngine.renderSvg('실', {
+        style: 'bongseo', showNumbers: true, showGrid: false, animated: false, theme: 'hanji'
+    });
+    document.getElementById('box2').innerHTML = HangulBongseoEngine.renderSvg('객', {
+        style: 'bongseo', showNumbers: true, showGrid: false, animated: false, theme: 'hanji'
+    });
+});
+</script>
+</body>
+</html>
