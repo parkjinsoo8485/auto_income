@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>한국어 마스터 TOPIK 1~6급 | Korean Master</title>
 <meta name="description" content="TOPIK 1~6급 600단어 완전 대비 한국어 학습 앱. 플래시카드, 퀴즈, 듣기, 모의시험 지원.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -232,6 +235,9 @@ body {
 .stroke-ctrl-btn.active{background:rgba(56,189,248,.18);border-color:var(--accent);color:var(--accent)}
 .stroke-canvas-overlay{position:absolute;top:0;left:0;width:100%;height:100%;touch-action:none;cursor:crosshair;display:none;z-index:10}
 .stroke-canvas-overlay.active{display:block}
+.stroke-preview-box.calli-paper{background:#fbf7ee;border:2px solid #e2d7be;box-shadow:0 10px 30px rgba(0,0,0,.35),inset 0 0 35px rgba(215,200,170,.28)}
+.stroke-preview-box.calli-paper svg{filter:drop-shadow(0 2px 4px rgba(60,45,20,.12))}
+.stroke-calli-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(99,102,241,.16);border:1px solid rgba(99,102,241,.35);color:#a5b4fc;font-size:11px;font-weight:700;padding:3px 10px;border-radius:12px;margin-top:4px}
 @keyframes hangulStrokeDraw{to{stroke-dashoffset:0}}
 @keyframes hangulMarkerShow{to{opacity:1;transform:scale(1)}}
 @keyframes hangulGlyphFinale{to{opacity:1}}
@@ -693,8 +699,9 @@ body {
   <!-- Home Indicator Bar -->
 </div> <!-- /mobile-device -->
 
-<script src="hangul_variant_dispatcher.js"></script>
-<script src="hangul_variant_data.js"></script>
+<script src="hangul_variant_dispatcher.js?v=20261021_gold_v1"></script>
+<script src="hangul_variant_data.js?v=20261021_gold_v1"></script>
+<script src="hangul_bongseo_engine.js?v=20261021_gold_v1"></script>
 
 <script>
 // ═══════════════════════════════════════════════════════
@@ -9791,6 +9798,15 @@ if (typeof S.strokeSpeed === 'undefined') S.strokeSpeed = 1.0;
 if (typeof S.strokeShowNumbers === 'undefined') S.strokeShowNumbers = true;
 if (typeof S.strokeDrawMode === 'undefined') S.strokeDrawMode = false;
 if (typeof S.strokeStepIdx === 'undefined') S.strokeStepIdx = -1; // -1: 전체 애니메이션, >=0: 특정 획
+if (typeof S.strokeCalliStyle === 'undefined') S.strokeCalliStyle = 'bongseo'; // 'bongseo' | 'gungseo' | 'clean_vector'
+
+function getActiveStrokeTotal(char) {
+  if (typeof HangulBongseoEngine !== 'undefined' && S.strokeCalliStyle !== 'clean_vector') {
+    const comp = HangulBongseoEngine.composeChar(char, S.strokeCalliStyle);
+    return comp ? comp.totalStrokes : 1;
+  }
+  return HangulStrokeComposer.composeStrokePlan(char).strokes.length;
+}
 
 function renderStrokeMode() {
   const words = TOPIK_DATA[S.level] || [];
@@ -9811,23 +9827,44 @@ function renderStrokeMode() {
     `<button class="stroke-char-tab ${idx === S.strokeCharIdx ? 'active' : ''}" onclick="setStrokeChar(${idx})">${c}</button>`
   ).join('');
 
-  // 획순 계획 분석
-  const plan = HangulStrokeComposer.composeStrokePlan(curChar);
-  const totalStrokes = plan.strokes.length;
+  // 획순 렌더링 (봉서체 절차적 모필 엔진 우선 사용)
+  const useBongseo = typeof HangulBongseoEngine !== 'undefined' && S.strokeCalliStyle !== 'clean_vector';
+  let totalStrokes = 1;
+  let svgHTML = '';
 
-  // SVG 렌더링
-  const svgHTML = HangulStrokeComposer.renderComposerSvg(curChar, {
-    showGrid: true,
-    showNumbers: S.strokeShowNumbers,
-    showArrows: false,
-    speed: S.strokeSpeed,
-    animated: S.strokeStepIdx < 0,
-    activeStroke: S.strokeStepIdx
-  });
+  if (useBongseo) {
+    const comp = HangulBongseoEngine.composeChar(curChar, S.strokeCalliStyle);
+    totalStrokes = comp ? comp.totalStrokes : 1;
+    svgHTML = HangulBongseoEngine.renderSvg(curChar, {
+      style: S.strokeCalliStyle,
+      speed: S.strokeSpeed,
+      showNumbers: S.strokeShowNumbers,
+      showSpines: true,
+      showGrid: true,
+      animated: S.strokeStepIdx < 0,
+      activeStroke: S.strokeStepIdx,
+      theme: 'hanji'
+    });
+  } else {
+    const plan = HangulStrokeComposer.composeStrokePlan(curChar);
+    totalStrokes = plan.strokes.length;
+    svgHTML = HangulStrokeComposer.renderComposerSvg(curChar, {
+      showGrid: true,
+      showNumbers: S.strokeShowNumbers,
+      showArrows: false,
+      speed: S.strokeSpeed,
+      animated: S.strokeStepIdx < 0,
+      activeStroke: S.strokeStepIdx
+    });
+  }
 
   const stepText = S.strokeStepIdx >= 0 
     ? `${S.strokeStepIdx + 1}획 / ${totalStrokes}획`
     : `총 ${totalStrokes}획 순서대로 재생`;
+
+  const styleBadgeText = S.strokeCalliStyle === 'bongseo'
+    ? '왕실 봉서체 (중후한 큰붓)'
+    : (S.strokeCalliStyle === 'gungseo' ? '정통 궁서체 (궁체)' : '표준 벡터체');
 
   document.getElementById('mode-content').innerHTML = `
     <div class="stroke-view-container">
@@ -9835,15 +9872,16 @@ function renderStrokeMode() {
       ${chars.length > 1 ? `<div class="stroke-tabs-row">${charTabsHTML}</div>` : ''}
 
       <!-- 획순 뷰어 & 캔버스 -->
-      <div class="stroke-preview-box" id="strokePreviewBox">
+      <div class="stroke-preview-box ${useBongseo ? 'calli-paper' : ''}" id="strokePreviewBox">
         ${svgHTML}
         <canvas id="stroke-draw-canvas" class="stroke-canvas-overlay ${S.strokeDrawMode ? 'active' : ''}"></canvas>
       </div>
 
-      <!-- 음절 설명 & 획 안내 -->
+      <!-- 음절 설명 & 서체 뱃지 & 획 안내 -->
       <div style="text-align:center;margin-bottom:12px">
         <div style="font-size:22px;font-weight:900;color:var(--accent);letter-spacing:1px">${curChar}</div>
-        <div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:2px">${w.meaning || ''} (${stepText})</div>
+        <div style="margin-top:2px"><span class="stroke-calli-badge">🖌️ ${styleBadgeText}</span></div>
+        <div style="font-size:13px;color:var(--muted);font-weight:600;margin-top:4px">${w.meaning || ''} (${stepText})</div>
       </div>
 
       <!-- 제어 버튼 행 1: 재생 / 단계 이동 -->
@@ -9853,8 +9891,9 @@ function renderStrokeMode() {
         <button class="stroke-ctrl-btn" onclick="stepStrokeNext()">다음 획 ▶</button>
       </div>
 
-      <!-- 제어 버튼 행 2: 옵션 / 따라쓰기 -->
+      <!-- 제어 버튼 행 2: 서체 스타일 / 속도 / 번호 / 따라쓰기 -->
       <div class="stroke-controls-row">
+        <button class="stroke-ctrl-btn ${useBongseo ? 'active' : ''}" onclick="toggleCalliStyle()" title="서체 스타일 변경 (봉서체 / 궁서체 / 기본체)">🖌️ ${S.strokeCalliStyle === 'bongseo' ? '봉서체' : (S.strokeCalliStyle === 'gungseo' ? '궁서체' : '기본체')}</button>
         <button class="stroke-ctrl-btn" onclick="toggleStrokeSpeed()">⚡ ${S.strokeSpeed}x</button>
         <button class="stroke-ctrl-btn ${S.strokeShowNumbers ? 'active' : ''}" onclick="toggleStrokeNumbers()">🔢 번호</button>
         <button class="stroke-ctrl-btn ${S.strokeDrawMode ? 'active' : ''}" onclick="toggleStrokeDrawMode()">✏️ 직접 쓰기</button>
@@ -9874,6 +9913,14 @@ function renderStrokeMode() {
   }
 }
 
+function toggleCalliStyle() {
+  const styles = ['bongseo', 'gungseo', 'clean_vector'];
+  const curIdx = styles.indexOf(S.strokeCalliStyle || 'bongseo');
+  S.strokeCalliStyle = styles[(curIdx + 1) % styles.length];
+  S.strokeStepIdx = -1;
+  renderStrokeMode();
+}
+
 function setStrokeChar(idx) {
   S.strokeCharIdx = idx;
   S.strokeStepIdx = -1;
@@ -9890,8 +9937,7 @@ function stepStrokePrev() {
   const w = words[S.strokeIndex];
   if (!w) return;
   const curChar = [...w.term][S.strokeCharIdx] || w.term[0];
-  const plan = HangulStrokeComposer.composeStrokePlan(curChar);
-  const total = plan.strokes.length;
+  const total = getActiveStrokeTotal(curChar);
 
   if (S.strokeStepIdx < 0) {
     S.strokeStepIdx = total - 1;
@@ -9906,8 +9952,7 @@ function stepStrokeNext() {
   const w = words[S.strokeIndex];
   if (!w) return;
   const curChar = [...w.term][S.strokeCharIdx] || w.term[0];
-  const plan = HangulStrokeComposer.composeStrokePlan(curChar);
-  const total = plan.strokes.length;
+  const total = getActiveStrokeTotal(curChar);
 
   if (S.strokeStepIdx < 0) {
     S.strokeStepIdx = 0;
@@ -9973,8 +10018,9 @@ function setupStrokeDrawingCanvas() {
     const p = getPos(e);
     ctx.beginPath();
     ctx.moveTo(p.x, p.y);
-    ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 14;
+    const isCalli = S.strokeCalliStyle === 'bongseo' || S.strokeCalliStyle === 'gungseo';
+    ctx.strokeStyle = isCalli ? '#181615' : '#f59e0b';
+    ctx.lineWidth = isCalli ? 16 : 14;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     e.preventDefault();
